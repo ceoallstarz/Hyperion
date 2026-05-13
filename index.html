@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WFG SMD Builder System — Hyperion Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0f2540;
+  --navy-mid: #1a3a5c;
+  --navy-light: #2a5080;
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-pale: #fdf3d8;
+  --gold-deep: #8a6200;
+  --cream: #faf8f3;
+  --white: #ffffff;
+  --green: #2e7d4f;
+  --green-light: #e0f2e9;
+  --green-text: #1e5c38;
+  --red-bg: #fce8e8;
+  --red-text: #8b1a1a;
+  --gray: #6b7280;
+  --gray-light: #f3f4f6;
+  --border: rgba(15,37,64,0.12);
+  --shadow: 0 4px 24px rgba(15,37,64,0.10);
+  --shadow-lg: 0 12px 48px rgba(15,37,64,0.16);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--navy);
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* ===== HEADER ===== */
+.hero {
+  background: var(--navy);
+  color: var(--white);
+  padding: 60px 40px 50px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 400px; height: 400px;
+  border: 80px solid rgba(201,168,76,0.10);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -40px;
+  width: 300px; height: 300px;
+  border: 60px solid rgba(201,168,76,0.06);
+  border-radius: 50%;
+}
+.hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.18);
+  color: var(--gold-light);
+  font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  padding: 6px 16px; border-radius: 20px; margin-bottom: 20px;
+  border: 1px solid rgba(201,168,76,0.3);
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 18px;
+  letter-spacing: -0.02em;
+}
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.72); max-width: 560px;
+  font-weight: 300; line-height: 1.7; margin-bottom: 32px;
+}
+.hero-stats {
+  display: flex; flex-wrap: wrap; gap: 24px;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 16px 22px;
+}
+.hero-stat .num { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--gold); display: block; }
+.hero-stat .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+/* ===== NAV ===== */
+.nav-wrapper {
+  background: var(--white);
+  border-bottom: 2px solid var(--gold);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(15,37,64,0.08);
+}
+.nav-inner {
+  max-width: 900px; margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 0;
+  overflow-x: auto;
+}
+.nav-btn {
+  padding: 16px 18px;
+  border: none; background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--gray); cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all .2s; white-space: nowrap;
+  letter-spacing: .02em;
+}
+.nav-btn:hover { color: var(--navy-mid); background: var(--cream); }
+.nav-btn.active { color: var(--navy); border-bottom-color: var(--gold); font-weight: 600; }
+
+/* ===== MAIN ===== */
+.main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+.tab { display: none; }
+.tab.active { display: block; animation: fadeUp .3s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ===== SECTION HEADERS ===== */
+.section-header { margin-bottom: 28px; }
+.section-header .eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold-deep); margin-bottom: 8px;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; font-weight: 700; color: var(--navy);
+  line-height: 1.2; margin-bottom: 10px;
+}
+.section-header p { color: var(--gray); font-size: 15px; max-width: 640px; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card-navy { border-left: 4px solid var(--navy-mid); border-radius: 0 16px 16px 0; }
+.card-gold { border-left: 4px solid var(--gold); border-radius: 0 16px 16px 0; }
+.card-green { border-left: 4px solid var(--green); border-radius: 0 16px 16px 0; }
+.card-red { border-left: 4px solid #c0392b; border-radius: 0 16px 16px 0; }
+
+.card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px; font-weight: 700; color: var(--navy);
+  margin-bottom: 8px;
+}
+.card p { color: var(--gray); font-size: 14px; line-height: 1.7; margin-bottom: 0; }
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 10px;
+}
+.badge-navy { background: #e0eaf7; color: var(--navy-mid); }
+.badge-gold { background: var(--gold-pale); color: var(--gold-deep); }
+.badge-green { background: var(--green-light); color: var(--green-text); }
+.badge-red { background: var(--red-bg); color: var(--red-text); }
+.badge-purple { background: #EEEDFE; color: #3C3489; }
+
+/* ===== METRICS ROW ===== */
+.metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.metric-box {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 16px; text-align: center;
+  box-shadow: 0 2px 8px rgba(15,37,64,0.06);
+}
+.metric-box .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px; font-weight: 700; color: var(--navy-mid); display: block;
+}
+.metric-box .lbl { font-size: 11px; color: var(--gray); margin-top: 4px; text-transform: uppercase; letter-spacing: .06em; }
+
+/* ===== STEPS ===== */
+.step-list { list-style: none; }
+.step-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0; border-bottom: 1px solid rgba(15,37,64,0.07);
+}
+.step-item:last-child { border-bottom: none; }
+.step-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--navy); color: var(--white);
+  font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-num.gold { background: var(--gold); color: var(--navy); }
+.step-num.green { background: var(--green); color: var(--white); }
+.step-num.arrow { background: var(--navy-light); font-size: 16px; }
+.step-body h4 { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.step-body p { font-size: 13px; color: var(--gray); margin: 0; }
+
+/* ===== SCRIPT BOX ===== */
+.script-box {
+  background: #f8f6f0;
+  border-left: 4px solid var(--gold);
+  padding: 16px 18px;
+  border-radius: 0 10px 10px 0;
+  margin-bottom: 14px;
+  font-size: 13.5px; font-style: italic; color: var(--navy);
+  line-height: 1.75;
+}
+.script-box .script-label {
+  font-style: normal; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--gold-deep); display: block; margin-bottom: 8px;
+}
+
+/* ===== GRID ===== */
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+
+/* ===== OBJECTION ACCORDION ===== */
+.obj-item {
+  border: 1px solid var(--border); border-radius: 12px;
+  margin-bottom: 10px; overflow: hidden;
+  box-shadow: 0 1px 4px rgba(15,37,64,0.05);
+}
+.obj-q {
+  padding: 16px 20px;
+  background: var(--white); font-size: 14px; font-weight: 500;
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  color: var(--navy); transition: background .15s;
+}
+.obj-q:hover { background: var(--cream); }
+.obj-q .arrow { font-size: 18px; color: var(--gold); transition: transform .2s; }
+.obj-q.open .arrow { transform: rotate(180deg); }
+.obj-a {
+  padding: 0 20px; max-height: 0; overflow: hidden;
+  font-size: 13.5px; color: var(--gray); line-height: 1.75;
+  transition: max-height .3s ease, padding .3s;
+  font-style: italic; background: #fafaf7;
+}
+.obj-a.open { max-height: 300px; padding: 14px 20px 18px; }
+
+/* ===== TIMELINE ===== */
+.timeline-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px 28px; margin-bottom: 16px;
+  box-shadow: var(--shadow); position: relative;
+}
+.timeline-month {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--navy); color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 13px; font-weight: 700; padding: 6px 16px;
+  border-radius: 20px; margin-bottom: 14px;
+}
+.timeline-month.gold { background: var(--gold); color: var(--navy); }
+
+/* ===== SIGNALS ===== */
+.signal-chip {
+  background: var(--cream); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: var(--navy);
+  display: flex; align-items: flex-start; gap: 8px;
+}
+.signal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; margin-top: 10px; }
+
+/* ===== WARN CHIP ===== */
+.warn-chip {
+  background: #fffbf0; border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 13px; color: var(--navy);
+  display: flex; gap: 10px; align-items: flex-start;
+  margin-bottom: 10px;
+}
+.warn-chip .warn-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+/* ===== TAGS ===== */
+.tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin: 3px; }
+.tag-navy { background: #e0eaf7; color: var(--navy-mid); }
+.tag-gold { background: var(--gold-pale); color: var(--gold-deep); }
+
+/* ===== PROFILE SUBTABS ===== */
+.sub-tab-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.sub-tab {
+  padding: 8px 18px; border-radius: 24px;
+  border: 1.5px solid var(--border); background: var(--white);
+  font-size: 12px; font-weight: 500; cursor: pointer; color: var(--gray);
+  transition: all .15s;
+}
+.sub-tab:hover { border-color: var(--navy-light); color: var(--navy); }
+.sub-tab.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.sub-section { display: none; }
+.sub-section.active { display: block; animation: fadeUp .25s ease; }
+
+/* ===== SCORER ===== */
+.scorer-factor { margin-bottom: 18px; }
+.factor-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.factor-top label { font-size: 13px; font-weight: 500; color: var(--navy); }
+.factor-top .val { font-size: 18px; font-weight: 700; color: var(--navy-mid); font-family: 'Playfair Display', serif; min-width: 20px; text-align: right; }
+.factor-desc { font-size: 11px; color: var(--gray); margin-bottom: 8px; }
+input[type=range] {
+  width: 100%; height: 5px; border-radius: 3px;
+  accent-color: var(--navy-mid); cursor: pointer;
+}
+input[type=text] {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-family: 'DM Sans', sans-serif;
+  font-size: 14px; color: var(--navy); background: var(--white);
+  margin-bottom: 20px; outline: none;
+}
+input[type=text]:focus { border-color: var(--navy-mid); }
+
+/* ===== CTA BUTTONS ===== */
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 22px; border-radius: 24px;
+  border: 1.5px solid var(--navy-mid); background: transparent;
+  color: var(--navy-mid); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  margin-top: 10px; margin-right: 8px; transition: all .15s;
+  text-decoration: none;
+}
+.cta-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.cta-btn-gold {
+  background: var(--gold); color: var(--navy); border-color: var(--gold);
+  font-weight: 600;
+}
+.cta-btn-gold:hover { background: var(--gold-light); }
+.cta-btn .arrow { font-size: 16px; }
+
+/* ===== GLOSSARY ===== */
+.gloss-item { border-bottom: 1px solid rgba(15,37,64,0.07); padding: 14px 0; }
+.gloss-item:last-child { border-bottom: none; }
+.gloss-term { font-size: 14px; font-weight: 600; color: var(--navy-mid); margin-bottom: 4px; }
+.gloss-def { font-size: 13px; color: var(--gray); line-height: 1.65; }
+
+/* ===== SAY THIS / NOT THAT ===== */
+.say-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+.say-col { padding: 16px; border-radius: 12px; }
+.say-col.no { background: var(--red-bg); }
+.say-col.yes { background: var(--green-light); }
+.say-col .say-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; display: block; }
+.say-col.no .say-label { color: var(--red-text); }
+.say-col.yes .say-label { color: var(--green-text); }
+.say-col p { font-size: 13px; line-height: 2; margin: 0; }
+.say-col.no p { color: var(--red-text); }
+.say-col.yes p { color: var(--green-text); }
+
+/* ===== SCORE RESULT ===== */
+.result-box { border-radius: 14px; padding: 24px; text-align: center; margin-bottom: 16px; }
+.result-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 52px; font-weight: 900; display: block; margin-bottom: 4px;
+}
+.result-tier { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+.result-advice { font-size: 13.5px; line-height: 1.7; }
+.meter-bar { height: 8px; background: rgba(255,255,255,0.3); border-radius: 4px; margin: 12px 0; overflow: hidden; }
+.meter-fill { height: 100%; border-radius: 4px; transition: width 1s ease; background: rgba(255,255,255,0.8); }
+
+button.primary-btn {
+  width: 100%; padding: 14px; border-radius: 12px;
+  background: var(--navy); color: var(--white); border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background .15s; margin-top: 8px;
+}
+button.primary-btn:hover { background: var(--navy-mid); }
+button.secondary-btn {
+  width: 100%; padding: 12px; border-radius: 12px;
+  background: transparent; color: var(--navy-mid);
+  border: 1.5px solid var(--navy-mid);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all .15s; margin-top: 8px;
+}
+button.secondary-btn:hover { background: var(--cream); }
+
+/* ===== FOOTER ===== */
+.footer {
+  background: var(--navy); color: rgba(255,255,255,0.5);
+  text-align: center; padding: 30px 24px;
+  font-size: 12px; letter-spacing: .04em;
+}
+.footer span { color: var(--gold); }
+
+@media (max-width: 600px) {
+  .hero { padding: 40px 20px 36px; }
+  .main { padding: 28px 16px 60px; }
+  .say-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">&#9733; WFG &#9733; Revolution Financial Management &#9733; HYPERION</div>
+    <h1>SMD Builder<br><em>Command Center</em></h1>
+    <p class="hero-sub">HYPERION's complete system — from warm market to SMD in 90 days, EMD in 6 months. Every script, every profile, every play.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">9</span><span class="lbl">GX Team Target</span></div>
+      <div class="hero-stat"><span class="num">90K</span><span class="lbl">Points/3mo → SMD</span></div>
+      <div class="hero-stat"><span class="num">500K</span><span class="lbl">Team pts/6mo → EMD</span></div>
+      <div class="hero-stat"><span class="num">6 mo</span><span class="lbl">EMD Timeline</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-wrapper">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showTab('overview')">🎯 Mission HQ</button>
+    <button class="nav-btn" onclick="showTab('list')">📋 Build the List</button>
+    <button class="nav-btn" onclick="showTab('contact')">📞 Contact Scripts</button>
+    <button class="nav-btn" onclick="showTab('appt')">📅 Lock Appointments</button>
+    <button class="nav-btn" onclick="showTab('close')">🤝 Close & Partner</button>
+    <button class="nav-btn" onclick="showTab('objections')">🛡️ Objections</button>
+    <button class="nav-btn" onclick="showTab('timeline')">📈 SMD→EMD Path</button>
+    <button class="nav-btn" onclick="showTab('profiles')">🎯 Recruit Profiles</button>
+    <button class="nav-btn" onclick="showTab('training')">🎓 Training</button>
+    <button class="nav-btn" onclick="showTab('glossary')">📖 Terms & Identity</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ==================== MISSION HQ ==================== -->
+<div class="tab active" id="tab-overview">
+  <div class="section-header">
+    <div class="eyebrow">Your foundation</div>
+    <h2>Mission HQ — The Big Picture</h2>
+    <p>Family-run. Mission-led. Fast-moving. Here's your entire operation at a glance.</p>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-box"><span class="num">9</span><span class="lbl">GX Team Target</span></div>
+    <div class="metric-box"><span class="num">90K</span><span class="lbl">3mo SMD team pts</span></div>
+    <div class="metric-box"><span class="num">3</span><span class="lbl">SMDs for EMD</span></div>
+    <div class="metric-box"><span class="num">500K</span><span class="lbl">Team pts/6mo → EMD</span></div>
+  </div>
+
+  <div class="card card-navy">
+    <div class="badge badge-navy">Your core unit</div>
+    <h3>The Family Engine</h3>
+    <p><strong style="color:var(--navy)">Glenn/Mitch</strong> — Lead builder, frontline recruiter, sales closer &nbsp;|&nbsp; <strong style="color:var(--navy)">Glenn/Mitch</strong> — Culture keeper, follow-up, client nurture, team morale &nbsp;|&nbsp; <strong style="color:var(--navy)">Tristan</strong> — Admin &amp; baseshop coordinator, tracking, scheduling, BPM logistics. 5 existing licensed associates need activation with structure, coaching, and accountability.</p>
+  </div>
+
+  <div class="card card-gold">
+    <div class="badge badge-gold">GX math to SMD</div>
+    <h3>GX1 Every Month — The Non-Negotiable</h3>
+    <p>You need 9 people (including yourself) doing a GX1 every month. That's 27 fresh recruits who train, license, and produce within 30 days. The whole system below is engineered to make this repeatable and duplicatable by every associate you bring in.</p>
+  </div>
+
+  <div class="card card-green">
+    <div class="badge badge-green">Balance formula</div>
+    <h3>Best Market Balance to Build Fast</h3>
+    <div class="grid2" style="margin-top:14px">
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin-bottom:8px">Recruit Market (70%)</div>
+        <div><span class="tag tag-navy">Old friends 25–45</span><span class="tag tag-navy">Former coworkers</span><span class="tag tag-navy">Extended family</span><span class="tag tag-navy">Faith community</span><span class="tag tag-navy">Entrepreneurs</span><span class="tag tag-navy">Military/veterans</span></div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin-bottom:8px">Client Market (30%)</div>
+        <div><span class="tag tag-gold">Dual-income families</span><span class="tag tag-gold">Small biz owners</span><span class="tag tag-gold">Parents 30–55</span><span class="tag tag-gold">Professionals (LTC)</span><span class="tag tag-gold">Retiree-adjacent</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BUILD THE LIST ==================== -->
+<div class="tab" id="tab-list">
+  <div class="section-header">
+    <div class="eyebrow">Step 1</div>
+    <h2>Build the List</h2>
+    <p>Your warm market is your fastest shortcut. Goal: 100 names in 48 hours. Don't qualify yet — just capture every name.</p>
+  </div>
+
+  <div class="card card-navy">
+    <div class="badge badge-navy">Memory jogger — 5 categories</div>
+    <h3>Where Your 100 Names Come From</h3>
+    <ul class="step-list" style="margin-top:14px">
+      <li class="step-item"><div class="step-num">1</div><div class="step-body"><h4>Old friends &amp; classmates</h4><p>High school, college, old neighborhoods. People who knew your "before" and will respect your "now." Check Facebook, LinkedIn, old phones.</p></div></li>
+      <li class="step-item"><div class="step-num">2</div><div class="step-body"><h4>Former coworkers &amp; bosses</h4><p>People who already know your work ethic. Anyone who was ambitious, entrepreneurial, or frustrated in corporate. Gold.</p></div></li>
+      <li class="step-item"><div class="step-num">3</div><div class="step-body"><h4>Extended family network</h4><p>Cousins, in-laws, family friends you haven't connected with in years. Reach out with genuine reconnection energy first.</p></div></li>
+      <li class="step-item"><div class="step-num">4</div><div class="step-body"><h4>Faith &amp; community circles</h4><p>Church, volunteer groups, community events. People who already share your values around service and mission.</p></div></li>
+      <li class="step-item"><div class="step-num">5</div><div class="step-body"><h4>Service providers you know</h4><p>Hair stylists, gym trainers, real estate agents, barbers — they have networks and a natural sales mindset.</p></div></li>
+    </ul>
+  </div>
+
+  <div class="card card-gold">
+    <div class="badge badge-gold">Qualifying the list — 3 tiers</div>
+    <h3>A / B / C Filter System</h3>
+    <ul class="step-list" style="margin-top:14px">
+      <li class="step-item"><div class="step-num gold">A</div><div class="step-body"><h4>A-List — Recruit priority (contact first)</h4><p>Ambitious, entrepreneurial, people-person, financial stress, life change. These are your future SMDs. Contact within 24 hours.</p></div></li>
+      <li class="step-item"><div class="step-num gold">B</div><div class="step-body"><h4>B-List — Client + refer</h4><p>Stable income, family-focused, wide network. Open to protection products and referrals. Contact this week.</p></div></li>
+      <li class="step-item"><div class="step-num gold">C</div><div class="step-body"><h4>C-List — Long game</h4><p>Not ready now. Stay warm, follow up in 60–90 days. Never burn a C-list person — they become A-list when life shifts.</p></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== CONTACT SCRIPTS ==================== -->
+<div class="tab" id="tab-contact">
+  <div class="section-header">
+    <div class="eyebrow">Step 2</div>
+    <h2>Contact Scripts (NEPQ Style)</h2>
+    <p>The goal is never to pitch. Lead with curiosity, care, and connection. NEPQ = questions that make people feel understood, not sold.</p>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-navy">First touch — text or DM</div>
+    <h3>Reconnection Text (Old friend / family)</h3>
+    <div class="script-box">
+      <span class="script-label">Script</span>
+      "Hey [Name] — I was thinking about you the other day. Remember when [brief shared memory]? How have you been? Hope life's been good. I've been doing something that's been really meaningful for me and my family and I thought about you specifically. Would love to catch up for 20 minutes, no agenda. You free for a quick Zoom or call this week?"
+    </div>
+    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, low-pressure. No pitch in first touch. The goal is only the meeting.</p>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-gold">NEPQ full call flow — 6 steps</div>
+    <h3>Phone / Zoom Opening Conversation</h3>
+    <div class="script-box"><span class="script-label">Step 1 — Reconnect (2 min)</span>"It's so good to reconnect. How's [family/work/life]? What's been the biggest thing on your plate lately?"</div>
+    <div class="script-box"><span class="script-label">Step 2 — Situation question</span>"Can I ask — where are you at financially right now? Like, are you exactly where you thought you'd be at this point in your life?"</div>
+    <div class="script-box"><span class="script-label">Step 3 — Problem question</span>"What would you say is the biggest thing holding you back from having the kind of financial security you actually want for your family?"</div>
+    <div class="script-box"><span class="script-label">Step 4 — Implication question</span>"If nothing changed in the next 3–5 years — same income, same protection, same retirement track — how would you feel about that?"</div>
+    <div class="script-box"><span class="script-label">Step 5 — Solution awareness</span>"What would it mean for you and your family if you actually had a clear plan — and possibly a way to build income on the side while building that plan?"</div>
+    <div class="script-box"><span class="script-label">Step 6 — Bridge to appointment</span>"I want to show you what I've been building — it's not for everyone but I thought of you for a reason. Can I get you in front of my team on [day] at [time]? About 45 minutes, totally no pressure."</div>
+  </div>
+
+  <div class="card card-green">
+    <div class="badge badge-green">Former coworker track</div>
+    <h3>Former Coworker Script</h3>
+    <div class="script-box">
+      <span class="script-label">Script</span>
+      "Hey [Name] — I've been meaning to reach out. I remember how driven you were at [company]. I stepped into something about a year ago that completely changed how I think about income and financial security. I thought about you when we were looking for sharp people. Would you be open to 20 minutes just to hear what it looks like? No strings."
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APPOINTMENTS ==================== -->
+<div class="tab" id="tab-appt">
+  <div class="section-header">
+    <div class="eyebrow">Step 3</div>
+    <h2>Lock the Appointment</h2>
+    <p>A confirmed, excited appointment is worth 10 vague maybes. Lock it with the 3-confirm method.</p>
+  </div>
+
+  <div class="card card-navy">
+    <div class="badge badge-navy">The 3-confirm method</div>
+    <h3>How to Lock It So It Sticks</h3>
+    <ul class="step-list" style="margin-top:14px">
+      <li class="step-item"><div class="step-num">1</div><div class="step-body"><h4>Confirm day, time, and who's attending</h4><p>"Great — let's do [Tuesday at 7pm]. I'll send you a Zoom link. Does that work for you and your spouse? I want them there too."</p></div></li>
+      <li class="step-item"><div class="step-num">2</div><div class="step-body"><h4>Send the link within 5 minutes</h4><p>Text or email immediately: "Here's your link [link]. I'm excited to show you this. See you [day]." Do not wait.</p></div></li>
+      <li class="step-item"><div class="step-num">3</div><div class="step-body"><h4>Day-before reminder</h4><p>"Hey [Name] — just confirming our call tomorrow at 7pm. Looking forward to it!" Short, warm, no pressure. If no reply, call the morning of.</p></div></li>
+    </ul>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="badge badge-navy">Zoom</div>
+      <h3>Use for:</h3>
+      <p>Out-of-area contacts, busy professionals, first touch with out-of-state family, anyone who hesitates on driving in. Zoom lowers the barrier to yes.</p>
+    </div>
+    <div class="card">
+      <div class="badge badge-gold">In-office (Torrance)</div>
+      <h3>Use for:</h3>
+      <p>Local warm market, serious recruits, anyone ready for a BPM experience, client closes that need white-glove treatment.</p>
+    </div>
+  </div>
+
+  <div class="card card-red">
+    <div class="badge badge-red">Handle the ghost or cancel</div>
+    <h3>When They Don't Show or Cancel Last Minute</h3>
+    <div class="script-box"><span class="script-label">Same-day reschedule</span>"No worries at all — life happens! I want to make sure you get to see this though. What does your schedule look like Wednesday or Thursday? I'll work around you."</div>
+    <div class="script-box"><span class="script-label">If they ghost entirely</span>"Hey [Name] — I know life gets crazy. I still think what I have to show you could really benefit your family. Would it be okay if I check back in about two weeks? No rush at all."</div>
+  </div>
+</div>
+
+<!-- ==================== CLOSE ==================== -->
+<div class="tab" id="tab-close">
+  <div class="section-header">
+    <div class="eyebrow">Step 4</div>
+    <h2>Close as Business Partner AND Client</h2>
+    <p>Every person you sit with has two doors. Your goal is to open both — the business opportunity and financial protection.</p>
+  </div>
+
+  <div class="card card-navy">
+    <div class="badge badge-navy">Business partner close</div>
+    <h3>Closing the Recruit</h3>
+    <div class="script-box"><span class="script-label">After BPM</span>"So — what resonated most with you from what you saw tonight?"</div>
+    <div class="script-box"><span class="script-label">NEPQ transition</span>"If the income were real, and the training were solid — what would stop you from at least getting your license and seeing what's possible?"</div>
+    <div class="script-box"><span class="script-label">The close</span>"Here's what I want to invite you to do. Start the application tonight, get licensed in the next 30 days, and let me personally walk you through your first 90 days. I'll be right there with you. Are you in?"</div>
+    <div class="script-box"><span class="script-label">If hesitant</span>"I get it — this is a big decision. What would you need to feel confident taking that first step?"</div>
+  </div>
+
+  <div class="card card-gold">
+    <div class="badge badge-gold">Client close</div>
+    <h3>Closing the Financial Services Client</h3>
+    <div class="script-box"><span class="script-label">After FNA review</span>"Based on what you shared with me, what feels like the biggest gap right now — protection for your family, retirement, or both?"</div>
+    <div class="script-box"><span class="script-label">Product tie-in</span>"What we can do is start with a [term/IUL/annuity] that addresses [specific gap]. You're not locking in forever — this is step one of a real plan. Can we move forward today?"</div>
+    <div class="script-box"><span class="script-label">The dual close</span>"I want to do two things with you — protect your family with a solid plan AND show you how to build an income doing exactly what we're doing right now. Can we do both?"</div>
+  </div>
+
+  <div class="card card-green">
+    <div class="badge badge-green">Referral ask</div>
+    <h3>Ask at the Right Moment — Right After the Close</h3>
+    <div class="script-box"><span class="script-label">After close</span>"The way I grow my business is through people like you who see the value and trust me. Who's one or two people in your world — ambitious, family-focused — who you think deserves to hear what you just heard?"</div>
+    <div class="script-box"><span class="script-label">The warm intro</span>"Would you be open to sending them a quick intro text? Something simple like:
+
+'Hey! I have some friends, Glenn and Mitch, who specialize in helping families and business owners create customized financial strategies and long-term solutions. No pressure at all — I just thought you’d genuinely enjoy meeting them and getting connected.' That's all I need."</div>
+  </div>
+</div>
+
+<!-- ==================== OBJECTIONS ==================== -->
+<div class="tab" id="tab-objections">
+  <div class="section-header">
+    <div class="eyebrow">Handle with care</div>
+    <h2>Objection Handling</h2>
+    <p>Every objection is a question wrapped in fear or uncertainty. Validate first, redirect with curiosity — never pressure.</p>
+  </div>
+  <div id="obj-list"></div>
+</div>
+
+<!-- ==================== TIMELINE ==================== -->
+<div class="tab" id="tab-timeline">
+  <div class="section-header">
+    <div class="eyebrow">The roadmap</div>
+    <h2>SMD → EMD Path</h2>
+    <p>Month by month. Week by week. Protect your calendar and execute with discipline.</p>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric-box"><span class="num" style="color:var(--navy-mid)">M1–3</span><span class="lbl">SMD Path</span></div>
+    <div class="metric-box"><span class="num" style="color:var(--gold-deep)">M4–6</span><span class="lbl">EMD Path</span></div>
+    <div class="metric-box"><span class="num" style="color:var(--green)">3 SMDs</span><span class="lbl">Required for EMD</span></div>
+    <div class="metric-box"><span class="num">GX3</span><span class="lbl">Month 3 goal</span></div>
+  </div>
+
+  <div id="timeline-cards"></div>
+
+  <div class="card card-gold" style="margin-top:8px">
+    <div class="badge badge-gold">GX sequence for new associates</div>
+    <h3>GX1 → GX2 → GX3 Breakdown</h3>
+    <ul class="step-list" style="margin-top:14px">
+      <li class="step-item"><div class="step-num gold">GX1</div><div class="step-body"><h4>Month 1 — Field training, first client, first recruit</h4><p>Complete FNA training, get licensed, sit 10 FNAs with trainer, write first policy, recruit 1 person. Focus: momentum and belief-building.</p></div></li>
+      <li class="step-item"><div class="step-num gold">GX2</div><div class="step-body"><h4>Month 2 — Build personal clientele + recruit 3</h4><p>10 personal FNAs, write 3–5 policies, recruit 3 people, attend every BPM. Focus: duplication. Do what you want your team to do.</p></div></li>
+      <li class="step-item"><div class="step-num gold">GX3</div><div class="step-body"><h4>Month 3 — Lead team production + SMD qualification</h4><p>Your recruits are now doing GX1. You coordinate their FNAs, support their closes, hit 90K points together. Focus: leadership, not just sales.</p></div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== RECRUIT PROFILES ==================== -->
+<div class="tab" id="tab-profiles">
+  <div class="section-header">
+    <div class="eyebrow">Know who to call first</div>
+    <h2>Ideal Recruit Profile System</h2>
+    <p>Not all warm market contacts are equal. Here's how to identify your best prospects — the ones most likely to move fast and build big.</p>
+  </div>
+
+  <div class="sub-tab-row">
+    <button class="sub-tab active" onclick="showSub('archetypes')">The 5 archetypes</button>
+    <button class="sub-tab" onclick="showSub('traits')">Core traits</button>
+    <button class="sub-tab" onclick="showSub('signals')">Warm market signals</button>
+    <button class="sub-tab" onclick="showSub('scorer')">Score your list</button>
+    <button class="sub-tab" onclick="showSub('avoid')">Who to avoid</button>
+  </div>
+
+  <div class="sub-section active" id="sub-archetypes">
+    <div class="grid2" id="archetype-cards"></div>
+  </div>
+
+  <div class="sub-section" id="sub-traits">
+    <div class="card">
+      <div class="badge badge-navy">Must-have traits</div>
+      <h3>What you're actually looking for</h3>
+      <ul class="step-list" id="trait-list" style="margin-top:14px"></ul>
+    </div>
+    <div class="card card-gold" style="margin-top:4px">
+      <div class="badge badge-gold">Potential SMD markers (the 1 in 10)</div>
+      <h3>Who has SMD in them</h3>
+      <ul class="step-list" id="smd-trait-list" style="margin-top:14px"></ul>
+    </div>
+  </div>
+
+  <div class="sub-section" id="sub-signals">
+    <div class="card">
+      <div class="badge badge-navy">Warm market radar</div>
+      <h3>What to watch and listen for</h3>
+      <p style="margin-bottom:14px">These phrases, behaviors, and life moments are signals someone is ready — even if they don't know it yet.</p>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin-bottom:8px">Verbal signals — things they say</div>
+      <div class="signal-grid" id="verbal-signals"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin:18px 0 8px">Life event signals</div>
+      <div class="signal-grid" id="life-signals"></div>
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin:18px 0 8px">Social signals — what you see online</div>
+      <div class="signal-grid" id="social-signals"></div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="sub-scorer">
+    <div class="card">
+      <div class="badge badge-navy">60-second priority scorer</div>
+      <h3>Score anyone on your list instantly</h3>
+      <p style="margin-bottom:18px">Rate each factor 1–5 for a person in your warm market to get an instant priority ranking.</p>
+      <div id="scorer-form">
+        <input type="text" id="prospect-name" placeholder="Name (optional)">
+        <div id="factor-inputs"></div>
+        <button class="primary-btn" onclick="calcScore()">Calculate priority score →</button>
+      </div>
+      <div id="scorer-result" style="display:none">
+        <div id="result-output"></div>
+        <button class="secondary-btn" onclick="resetScorer()">Score another person</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-section" id="sub-avoid">
+    <div class="card">
+      <div class="badge badge-red">Caution profiles</div>
+      <h3>Who tends to stall, drain, and disappear</h3>
+      <p style="margin-bottom:14px">These aren't bad people — they're just not in the right season. Stay warm and revisit later. Don't build your GX around them.</p>
+      <div id="avoid-list"></div>
+    </div>
+    <div class="card card-green" style="margin-top:4px">
+      <div class="badge badge-green">The 72-hour rule</div>
+      <h3>Move fast, don't convince</h3>
+      <p>If someone hasn't taken one step (filled out an app, attended a BPM, scheduled a follow-up) within 72 hours of expressing interest — the energy is fading. Don't spend more than 3 follow-ups trying to resurrect it. Move to the next name. The right people move with urgency because they feel the need.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TRAINING ==================== -->
+<div class="tab" id="tab-training">
+  <div class="section-header">
+    <div class="eyebrow">30-day onboarding</div>
+    <h2>Training Program — Zero to Field-Ready</h2>
+    <p>Built for Hyperion and every new associate. Sequential, simple, and tested. Complete each phase before moving forward.</p>
+  </div>
+  <div id="training-cards"></div>
+</div>
+
+<!-- ==================== GLOSSARY ==================== -->
+<div class="tab" id="tab-glossary">
+  <div class="section-header">
+    <div class="eyebrow">Know your craft</div>
+    <h2>Terms, Language &amp; Financial Identity</h2>
+    <p>How you speak shapes how you're perceived. Speak like a financial professional. Think like a mission leader.</p>
+  </div>
+
+  <div class="card card-navy">
+    <div class="badge badge-navy">Identity shift</div>
+    <h3>Who You Are Now</h3>
+    <p>You are not a salesperson. You are a <strong style="color:var(--navy-mid)">financial professional, educator, and wealth advocate</strong>. You help families stop being victimized by financial ignorance and start building generational security. Every conversation is a service, not a pitch.</p>
+    <div style="margin-top:12px">
+      <span class="tag tag-navy">Financial professional</span><span class="tag tag-navy">Wealth educator</span><span class="tag tag-navy">Mission leader</span><span class="tag tag-navy">Business builder</span><span class="tag tag-navy">Legacy creator</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-gold">Say this, not that</div>
+    <h3>Elevated Language Guide</h3>
+    <div class="say-grid" style="margin-top:14px">
+      <div class="say-col no">
+        <span class="say-label">❌ Don't say</span>
+        <p>"I sell insurance"<br>"It's like a pyramid"<br>"Can I pitch you something?"<br>"I want to show you an opportunity"<br>"It doesn't cost much"</p>
+      </div>
+      <div class="say-col yes">
+        <span class="say-label">✅ Say instead</span>
+        <p>"I help families build financial security"<br>"It's a field force model, like Keller Williams"<br>"I want to ask you a few questions"<br>"I want to share something that changed my family"<br>"The value here is significant"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-navy">Essential terms — know these cold</div>
+    <h3>Financial Professional Vocabulary</h3>
+    <div id="glossary-list" style="margin-top:14px"></div>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer">
+  <p>Built for <span>Hyperion</span> — Revolution Financial Management &nbsp;|&nbsp; Hyperion Torrance Baseshop &nbsp;|&nbsp; <span>SMD in 90 days. EMD in 6 months.</span></p>
+</footer>
+
+<script>
+// ===== NAV =====
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior:'smooth'});
+}
+function showSub(id) {
+  document.querySelectorAll('.sub-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sub-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== OBJECTIONS =====
+const objections = [
+  { q: '"I don\'t have time for this."', a: '"I totally understand — you\'re clearly someone who\'s already busy doing something meaningful. Can I ask — is it that you don\'t have time, or that you\'re not sure it\'s worth your time? Because if this could generate an extra $3–5K a month around your current schedule, would time still be the issue?"' },
+  { q: '"Is this a pyramid scheme?"', a: '"I get why that comes up — there\'s a lot of noise out there. Honest answer: pyramid schemes are illegal, and WFG/Revolution Financial Management is licensed in all 50 states and regulated by state insurance departments and federally through FINRA. We work with major companies like Nationwide, Pacific Life, and Transamerica. You’d have to agree those companies wouldn’t partner with us if that were true, would they? Think of it more like Keller Williams or a medical practice — you build a team, your team helps families, and everyone earns. The solutions and services are legit — financial blueprints for real families."' },
+  { q: '"I\'m not a salesperson."', a: '"Good news — neither am I, really. We\'re a professional financial educators. We don\'t sell anything — we sit down with families, understand their situation, and help them design a plan. Most of our best people were teachers, nurses, coaches — people who care about others. That\'s the skillset here."' },
+  { q: '"I need to think about it."', a: '"Of course — this is a real decision. Can I ask what specifically you\'re thinking through? Is it the time, the investment, the uncertainty of income? Because I want to make sure I answer the right question for you, not just leave you hanging."' },
+  { q: '"I already have a financial advisor."', a: '"That\'s great — honestly, that means you already value this kind of work. Can I ask — are they helping you build income, or just managing what you already have? What we do isn’t meant to replace anything you’re already doing. From what I’ve seen, we typically complement what’s already working for someone like you. Would it make sense for us to get together so you can see if there’s anything here that might be helpful? If you like what you see, great. If not, no problem."' },
+  { q: '"I\'m too busy with my job."', a: '"I hear you. Can I ask — is your job giving you the financial security and time freedom you actually want for your family five years from now? Most people I work with started part-time, around their job, and within 6–12 months had a choice to make. I\'m not asking you to quit anything — just explore a door."' },
+  { q: '"My spouse isn\'t on board."', a: '"I completely respect that. Can I ask — what\'s their top 2 main concerns? I\'d love to address it directly. Would it be okay if we got them on a quick call or even brought them to one of our events? Most spouses become the biggest supporters once they see the full picture."' },
+  { q: '"I don\'t need life insurance."', a: '"I love that confidence — it usually means you\'re healthy and doing well. Can I ask — is your family\'s financial security protected if something unexpected happened tomorrow? And beyond protection, are you aware of how people use these same vehicles to build tax-free retirement income? That might change the conversation."' }
+];
+const objList = document.getElementById('obj-list');
+objections.forEach((obj, i) => {
+  objList.innerHTML += `<div class="obj-item"><div class="obj-q" id="oq${i}" onclick="toggleObj(${i})">${obj.q}<span class="arrow">⌄</span></div><div class="obj-a" id="oa${i}">${obj.a}</div></div>`;
+});
+function toggleObj(i) {
+  const q = document.getElementById('oq'+i), a = document.getElementById('oa'+i);
+  a.classList.toggle('open'); q.classList.toggle('open');
+}
+
+// ===== TIMELINE =====
+const timelineData = [
+  { month: 'Month 1', gold: false, title: 'Ignition — Build & Recruit', items: ['Finish 100-name list. A-B-C qualify all contacts.',' Full Timers Contact 20 people per day. Lock 2–3 appointments/day personally.','Activate 3 of your 5 existing licensed associates with this program.','Run BPM weekly. Host 2 Zoom info sessions.','Do your own GX1: 30 Booked Appointments 18 FNAs, 6–8 policies written.','Son tracks all appointments, follow-ups, and licensing progress.'] },
+  { month: 'Month 2 — GX2', gold: false, title: 'Build Momentum — Duplicate', items: ['Your 3 new associates each start their GX1.','You run GX2: 20+ FNAs, 6–8 policies, 3 new recruits personally.','Host weekly field training sessions. Wife leads culture and morale.','Total team: target 6 people actively working.','Points focus: push team to 50,000 combined points.','Introduce annuity, and LTC conversations to B-list clients.'] },
+  { month: 'Month 3 — GX3 → SMD', gold: false, title: 'Push to 90K — SMD Qualification', items: ['All 9 people on team doing GX1 simultaneously.','Your role: coach, motivate, remove obstacles.','Hold daily 15-min team calls. Weekly recognition.','Hit 90,000 team points. SMD achieved.','Document everything — this becomes your playbook for 3 more SMDs.','Begin identifying 3 candidates to develop as your future SMDs.'] },
+  { month: 'Months 4–6 → EMD', gold: true, title: 'Build 3 SMDs — EMD Qualification', items: ['Each of your top 3 associates replicates your GX1→GX2→GX3 cycle.','You shift from builder to leader and trainer.','Support each future SMD with weekly 1:1 coaching sessions.','Son coordinates team logistics, BPM, licensing tracking.','Hit 500,000 total team points across 3 SMD qualifying months.','EMD achieved. Build the next generation of leaders.'] }
+];
+const tc = document.getElementById('timeline-cards');
+timelineData.forEach(t => {
+  tc.innerHTML += `<div class="timeline-card"><div class="timeline-month ${t.gold?'gold':''}">${t.month}</div><h3 style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;margin-bottom:14px;color:var(--navy)">${t.title}</h3><ul class="step-list">${t.items.map(item=>`<li class="step-item"><div class="step-num arrow ${t.gold?'gold':''}">→</div><div class="step-body"><p style="margin:0;font-size:13px;color:var(--gray)">${item}</p></div></li>`).join('')}</ul></div>`;
+});
+
+// ===== ARCHETYPES =====
+const archetypes = [
+  { badge:'Archetype 1 — highest priority', bclass:'badge-navy', color:'var(--navy-mid)', title:'The Frustrated High-Earner', desc:'Good income but no margin. Corporate job, feeling trapped. Lifestyle crept up with the paycheck. Knows they\'re one layoff from crisis. Ambitious but stuck inside someone else\'s system.', where:'Former corporate coworkers, LinkedIn connections, middle management peers, friends who "do well" but complain about work constantly.' },
+  { badge:'Archetype 2 — fast mover', bclass:'badge-gold', color:'var(--gold-deep)', title:'The Life-Transition Person', desc:'Just had a baby, got married, divorced, lost a job, got promoted, or turned 30/40. Life changed — their mindset is open. Perfect timing to invite.', where:'Family network, old friends reconnecting on social media, anyone who\'s posted a major life announcement recently.' },
+  { badge:'Archetype 3 — natural builder', bclass:'badge-green', color:'var(--green-text)', title:'The People-Magnet', desc:'Hair stylist, barber, trainer, teacher, nurse, pastor, real estate agent. Already has a warm network and earns trust naturally. Their network is their asset.', where:'Faith community, gym, service professionals you use personally, community volunteers, coaches.' },
+  { badge:'Archetype 4 — mission-driven', bclass:'badge-purple', color:'#3C3489', title:'The Purpose Seeker', desc:'Doing work that doesn\'t fulfill them financially or spiritually. Responds powerfully to the WFG mission. Values over income — until you show them both are possible.', where:'Faith community, nonprofit workers, educators, social workers, military veterans, community organizers.' },
+  { badge:'Archetype 5 — sleeper', bclass:'badge-gold', color:'var(--gold-deep)', title:'The Hungry Side-Hustler', desc:'Already has 1–2 side hustles. DoorDash, Uber, Amazon, dropshipping. Entrepreneurial energy but no real vehicle. Once they see licensing + training + team support, WFG clicks.', where:'Old friends who always have a new project, anyone who\'s tried an MLM before, social posts about "building something."' }
+];
+const ac = document.getElementById('archetype-cards');
+archetypes.forEach(a => {
+  ac.innerHTML += `<div class="card" style="border-left:4px solid ${a.color};border-radius:0 16px 16px 0"><div class="badge ${a.bclass}">${a.badge}</div><h3>${a.title}</h3><p style="margin-bottom:12px">${a.desc}</p><div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-deep);margin-bottom:6px">Where to find them</div><p style="font-size:12px">${a.where}</p></div>`;
+});
+
+// ===== TRAITS =====
+const traits = [
+  { icon:'🔥', h:'Coachable, not know-it-all', p:'Listens more than argues. Open to learning. Coachability matters 10x more than existing financial knowledge.' },
+  { icon:'👥', h:'Has a natural warm market', p:'Social, communal, trusted. Friends and family who respect them. Relationships people trust.' },
+  { icon:'❤️', h:'Driven by more than money', p:'Pure money motivation burns out. The best recruits want to help people, build something, or leave something behind.' },
+  { icon:'🎯', h:'Dissatisfied with the status quo', p:'Content people don\'t move. You want someone who feels the gap between where they are and where they want to be.' },
+  { icon:'⏰', h:'Can find 10–15 hours per week', p:'They don\'t need to quit their job. If they can\'t find 10 hours, they\'re not ready. Revisit in 60 days.' },
+  { icon:'⭐', h:'Integrity and honesty', p:'Non-negotiable. This business runs on trust. Character first, always.' }
+];
+const tl = document.getElementById('trait-list');
+traits.forEach(t => {
+  tl.innerHTML += `<li class="step-item"><div class="step-num" style="background:var(--cream);color:var(--navy);font-size:16px;border:1px solid var(--border)">${t.icon}</div><div class="step-body"><h4>${t.h}</h4><p>${t.p}</p></div></li>`;
+});
+const smdTraits = [
+  { h:'They recruit before you ask them to', p:'Naturally starts thinking about who else should hear this. Doesn\'t wait for permission to share.' },
+  { h:'They show up without being chased', p:'Calls you, asks questions, attends events. You\'re not dragging them — they\'re pulling you.' },
+  { h:'They handle rejection and keep moving', p:'Not deterred by one "no." They process it and move to the next. Resilience under early pressure is the tell.' },
+  { h:'They care about their team\'s success, not just their own', p:'By month 2 they\'re already thinking about how to help their recruit. That\'s the leadership instinct that builds SMDs.' }
+];
+const stl = document.getElementById('smd-trait-list');
+smdTraits.forEach(t => {
+  stl.innerHTML += `<li class="step-item"><div class="step-num gold">★</div><div class="step-body"><h4>${t.h}</h4><p>${t.p}</p></div></li>`;
+});
+
+// ===== SIGNALS =====
+const verbal = ['"I\'m so tired of my job"','"I need to make more money"','"I want to be home more"','"I\'m not where I thought I\'d be"','"I want to start something"','"My company laid people off"','"I have no retirement plan"','"I want to leave something for my kids"'];
+const life = ['New baby or pregnancy','Engagement or marriage','Job loss or career change','Bought or sold a home','Health scare (family or personal)','Milestone birthday (30, 40, 50)','Moved to a new city','Kids starting school / college'];
+const social = ['Posting about a new side hustle','Updating LinkedIn frequently','Engaging with business content','Venting about work publicly','Celebrating a life milestone','Starting a community or group'];
+document.getElementById('verbal-signals').innerHTML = verbal.map(s=>`<div class="signal-chip">💬 ${s}</div>`).join('');
+document.getElementById('life-signals').innerHTML = life.map(s=>`<div class="signal-chip">📌 ${s}</div>`).join('');
+document.getElementById('social-signals').innerHTML = social.map(s=>`<div class="signal-chip">📱 ${s}</div>`).join('');
+
+// ===== SCORER =====
+const factors = [
+  { id:'f1', label:'Financial urgency', desc:'How much do they need more money right now?' },
+  { id:'f2', label:'Warm network size', desc:'Do they have people who trust and like them?' },
+  { id:'f3', label:'Coachability', desc:'Are they open-minded and willing to learn?' },
+  { id:'f4', label:'Ambition / drive', desc:'Do they talk about wanting more in life?' },
+  { id:'f5', label:'Life-change trigger', desc:'Did something recently shift their mindset?' },
+  { id:'f6', label:'Time availability', desc:'Can they realistically give 10–15 hrs/week?' }
+];
+const fi = document.getElementById('factor-inputs');
+factors.forEach(f => {
+  fi.innerHTML += `<div class="scorer-factor"><div class="factor-top"><label>${f.label}</label><span class="val" id="${f.id}-out">3</span></div><div class="factor-desc">${f.desc}</div><input type="range" min="1" max="5" value="3" step="1" id="${f.id}" oninput="document.getElementById('${f.id}-out').textContent=this.value"></div>`;
+});
+function calcScore() {
+  const name = document.getElementById('prospect-name').value || 'This person';
+  let total = 0;
+  factors.forEach(f => { total += parseInt(document.getElementById(f.id).value); });
+  const max = factors.length * 5, pct = Math.round((total/max)*100);
+  let tier, bg, advice;
+  if(pct>=80){ tier='A-List — Contact within 24 hours'; bg='var(--navy)'; advice='High priority. This person has the profile of a future SMD. Lead with the business opportunity immediately.' }
+  else if(pct>=60){ tier='B-List — Contact this week'; bg='var(--gold-deep)'; advice='Strong prospect. Contact this week. Lead with the mission and let the business unfold naturally.' }
+  else if(pct>=40){ tier='C-List — Warm up first'; bg='#5a7a9a'; advice='Reconnect socially first over 2–4 weeks, then introduce the conversation.' }
+  else{ tier='Hold — revisit in 60 days'; bg='var(--gray)'; advice='Too early or not the right fit right now. Stay warm. Don\'t force it.' }
+  document.getElementById('result-output').innerHTML = `<div class="result-box" style="background:${bg};color:#fff"><span class="result-num">${total}/${max}</span><div class="meter-bar"><div class="meter-fill" style="width:${pct}%"></div></div><div class="result-tier">${tier}</div><div class="result-advice">${advice}</div></div>`;
+  document.getElementById('scorer-form').style.display='none';
+  document.getElementById('scorer-result').style.display='block';
+}
+function resetScorer() {
+  document.getElementById('prospect-name').value='';
+  factors.forEach(f=>{ document.getElementById(f.id).value=3; document.getElementById(f.id+'-out').textContent='3'; });
+  document.getElementById('scorer-result').style.display='none';
+  document.getElementById('scorer-form').style.display='block';
+}
+
+// ===== AVOID =====
+const avoidList = [
+  { title:'The chronic skeptic', desc:'Questions everything before trying anything. Has a reason why every opportunity is a scam. You can\'t logic someone into belief — move on.' },
+  { title:'The approval-seeker', desc:'Needs everyone around them to say yes first. Spouse, best friend, parents all have to approve. Invite the whole circle instead of waiting.' },
+  { title:'The "one day" person', desc:'Always interested, never ready. If they\'ve said "I just need to get past this thing" twice, they\'ll say it a third time. Keep warm but don\'t build your GX around them.' },
+  { title:'The negative-energy person', desc:'Complains constantly, turns pessimistic at the first hard moment. One negative associate can poison a whole team culture. Attitude is non-negotiable.' },
+  { title:'The too-comfortable', desc:'Happy with their current income, no financial urgency, no deeper why. They may be good clients eventually — but the pain that drives action isn\'t there yet.' }
+];
+const al = document.getElementById('avoid-list');
+avoidList.forEach(a => {
+  al.innerHTML += `<div class="warn-chip"><span class="warn-icon">⚠️</span><div><strong style="font-size:13px;display:block;margin-bottom:3px">${a.title}</strong><span style="font-size:12px;color:var(--gray)">${a.desc}</span></div></div>`;
+});
+
+// ===== TRAINING =====
+const trainingPhases = [
+  { phase:'Phase 1', badge:'badge-navy', accent:'var(--navy-mid)', title:'Days 1–3: Belief & Foundation', items:['Why WFG & the mission — personal story from our Leaders','The financial problem in America — why families need us','How to build your 100-name list (complete by end of Day 2)','Products overview: Term, IUL, Annuities, LTC (high-level)','Identity shift — you are a financial professional now'] },
+  { phase:'Phase 2', badge:'badge-gold', accent:'var(--gold-deep)', title:'Days 4–10: Licensing & Scripts', items:['Start licensing prep — son tracks progress daily','Memorize the NEPQ contact script — role play daily','Practice the two-door approach: business + client','Attend BPM as a guest, then as an associate guide','Shadow SMDs on 2–3 appointments'] },
+  { phase:'Phase 3', badge:'badge-navy', accent:'var(--navy-mid)', title:'Days 11–21: Field Training', items:['Observe 10 Step 1 and 2s with trainer present (SMD or senior associate)','Learn to complete FNA and position solutions','Present to 3 people solo with feedback session after each','Lock first personal appointments from your own list','Weekly accountability call with SMD — every Monday'] },
+  { phase:'Phase 4', badge:'badge-green', accent:'var(--green-text)', title:'Days 22–30: GX1 Sprint', items:['Complete 10 Step 1 and 2s independently','Write first personal policy — celebrate publicly at BPM','Recruit first person — walk them through this same program','Attend recognition at BPM','Set GX2 goals with SMD. Begin Month 2 planning.'] }
+];
+const trc = document.getElementById('training-cards');
+trainingPhases.forEach((ph, pi) => {
+  trc.innerHTML += `<div class="card" style="border-left:4px solid ${ph.accent};border-radius:0 16px 16px 0;margin-bottom:18px"><div class="badge ${ph.badge}">${ph.phase}</div><h3>${ph.title}</h3><ul class="step-list" style="margin-top:14px">${ph.items.map((item,i)=>`<li class="step-item"><div class="step-num" style="background:${ph.accent}">${i+1}</div><div class="step-body"><p style="margin:0;font-size:13px;color:var(--gray)">${item}</p></div></li>`).join('')}</ul></div>`;
+});
+
+// ===== GLOSSARY =====
+const glossary = [
+  { term:'FNA — Financial Needs Analysis', def:'The discovery meeting tool used to assess a client\'s current financial situation, gaps, and goals. Every client starts here.' },
+  { term:'IUL — Indexed Universal Life', def:'Permanent life insurance that builds cash value tied to a stock market index. Offers tax-free retirement income, death benefit, and protection from market loss.' },
+  { term:'Term Life Insurance', def:'Coverage for a set period (10, 20, 30 years). Most affordable per dollar of death benefit. Great starting product for young families.' },
+  { term:'FIA — Fixed Index Annuity', def:'Retirement vehicle with principal protection. Growth tied to market index with no direct market participation. Zero loss in down years.' },
+  { term:'RILA — Registered Index-Linked Annuity', def:'Like an FIA but with some downside risk (buffer) in exchange for higher growth potential. For more risk-tolerant clients.' },
+  { term:'LTC — Long-Term Care Insurance', def:'Covers costs of care (home care, assisted living, nursing home) when unable to perform basic daily activities. Massively underdiscussed.' },
+  { term:'BPM — Business Presentation Meeting', def:'WFG\'s primary event to show the business opportunity to prospects. Your most powerful recruiting tool.' },
+  { term:'GX1 / GX2 / GX3', def:'Monthly growth achievement levels. GX1 = first level of monthly production. Three consecutive months earns SMD qualification.' },
+  { term:'SMD — Senior Marketing Director', def:'Leadership level achieved with 90,000 personal + team points for 3 consecutive months.' },
+  { term:'EMD — Executive Marketing Director', def:'Next level above SMD. Requires 3 SMDs on your team and 500,000 team points.' },
+  { term:'Cash Value', def:'The savings component inside a permanent life insurance policy that grows over time and can be borrowed against tax-free.' },
+  { term:'Death Benefit', def:'The tax-free lump sum paid to beneficiaries upon the insured\'s death.' },
+  { term:'Premium', def:'The amount a policyholder pays for insurance coverage, typically monthly or annually.' },
+  { term:'Beneficiary', def:'The person(s) designated to receive the death benefit or policy proceeds.' },
+  { term:'Underwriting', def:'The process insurance companies use to assess risk and determine eligibility and pricing for coverage.' }
+];
+const gl = document.getElementById('glossary-list');
+glossary.forEach(g => {
+  gl.innerHTML += `<div class="gloss-item"><div class="gloss-term">${g.term}</div><div class="gloss-def">${g.def}</div></div>`;
+});
+</script>
+</body>
+</html>
