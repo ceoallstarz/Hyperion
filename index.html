@@ -107,6 +107,98 @@ body {
   display: flex; flex-wrap: wrap; gap: 0;
   overflow-x: auto;
 }
+
+/* ===== SEARCH BAR (hero top-right) ===== */
+.hero-search-wrap {
+  position: absolute;
+  top: 22px; right: 40px;
+  z-index: 10;
+}
+.hero-search-box {
+  display: flex; align-items: center;
+  background: rgba(255,255,255,0.12);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  border-radius: 24px;
+  padding: 8px 14px 8px 12px;
+  gap: 8px;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.hero-search-box:focus-within {
+  background: rgba(255,255,255,0.22);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.25);
+}
+.hero-search-icon { font-size: 14px; color: rgba(255,255,255,0.65); flex-shrink: 0; }
+.hero-search-input {
+  border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: #fff;
+  width: 170px; outline: none;
+  padding: 0; margin: 0;
+}
+.hero-search-input::placeholder { color: rgba(255,255,255,0.45); }
+.hero-search-clear {
+  background: none; border: none;
+  font-size: 13px; color: rgba(255,255,255,0.45);
+  cursor: pointer; padding: 0; line-height: 1;
+  display: none;
+}
+.hero-search-clear.visible { display: block; }
+.hero-search-clear:hover { color: #fff; }
+
+/* Search results dropdown */
+.search-results {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 340px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 16px 48px rgba(15,37,64,0.22);
+  z-index: 9999;
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  scroll-behavior: smooth;
+}
+.search-results::-webkit-scrollbar { width: 4px; }
+.search-results::-webkit-scrollbar-track { background: transparent; }
+.search-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.search-results.open { display: block; }
+.search-result-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(15,37,64,0.06);
+  cursor: pointer;
+  transition: background .12s;
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--cream); }
+.search-result-tab {
+  font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--gold-deep); margin-bottom: 3px;
+}
+.search-result-title {
+  font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 2px;
+}
+.search-result-snippet {
+  font-size: 12px; color: var(--gray); line-height: 1.5;
+}
+.search-result-snippet mark {
+  background: var(--gold-pale); color: var(--navy);
+  border-radius: 2px; padding: 0 2px;
+}
+.search-no-results {
+  padding: 20px 16px; text-align: center;
+  font-size: 13px; color: var(--gray);
+}
+@media (max-width: 600px) {
+  .hero-search-wrap { top: 14px; right: 16px; }
+  .hero-search-input { width: 110px; }
+  .search-results { width: 260px; }
+}
 .nav-btn {
   padding: 16px 18px;
   border: none; background: none;
@@ -413,6 +505,15 @@ button.secondary-btn:hover { background: var(--cream); }
       <div class="hero-stat"><span class="num">500K</span><span class="lbl">Team pts/6mo → EMD</span></div>
       <div class="hero-stat"><span class="num">6 mo</span><span class="lbl">EMD Timeline</span></div>
     </div>
+  </div>
+  <!-- SEARCH BAR -->
+  <div class="hero-search-wrap">
+    <div class="hero-search-box">
+      <span class="hero-search-icon">🔍</span>
+      <input class="hero-search-input" id="hero-search-input" type="text" placeholder="Search anything..." autocomplete="off" oninput="runSearch(this.value)" onkeydown="handleSearchKey(event)" />
+      <button class="hero-search-clear" id="hero-search-clear" onclick="clearSearch()" title="Clear">&#x2715;</button>
+    </div>
+    <div class="search-results" id="search-results"></div>
   </div>
 </header>
 
@@ -4605,11 +4706,166 @@ function goSlide(n){
 </footer>
 
 <script>
+// ===== SEARCH INDEX — built from live DOM so nothing is ever missed =====
+const TAB_LABELS = {
+  overview: 'Mission HQ', list: 'Build the List', contact: 'Contact Scripts',
+  appt: 'Lock Appointments', close: 'Close & Partner', objections: 'Objections',
+  timeline: 'SMD→EMD Path', profiles: 'Recruit Profiles', training: 'Training',
+  glossary: 'Terms & Identity', licensing: 'Licensing', resources: 'Resources'
+};
+
+var SEARCH_INDEX = [];
+
+function buildSearchIndex() {
+  SEARCH_INDEX = [];
+  document.querySelectorAll('.tab').forEach(function(tabEl) {
+    var tabId = tabEl.id.replace('tab-', '');
+    var tabLabel = TAB_LABELS[tabId] || tabId;
+
+    // Index cards: each card gets its own entry with heading + full text
+    tabEl.querySelectorAll('.card, .timeline-card, .obj-item, .gloss-item, .script-box, .warn-chip, .step-item').forEach(function(block) {
+      var heading = '';
+      var h = block.querySelector('h3, h4, .gloss-term, .obj-q, .script-label, strong');
+      if (h) heading = h.textContent.trim();
+      var fullText = block.textContent.replace(/\s+/g, ' ').trim();
+      if (fullText.length < 8) return;
+      if (!heading) heading = fullText.slice(0, 60);
+      SEARCH_INDEX.push({ tab: tabId, tabLabel: tabLabel, title: heading, text: fullText });
+    });
+
+    // Also index the whole tab as one chunk (catches anything not in a card)
+    var wholeText = tabEl.textContent.replace(/\s+/g, ' ').trim();
+    SEARCH_INDEX.push({ tab: tabId, tabLabel: tabLabel, title: tabLabel + ' — full section', text: wholeText, _bulk: true });
+  });
+}
+
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp('(' + escaped + ')', 'gi'), '<mark>$1</mark>');
+}
+
+function getSnippet(text, query, maxLen) {
+  maxLen = maxLen || 100;
+  var lower = text.toLowerCase();
+  var words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  // Find earliest match position
+  var pos = -1;
+  for (var i = 0; i < words.length; i++) {
+    var p = lower.indexOf(words[i]);
+    if (p !== -1 && (pos === -1 || p < pos)) pos = p;
+  }
+  if (pos === -1) return text.slice(0, maxLen) + (text.length > maxLen ? '…' : '');
+  var start = Math.max(0, pos - 30);
+  var end = Math.min(text.length, start + maxLen);
+  var snippet = (start > 0 ? '…' : '') + text.slice(start, end) + (end < text.length ? '…' : '');
+  return snippet;
+}
+
+function runSearch(query) {
+  // Build index from DOM on first search
+  if (SEARCH_INDEX.length === 0) buildSearchIndex();
+
+  const clearBtn = document.getElementById('hero-search-clear');
+  const resultsEl = document.getElementById('search-results');
+  query = (query || '').trim();
+
+  if (clearBtn) clearBtn.classList.toggle('visible', query.length > 0);
+
+  if (query.length < 2) {
+    resultsEl.classList.remove('open');
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+  // Score every index entry
+  const scored = SEARCH_INDEX.map(function(item) {
+    const titleLower = item.title.toLowerCase();
+    const textLower = item.text.toLowerCase();
+    const haystackLower = titleLower + ' ' + textLower;
+    let score = 0;
+    words.forEach(function(w) {
+      if (titleLower.includes(w)) score += 3;  // title match worth more
+      if (textLower.includes(w)) score += 1;
+    });
+    // Exact phrase bonus
+    if (words.length > 1 && haystackLower.includes(query.toLowerCase())) score += 5;
+    // Penalise bulk entries so specific cards surface first
+    if (item._bulk) score = Math.max(0, score - 2);
+    return { item, score };
+  }).filter(function(r) { return r.score > 0; })
+    .sort(function(a, b) { return b.score - a.score; });
+
+  // Deduplicate: keep best result per tab, but allow up to 2 per tab if score is high
+  const tabCount = {};
+  const deduped = [];
+  for (var i = 0; i < scored.length && deduped.length < 8; i++) {
+    var r = scored[i];
+    var tid = r.item.tab;
+    tabCount[tid] = (tabCount[tid] || 0);
+    var limit = r.score >= 6 ? 3 : 2;
+    if (tabCount[tid] < limit) {
+      deduped.push(r);
+      tabCount[tid]++;
+    }
+  }
+
+  if (deduped.length === 0) {
+    resultsEl.innerHTML = '<div class="search-no-results">No results for <strong>"' + query + '"</strong></div>';
+  } else {
+    resultsEl.innerHTML = deduped.map(function(r) {
+      var snippet = getSnippet(r.item.text, query, 110);
+      return '<div class="search-result-item" onclick="searchGoTo(\'' + r.item.tab + '\')">' +
+        '<div class="search-result-tab">' + r.item.tabLabel + '</div>' +
+        '<div class="search-result-title">' + highlight(r.item.title.slice(0, 70), query) + '</div>' +
+        '<div class="search-result-snippet">' + highlight(snippet, query) + '</div>' +
+        '</div>';
+    }).join('');
+  }
+  resultsEl.classList.add('open');
+}
+
+function searchGoTo(tabId) {
+  clearSearch();
+  const btn = document.querySelector(`.nav-btn[onclick*="'${tabId}'"]`);
+  showTab(tabId, btn || null);
+}
+
+function clearSearch() {
+  const input = document.getElementById('hero-search-input');
+  const resultsEl = document.getElementById('search-results');
+  const clearBtn = document.getElementById('hero-search-clear');
+  if (input) input.value = '';
+  if (clearBtn) clearBtn.classList.remove('visible');
+  if (resultsEl) { resultsEl.classList.remove('open'); resultsEl.innerHTML = ''; }
+}
+
+function handleSearchKey(e) {
+  if (e.key === 'Escape') { clearSearch(); e.target.blur(); }
+  if (e.key === 'Enter') {
+    const first = document.querySelector('.search-result-item');
+    if (first) first.click();
+  }
+}
+
+// Close search results when clicking outside
+document.addEventListener('click', function(e) {
+  const wrap = document.querySelector('.hero-search-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    const resultsEl = document.getElementById('search-results');
+    if (resultsEl) resultsEl.classList.remove('open');
+  }
+});
+
 // ===== NAV =====
 function showTab(id, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
+  var tabEl = document.getElementById('tab-' + id);
+  if (!tabEl) return; // guard against missing tab
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  tabEl.classList.add('active');
   if (btn) btn.classList.add('active');
   window.scrollTo({top: 0, behavior:'smooth'});
 }
@@ -4665,6 +4921,7 @@ const objections = [
   { q: '"I\'m not a salesperson."', a: '"Good news — neither am I, really. We\'re a professional financial educators. We don\'t sell anything — we sit down with families, understand their situation, and help them design a plan. Most of our best people were teachers, nurses, coaches — people who care about others. That\'s the skillset here."' },
   { q: '"I need to think about it."', a: '"Of course — this is a real decision. Can I ask what specifically you\'re thinking through? Is it the time, the investment, the uncertainty of income? Because I want to make sure I answer the right question for you, not just leave you hanging."' },
   { q: '"I already have a financial advisor."', a: '"That\'s great — honestly, that means you already value this kind of work. Can I ask — are they helping you build income, or just managing what you already have? What we do isn’t meant to replace anything you’re already doing. From what I’ve seen, we typically complement what’s already working for someone like you. Would it make sense for us to get together so you can see if there’s anything here that might be helpful? If you like what you see, great. If not, no problem."' },
+  { q: '"I want to do research."', a: '"I love that you want to do your research — let me make that easy for you and make sure you\'re looking in the right places, because if you just Google us you might end up on a Reddit page, and honestly, anyone can post anything there. We have over 86,000 licensed agents and not everyone\'s going to have the same experience — so let me point you to the sources that actually mean something.<br><br>Pull up the Better Business Bureau — bbb.org — and search World Financial Group. We have an A+ rating. Then bookmark aegon.com — that\'s our parent company, nearly 200 years old, managing over a trillion dollars. Also bookmark tfaconnect.com, which is Transamerica, one of our main carriers. And worldfinancialgroup.com — that\'s our brokerage directly. I can also send you the full list of the 192 companies on our platform if you want.<br><br>What I\'d love to do is set up a second conversation — and I want you to come in like you\'re interviewing us. Bring every question, anything that concerned you, anything you saw — we\'ll go through it all. And then if you feel good about what you see, I\'ll have a few questions for you to make sure it\'s a mutual fit. Sound fair?"' },
   { q: '"I\'m too busy with my job."', a: '"I hear you. Can I ask — is your job giving you the financial security and time freedom you actually want for your family five years from now? Most people I work with started part-time, around their job, and within 6–12 months had a choice to make. I\'m not asking you to quit anything — just explore a door."' },
   { q: '"My spouse isn\'t on board."', a: '"I completely respect that. Can I ask — what\'s their top 2 main concerns? I\'d love to address it directly. Would it be okay if we got them on a quick call or even brought them to one of our events? Most spouses become the biggest supporters once they see the full picture."' },
   { q: '"I don\'t need life insurance."', a: '"I love that confidence — it usually means you\'re healthy and doing well. Can I ask — is your family\'s financial security protected if something unexpected happened tomorrow? And beyond protection, are you aware of how people use these same vehicles to build tax-free retirement income? That might change the conversation."' }
@@ -4816,6 +5073,9 @@ const gl = document.getElementById('glossary-list');
 glossary.forEach(g => {
   gl.innerHTML += `<div class="gloss-item"><div class="gloss-term">${g.term}</div><div class="gloss-def">${g.def}</div></div>`;
 });
+
+// Build search index now that all dynamic content has been injected into the DOM
+buildSearchIndex();
 </script>
 </body>
 </html>
