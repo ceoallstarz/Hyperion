@@ -2,6 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script>
+// Reddit Objection Module — defined in <head> so always available
+window.rm_showPanel = function(id, btn) {
+  var wrap = document.querySelector('.rm-wrap');
+  if (!wrap) return;
+  wrap.querySelectorAll('.rm-panel').forEach(function(p){p.classList.remove('active');});
+  wrap.querySelectorAll('.rm-tab').forEach(function(b){b.classList.remove('active');});
+  var panel = wrap.querySelector('#panel-'+id);
+  if (panel) panel.classList.add('active');
+  if (btn) btn.classList.add('active');
+};
+window.rm_toggleObj = function(header) {
+  var wrap = document.querySelector('.rm-wrap');
+  if (!wrap) return;
+  var body = header.nextElementSibling;
+  var chev = header.querySelector('.rm-chevron');
+  var isOpen = body.classList.contains('open');
+  wrap.querySelectorAll('.obj-bdy').forEach(function(b){b.classList.remove('open');});
+  wrap.querySelectorAll('.rm-chevron').forEach(function(c){c.classList.remove('open');});
+  if (!isOpen) { body.classList.add('open'); if(chev) chev.classList.add('open'); }
+};
+window.rm_revealCoach = function(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+};
+window.rm_toggleCheck = function(el) {
+  el.classList.toggle('done');
+  el.innerHTML = el.classList.contains('done') ? '✓' : '';
+};
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WFG SMD Builder System — Hyperion Command Center</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -793,7 +823,7 @@ button.secondary-btn:hover { background: var(--off-white); }
     <div class="card card-navy" style="margin-bottom:0;padding:18px 22px">
       <div class="badge badge-navy">Your Core Unit</div>
       <h3 style="font-size:16px;margin-bottom:8px">The Family Engine</h3>
-      <p style="font-size:13px;line-height:1.7"><strong style="color:rgba(255,255,255,.88)">Glenn/Mitch</strong> — Lead builder, recruiter, closer<br><strong style="color:rgba(255,255,255,.88)">Glenn/Mitch</strong> — Culture, follow-up, client nurture<br><strong style="color:rgba(255,255,255,.88)">Tristan</strong> — Admin, scheduling, BPM logistics<br><span style="color:rgba(255,255,255,.45);font-size:12px;margin-top:6px;display:block">5 existing licensed associates need activation</span></p>
+      <p style="font-size:13px;line-height:1.7"><strong style="color:rgba(255,255,255,.88)">You</strong> — Lead builder, recruiter, closer<br><strong style="color:rgba(255,255,255,.88)">Ride or Die</strong> — Culture, follow-up, client nurture<br><strong style="color:rgba(255,255,255,.88)">Base Shop Coordinator</strong> — Admin, scheduling, BPM logistics<br><span style="color:rgba(255,255,255,.45);font-size:12px;margin-top:6px;display:block">5 existing licensed associates need activation</span></p>
     </div>
 
     <!-- GX Math -->
@@ -827,7 +857,7 @@ button.secondary-btn:hover { background: var(--off-white); }
     </div>
   </div>
 
-  <!-- Platform & Credibility — mirrored from Pitch Guide tab -->
+  <!-- Platform & Credibility — mirrored from Approach Guide tab -->
   <div style="margin-top:20px;padding-top:20px;border-top:2px solid var(--navy-subtle)">
     <div class="eyebrow" style="margin-bottom:6px">Platform &amp; Credibility</div>
     <h2 style="margin-bottom:14px;color:var(--navy)">Why WFG — The Full Picture</h2>
@@ -869,6 +899,34 @@ button.secondary-btn:hover { background: var(--off-white); }
           <p style="font-size:11px;font-weight:600;color:var(--gold-deep);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Top-rated carriers &amp; financial institutions</p>
           <p style="font-size:13px;color:var(--gray)">Over 200 of the best financial and insurance companies in the world chose to work within the WFG platform. That partnership is earned, and it means every client we serve has access to the best solutions available anywhere.</p>
         </div>
+      </div>
+    </div>
+
+
+    <!-- Why the Platform Wins -->
+    <div class="card card-gold" style="margin-bottom:16px">
+      <div class="badge badge-navy">Why the Platform Wins</div>
+      <h3 style="margin-bottom:14px">Three structural advantages no traditional firm can match</h3>
+      <div class="grid2">
+
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">You own a business — not a job</div>
+          <p style="font-size:11px;font-weight:600;color:var(--gold-deep);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Team equity · Residual income · Leverage</p>
+          <p style="font-size:13px;color:var(--gray)">Your team is your equity. Every associate you develop creates a revenue stream that compounds. This is the same model private equity uses — build a team, build leverage, build wealth that doesn't stop when you stop working.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">$700 to start. Not $250,000.</div>
+          <p style="font-size:11px;font-weight:600;color:var(--gold-deep);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Lowest barrier · Highest upside · Unreal asymmetry</p>
+          <p style="font-size:13px;color:var(--gray)">A Chick-fil-A franchise costs $10k–$1M+. A McDonald's is $1–2M. A financial practice under a wirehouse requires $100k+ in licensing, E&O, and compliance. WFG's entry cost is under $250 — with the same earning potential.</p>
+        </div>
+
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">Scale without a ceiling</div>
+          <p style="font-size:11px;font-weight:600;color:var(--gold-deep);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">People leverage · No hours cap · Infinite runway</p>
+          <p style="font-size:13px;color:var(--gray)">You don't trade time for money here — you build a team that serves thousands of families. Top earners in WFG aren't working more hours, they're leading more people. The model was designed specifically to scale through people, not products.</p>
+        </div>
+
       </div>
     </div>
 
@@ -1493,12 +1551,12 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
 </div>
 
 <div class="rm-tabs">
-  <button class="rm-tab active" onclick="rm_showPanel('mindset')">Mindset first</button>
-  <button class="rm-tab" onclick="rm_showPanel('framework')">The framework</button>
-  <button class="rm-tab" onclick="rm_showPanel('objections')">Objection bank</button>
-  <button class="rm-tab" onclick="rm_showPanel('master')">Master script</button>
-  <button class="rm-tab" onclick="rm_showPanel('drills')">Live drills</button>
-  <button class="rm-tab" onclick="rm_showPanel('checklist')">Field checklist</button>
+  <button class="rm-tab active" onclick="rm_showPanel('mindset',this)">Mindset first</button>
+  <button class="rm-tab" onclick="rm_showPanel('framework',this)">The framework</button>
+  <button class="rm-tab" onclick="rm_showPanel('objections',this)">Objection bank</button>
+  <button class="rm-tab" onclick="rm_showPanel('master',this)">Master script</button>
+  <button class="rm-tab" onclick="rm_showPanel('drills',this)">Live drills</button>
+  <button class="rm-tab" onclick="rm_showPanel('checklist',this)">Field checklist</button>
 </div>
 
 <div id="panel-mindset" class="rm-panel active">
@@ -1517,7 +1575,7 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
   </div>
   <div class="rm-step-row">
     <div class="rm-step-num">2</div>
-    <div class="rm-step-body"><strong>Negative press is proof of scale.</strong> WFG has 86,000+ licensed agents. Of course there are bad reviews. So does every hospital, law firm, and bank on earth. Scale creates critics. That doesn't make the critics right.</div>
+    <div class="rm-step-body"><strong>Negative press is proof of scale.</strong> WFG has 95,000+ licensed agents. Of course there are bad reviews. So does every hospital, law firm, and bank on earth. Scale creates critics. That doesn't make the critics right.</div>
   </div>
   <div class="rm-step-row">
     <div class="rm-step-num">3</div>
@@ -1664,7 +1722,7 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
     </div>
     <div class="obj-bdy">
       <div class="badge badge-gray" style="margin-bottom:.75rem">Never throw the agent under the bus. But never defend bad advice either. Thread the needle.</div>
-      <div class="script-block">"I hear you — and I won't dismiss that. If someone lost money because of bad advice from an agent, that's a real harm and it matters. Here's what I'll say: we have over 86,000 licensed agents. Not every experience is the same — just like not every doctor, attorney, or real estate agent gives the same quality of service. The solution isn't to avoid the industry. It's to find someone you trust.<br><br>I'd rather you walk away from me if you don't trust me than buy something because I pressured you. So here's what I'll offer — let's look at the Better Business Bureau together right now. WFG has an A+ rating. You can check every complaint, every response. And then you can decide whether to give me a shot.<br><br>What would it take for you to feel confident enough to have one real conversation?"</div>
+      <div class="script-block">"I hear you — and I won't dismiss that. If someone lost money because of bad advice from an agent, that's a real harm and it matters. Here's what I'll say: we have over 95,000 licensed agents. Not every experience is the same — just like not every doctor, attorney, or real estate agent gives the same quality of service. The solution isn't to avoid the industry. It's to find someone you trust.<br><br>I'd rather you walk away from me if you don't trust me than buy something because I pressured you. So here's what I'll offer — let's look at the Better Business Bureau together right now. WFG has an A+ rating. You can check every complaint, every response. And then you can decide whether to give me a shot.<br><br>What would it take for you to feel confident enough to have one real conversation?"</div>
       <div class="coach-note"><strong>Coaching note:</strong> The BBB offer — "let's look right now" — is powerful because it's transparent and immediate. Pull it up on your phone in the meeting.</div>
     </div>
   </div>
@@ -1688,7 +1746,7 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
     </div>
     <div class="obj-bdy">
       <div class="badge badge-gray" style="margin-bottom:.75rem">The research objection. This is actually a buying signal — they're doing due diligence, not shutting you out.</div>
-      <div class="script-block">"I love that you're doing your research — that tells me you're a serious person and you take your finances seriously. Let me make that research more useful, because if you just Google us, you're going to end up on Reddit or a forum, and honestly, anyone can post anything there. We have 86,000 licensed agents and not every experience is the same.<br><br>Here's where I'd actually point you. Pull up bbb.org — Better Business Bureau — and search World Financial Group. A+ rating. That's not bought, that's earned. Then bookmark aegon.com — nearly 200 years old, managing over a trillion dollars globally. Also tfaconnect.com — that's Transamerica, one of our main carriers. And worldfinancialgroup.com — our brokerage directly.<br><br>What I'd love to do is set up a second conversation — and I want you to come in ready to interview us. Bring every question, everything that concerned you, anything you saw. We'll go through it all. And then if you feel good, I'll have a few questions to see if it's a mutual fit. Sound fair?"</div>
+      <div class="script-block">"I love that you're doing your research — that tells me you're a serious person and you take your finances seriously. Let me make that research more useful, because if you just Google us, you're going to end up on Reddit or a forum, and honestly, anyone can post anything there. We have 95,000 licensed agents and not every experience is the same.<br><br>Here's where I'd actually point you. Pull up bbb.org — Better Business Bureau — and search World Financial Group. A+ rating. That's not bought, that's earned. Then bookmark aegon.com — nearly 200 years old, managing over a trillion dollars globally. Also tfaconnect.com — that's Transamerica, one of our main carriers. And worldfinancialgroup.com — our brokerage directly.<br><br>What I'd love to do is set up a second conversation — and I want you to come in ready to interview us. Bring every question, everything that concerned you, anything you saw. We'll go through it all. And then if you feel good, I'll have a few questions to see if it's a mutual fit. Sound fair?"</div>
       <div class="coach-note"><strong>Coaching note:</strong> Give them the exact URLs. Specificity builds credibility. Vague reassurances don't. Names and links do.</div>
       <div class="gold-note"><strong>Seasoned closer version:</strong> "Let me ask you something. When you research a surgeon before a procedure, do you read the one-star Yelp reviews and cancel the surgery — or do you check their board certifications and hospital affiliations? Google isn't a financial regulator. The BBB is."</div>
     </div>
@@ -1713,7 +1771,7 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
     <div class="rm-step-num" style="background:#EF9F27;color:#412402">2</div>
     <div class="rm-step-body">
       <strong>Acknowledge the partial truth</strong>
-      <div class="script-block">"I won't sit here and tell you every WFG agent has done right by every client. We have over 86,000 licensed agents and not every experience is the same. Bad advice from bad agents is real — in WFG, in banking, in every industry. The question is: who are you sitting across from right now?"</div>
+      <div class="script-block">"I won't sit here and tell you every WFG agent has done right by every client. We have over 95,000 licensed agents and not every experience is the same. Bad advice from bad agents is real — in WFG, in banking, in every industry. The question is: who are you sitting across from right now?"</div>
     </div>
   </div>
 
@@ -2036,7 +2094,7 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
     <button class="sub-tab" onclick="showSub('res-bpm-slides')">📊 BPM Presentation</button>
     <button class="sub-tab" onclick="showSub('res-bpm')">🎤 Zoom Script</button>
     <button class="sub-tab" onclick="showSub('res-prospecting')">🎯 Prospecting Program</button>
-    <button class="sub-tab" onclick="showSub('res-pitch')">💼 Pitch Guide</button>
+    <button class="sub-tab" onclick="showSub('res-pitch')">💼 Approach Guide</button>
   </div>
 
   <!-- ===== NEW ASSOCIATE ===== -->
@@ -2912,11 +2970,11 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
   <div class="sub-section" id="sub-res-pitch">
     <div class="card card-gold">
       <div class="badge badge-gold">WFG Field Guide — No Family Left Behind</div>
-      <h3>The Pitch Guide</h3>
+      <h3>The Approach Guide</h3>
       <p style="margin-bottom:18px">A complete field guide for new and seasoned WFG associates. Scripts, objection handlers, and re-ignition tools — all in one place.</p>
     </div>
 
-    <!-- Sub-tabs for Pitch Guide -->
+    <!-- Sub-tabs for Approach Guide -->
     <div class="sub-tab-row" id="pitch-tab-row">
       <button class="sub-tab active" onclick="showPitchTab('rookie', this)">🆕 New Associates</button>
       <button class="sub-tab" onclick="showPitchTab('seasoned', this)">⭐ Seasoned Associates</button>
@@ -4757,36 +4815,7 @@ document.addEventListener('keydown',function(e){
   else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();if(cur>0)goSlide(cur-1);}
 });
 </script>
-<script>
-// Reddit Objection Module — global handlers
-window.rm_showPanel = function(id) {
-  var wrap = document.querySelector('.rm-wrap');
-  if (!wrap) return;
-  wrap.querySelectorAll('.rm-panel').forEach(function(p){p.classList.remove('active');});
-  wrap.querySelectorAll('.rm-tab').forEach(function(b){b.classList.remove('active');});
-  var panel = wrap.querySelector('#panel-'+id);
-  if (panel) panel.classList.add('active');
-  if (event && event.target) event.target.classList.add('active');
-};
-window.rm_toggleObj = function(header) {
-  var wrap = document.querySelector('.rm-wrap');
-  if (!wrap) return;
-  var body = header.nextElementSibling;
-  var chev = header.querySelector('.rm-chevron');
-  var isOpen = body.classList.contains('open');
-  wrap.querySelectorAll('.obj-bdy').forEach(function(b){b.classList.remove('open');});
-  wrap.querySelectorAll('.rm-chevron').forEach(function(c){c.classList.remove('open');});
-  if (!isOpen) { body.classList.add('open'); if(chev) chev.classList.add('open'); }
-};
-window.rm_revealCoach = function(id) {
-  var el = document.getElementById(id);
-  if (el) el.classList.toggle('open');
-};
-window.rm_toggleCheck = function(el) {
-  el.classList.toggle('done');
-  el.innerHTML = el.classList.contains('done') ? '✓' : '';
-};
-</script>
+
 </body>
 </html>"
         style="width:100%;height:860px;border:none;display:block"
@@ -6097,7 +6126,7 @@ const objections = [
   { q: '"I\'m not a salesperson."', a: '"Good news — neither am I, really. We\'re a professional financial educators. We don\'t sell anything — we sit down with families, understand their situation, and help them design a plan. Most of our best people were teachers, nurses, coaches — people who care about others. That\'s the skillset here."' },
   { q: '"I need to think about it."', a: '"Of course — this is a real decision. Can I ask what specifically you\'re thinking through? Is it the time, the investment, the uncertainty of income? Because I want to make sure I answer the right question for you, not just leave you hanging."' },
   { q: '"I already have a financial advisor."', a: '"That\'s great — honestly, that means you already value this kind of work. Can I ask — are they helping you build income, or just managing what you already have? What we do isn’t meant to replace anything you’re already doing. From what I’ve seen, we typically complement what’s already working for someone like you. Would it make sense for us to get together so you can see if there’s anything here that might be helpful? If you like what you see, great. If not, no problem."' },
-  { q: '"I want to do research."', a: '"I love that you want to do your research — let me make that easy for you and make sure you\'re looking in the right places, because if you just Google us you might end up on a Reddit page, and honestly, anyone can post anything there. We have over 86,000 licensed agents and not everyone\'s going to have the same experience — so let me point you to the sources that actually mean something.<br><br>Pull up the Better Business Bureau — bbb.org — and search World Financial Group. We have an A+ rating. Then bookmark aegon.com — that\'s our parent company, nearly 200 years old, managing over a trillion dollars. Also bookmark tfaconnect.com, which is Transamerica, one of our main carriers. And worldfinancialgroup.com — that\'s our brokerage directly. I can also send you the full list of the 192 companies on our platform if you want.<br><br>What I\'d love to do is set up a second conversation — and I want you to come in like you\'re interviewing us. Bring every question, anything that concerned you, anything you saw — we\'ll go through it all. And then if you feel good about what you see, I\'ll have a few questions for you to make sure it\'s a mutual fit. Sound fair?"' },
+  { q: '"I want to do research."', a: '"I love that you want to do your research — let me make that easy for you and make sure you\'re looking in the right places, because if you just Google us you might end up on a Reddit page, and honestly, anyone can post anything there. We have over 95,000 licensed agents and not everyone\'s going to have the same experience — so let me point you to the sources that actually mean something.<br><br>Pull up the Better Business Bureau — bbb.org — and search World Financial Group. We have an A+ rating. Then bookmark aegon.com — that\'s our parent company, nearly 200 years old, managing over a trillion dollars. Also bookmark tfaconnect.com, which is Transamerica, one of our main carriers. And worldfinancialgroup.com — that\'s our brokerage directly. I can also send you the full list of the 192 companies on our platform if you want.<br><br>What I\'d love to do is set up a second conversation — and I want you to come in like you\'re interviewing us. Bring every question, anything that concerned you, anything you saw — we\'ll go through it all. And then if you feel good about what you see, I\'ll have a few questions for you to make sure it\'s a mutual fit. Sound fair?"' },
   { q: '"I\'m too busy with my job."', a: '"I hear you. Can I ask — is your job giving you the financial security and time freedom you actually want for your family five years from now? Most people I work with started part-time, around their job, and within 6–12 months had a choice to make. I\'m not asking you to quit anything — just explore a door."' },
   { q: '"My spouse isn\'t on board."', a: '"I completely respect that. Can I ask — what\'s their top 2 main concerns? I\'d love to address it directly. Would it be okay if we got them on a quick call or even brought them to one of our events? Most spouses become the biggest supporters once they see the full picture."' },
   { q: '"I don\'t need life insurance."', a: '"I love that confidence — it usually means you\'re healthy and doing well. Can I ask — is your family\'s financial security protected if something unexpected happened tomorrow? And beyond protection, are you aware of how people use these same vehicles to build tax-free retirement income? That might change the conversation."' }
