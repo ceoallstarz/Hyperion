@@ -1846,23 +1846,301 @@ What's your schedule like today or tomorrow? Quick Zoom — that's it.
       <div class="warn-chip" style="margin-bottom:10px"><span class="warn-icon">📞</span><div><span style="font-size:13px">Make calls immediately to set appointments with your known market.</span></div></div>
       <div class="warn-chip" style="margin-bottom:10px"><span class="warn-icon">📅</span><div><span style="font-size:13px">Make an appointment with your trainer immediately to learn savings concepts.</span></div></div>
       <div class="warn-chip"><span class="warn-icon">🚀</span><div><span style="font-size:13px"><strong>After completing GX1 (3-15), focus on building your team! → GX2 → GX3</strong></span></div></div>
+
+      <!-- ===== EASY START GUIDE ===== -->
+      <div style="margin-top:32px">
+        <div style="margin-bottom:16px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-deep);display:flex;align-items:center;gap:10px">
+          <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold-pale),transparent)"></span>
+          EASY START CHECKLIST
+          <span style="flex:1;height:1px;background:linear-gradient(270deg,var(--gold-pale),transparent)"></span>
+        </div>
+
+        <!-- Header -->
+        <div style="background:var(--navy);border-radius:var(--r-l) var(--r-l) 0 0;padding:28px 28px 22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:rgba(201,168,76,0.07)"></div>
+          <div style="position:absolute;bottom:-40px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(28,67,112,0.5)"></div>
+          <div style="position:relative;z-index:1">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Revolution Financial Management</div>
+            <h3 style="font-family:var(--serif);font-size:28px;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.1">Easy Start Guide</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.6;max-width:520px">Your simple step-by-step path to licensing, earning, and leading — one family at a time.</p>
+            <div style="background:rgba(255,255,255,0.15);border-radius:99px;height:6px;margin-top:18px;overflow:hidden;max-width:400px">
+              <div style="height:100%;background:var(--gold);border-radius:99px;transition:width 0.4s ease;width:0%" id="esg-prog-bar"></div>
+            </div>
+            <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:6px" id="esg-prog-label">0 of 25 steps completed</p>
+          </div>
+        </div>
+
+        <!-- Phase tabs -->
+        <div style="display:flex;background:var(--navy-mid);border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);overflow-x:auto;gap:0" id="esg-tabs">
+          <button class="esg-tab-btn active" onclick="esgShowPhase(0,this)" style="flex:1;min-width:90px;padding:13px 8px;font-size:11.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,0.5);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:var(--sans)">
+            <span style="display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:inherit">①</span> Week 1
+          </button>
+          <button class="esg-tab-btn" onclick="esgShowPhase(1,this)" style="flex:1;min-width:90px;padding:13px 8px;font-size:11.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,0.5);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:var(--sans)">
+            <span style="display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:inherit">②</span> Licensing
+          </button>
+          <button class="esg-tab-btn" onclick="esgShowPhase(2,this)" style="flex:1;min-width:90px;padding:13px 8px;font-size:11.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,0.5);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:var(--sans)">
+            <span style="display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:inherit">③</span> Activity
+          </button>
+          <button class="esg-tab-btn" onclick="esgShowPhase(3,this)" style="flex:1;min-width:90px;padding:13px 8px;font-size:11.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,0.5);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:var(--sans)">
+            <span style="display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:inherit">④</span> Grow
+          </button>
+          <button class="esg-tab-btn" onclick="esgShowPhase(4,this)" style="flex:1;min-width:90px;padding:13px 8px;font-size:11.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:rgba(255,255,255,0.5);border-bottom:2px solid transparent;transition:all 0.2s;white-space:nowrap;font-family:var(--sans)">
+            <span style="display:block;font-size:17px;font-weight:600;margin-bottom:2px;color:inherit">⑤</span> Goals
+          </button>
+        </div>
+
+        <style>
+          .esg-tab-btn.active { color: var(--gold) !important; border-bottom-color: var(--gold) !important; background: rgba(201,168,76,0.07) !important; }
+          .esg-tab-btn:hover:not(.active) { background: rgba(255,255,255,0.05) !important; color: rgba(255,255,255,0.8) !important; }
+          .esg-check-item { display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border:1px solid var(--border);border-radius:var(--r-m);cursor:pointer;transition:background .15s,border-color .15s;user-select:none;background:var(--white);margin-bottom:8px; }
+          .esg-check-item:hover { background: var(--off-white); }
+          .esg-check-item.esg-done { background: var(--green-light); border-color: rgba(26,102,68,0.25); opacity: 0.82; }
+          .esg-check-box { width:22px;height:22px;min-width:22px;border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s;background:var(--white); }
+          .esg-check-item.esg-done .esg-check-box { background:var(--green);border-color:var(--green); }
+          .esg-check-icon { color:#fff;font-size:13px;display:none; }
+          .esg-check-item.esg-done .esg-check-icon { display:block; }
+          .esg-check-label { font-size:14px;font-weight:600;color:var(--navy);line-height:1.4; }
+          .esg-check-item.esg-done .esg-check-label { text-decoration:line-through;color:var(--gray-500); }
+          .esg-check-note { font-size:12px;color:var(--gray-500);margin-top:3px;line-height:1.4; }
+          .esg-priority-badge { font-size:10px;padding:2px 8px;border-radius:99px;font-weight:600;background:var(--gold-pale);color:var(--gold-deep);white-space:nowrap;flex-shrink:0; }
+          .esg-tip-box { margin-top:16px;background:var(--navy-subtle);border:1px solid rgba(12,29,48,0.10);border-radius:var(--r-m);padding:13px 16px;display:flex;gap:10px;align-items:flex-start; }
+          .esg-tip-box p { font-size:13px;color:var(--navy-mid);line-height:1.5; }
+          .esg-goal-cards { display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px; }
+          .esg-goal-card { background:var(--off-white);border:1px solid var(--border);border-radius:var(--r-m);padding:14px;text-align:center; }
+          .esg-goal-card .esg-gi { font-size:22px;display:block;margin-bottom:6px; }
+          .esg-goal-card .esg-gt { font-size:12px;font-weight:600;color:var(--navy); }
+          .esg-goal-card .esg-gs { font-size:11px;color:var(--gray-500);margin-top:2px; }
+          .esg-phase-content { display:none;padding:20px 20px 8px;background:var(--gray-50);border-left:1px solid var(--border);border-right:1px solid var(--border); }
+          .esg-phase-content.esg-visible { display:block; }
+          .esg-phase-title { font-family:var(--serif);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px; }
+          .esg-phase-sub { font-size:13px;color:var(--gray-500);margin-bottom:16px; }
+          .esg-footer { background:var(--off-white);border:1px solid var(--border);border-radius:0 0 var(--r-l) var(--r-l);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px; }
+          .esg-footer-text { font-size:12px;color:var(--gray-500); }
+          .esg-reset-btn { font-size:12px;padding:6px 14px;border-radius:var(--r-s);border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--gray-500);font-family:var(--sans); }
+          .esg-reset-btn:hover { background:var(--white);color:var(--navy); }
+        </style>
+
+        <!-- Phase 0: Week 1 -->
+        <div class="esg-phase-content esg-visible" id="esg-phase-0">
+          <p class="esg-phase-title">Week 1 — Let's launch</p>
+          <p class="esg-phase-sub">~6–8 hours part-time. Chip away daily, no rush.</p>
+          <div id="esg-list-0">
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-1"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Start Xcel pre-licensing course</p><p class="esg-check-note">Only required in certain states — confirm with your trainer first.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-2"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Book your license exam date</p><p class="esg-check-note">Do this early — test centers fill up fast.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-3"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Watch the 8-min Welcome Video</p><p class="esg-check-note">Sets the tone for everything ahead.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-4"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Complete your personal Financial Needs Analysis (FNA)</p><p class="esg-check-note">You can't help families if you haven't helped yourself first.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-5"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Watch Orientation Class</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-6"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Watch ABCs Class — basics of financial planning</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-7"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Go on your first field training appointment</p><p class="esg-check-note">Observe and take notes — this is where the real learning begins.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="ew1-8"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Join Telegram — Team Revolution + your team leader's chat</p></div></div>
+          </div>
+          <div class="esg-tip-box"><span style="font-size:18px;flex-shrink:0">💡</span><p><strong>Pro tip from your SMD:</strong> speed matters at the start. The faster you take action, the faster your confidence builds. Don't wait to feel ready — you get ready by doing.</p></div>
+        </div>
+
+        <!-- Phase 1: Licensing -->
+        <div class="esg-phase-content" id="esg-phase-1">
+          <p class="esg-phase-title">Licensing — get your license fast</p>
+          <p class="esg-phase-sub">Your license is your business. Nothing else happens without it.</p>
+          <div id="esg-list-1">
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-1"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Complete the Xcel pre-licensing course</p><p class="esg-check-note">Aim for 85–90% on your final exam and all 3 simulator tests before sitting the real exam.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-2"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Watch the licensing crash course</p><p class="esg-check-note">Focused study for the actual state exam — don't skip this.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-3"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Pass your state license exam</p><p class="esg-check-note">Complete fingerprints if required in your state.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-4"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Apply for your license</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-5"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Complete AML course and save your certificate</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="elic-6"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Get appointed with product providers</p><p class="esg-check-note">Your trainer will walk you through this — it's what allows you to get paid.</p></div></div>
+          </div>
+        </div>
+
+        <!-- Phase 2: Activity -->
+        <div class="esg-phase-content" id="esg-phase-2">
+          <p class="esg-phase-title">Activity — get moving in the field</p>
+          <p class="esg-phase-sub">While you're studying, be active. These habits set your pace.</p>
+          <div id="esg-list-2">
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eact-1" style="align-items:center"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div style="flex:1"><p class="esg-check-label">Qualify for Fast Start School</p><p class="esg-check-note">Your top priority. This unlocks bonuses and fast-tracks your growth.</p></div><span class="esg-priority-badge">Top priority</span></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eact-2"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Attend your first BPM (Business Presentation Meeting)</p><p class="esg-check-note">Bring a guest if possible — this is your most powerful recruiting tool.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eact-3"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Complete your first full field training appointment</p><p class="esg-check-note">Watch and debrief. Do not present alone yet.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eact-4"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Memorize and practice your invite script</p><p class="esg-check-note">Know the "Help Me Script" cold. Role play with your upline daily.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eact-5"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Build your Top 25 prospect / share list</p><p class="esg-check-note">Think: married, homeowners, solid career, entrepreneurial mindset.</p></div></div>
+          </div>
+          <div class="esg-tip-box"><span style="font-size:18px;flex-shrink:0">👥</span><p><strong>The Fast Start process:</strong> set the appointment → learn their background → present to the spouse → discuss goals → time commitment → set 3/15 goal → review FNA → build their share list → field train ASAP.</p></div>
+        </div>
+
+        <!-- Phase 3: Grow -->
+        <div class="esg-phase-content" id="esg-phase-3">
+          <p class="esg-phase-title">Training and expansion — now go help families</p>
+          <p class="esg-phase-sub">Once licensed and appointed, focus on competence and confidence.</p>
+          <div id="esg-list-3">
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-1"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Study The Builders Playbook</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-2"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Download and practice Flipchart Presentations Steps 1–5</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-3"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Watch the full RFM Training Video Series</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-4"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Plug into the weekly ATM Club (product training)</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-5"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Work with your SMD to create a full-time income replacement plan</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="etrn-6"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Attend a big event or company convention</p><p class="esg-check-note">This is where the vision gets bigger and the belief gets stronger.</p></div></div>
+          </div>
+          <div class="esg-tip-box"><span style="font-size:18px;flex-shrink:0">📚</span><p><strong>Recommended reads:</strong> Think &amp; Grow Rich, Rich Dad Poor Dad, Atomic Habits, Happy &amp; Strong (Jaime Villalovos), The Builders Playbook. Start one now.</p></div>
+        </div>
+
+        <!-- Phase 4: Goals -->
+        <div class="esg-phase-content" id="esg-phase-4">
+          <p class="esg-phase-title">Your goals — know your why</p>
+          <p class="esg-phase-sub">Clarity on purpose drives everything else. Don't skip this.</p>
+          <div class="esg-goal-cards">
+            <div class="esg-goal-card"><span class="esg-gi">💵</span><p class="esg-gt">First $1,000</p><p class="esg-gs">In your first 30 days licensed</p></div>
+            <div class="esg-goal-card"><span class="esg-gi">🏆</span><p class="esg-gt">Qualify for GX1</p><p class="esg-gs">Promote to MD trainer in 3–5 months</p></div>
+            <div class="esg-goal-card"><span class="esg-gi">📅</span><p class="esg-gt">Full-time date</p><p class="esg-gs">Set a real target date with your SMD</p></div>
+            <div class="esg-goal-card"><span class="esg-gi">❤️</span><p class="esg-gt">Your top 10 whys</p><p class="esg-gs">Write them down — they pull you forward</p></div>
+          </div>
+          <div id="esg-list-4" style="margin-top:14px">
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eg-1"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Write out your top 10 reasons why</p><p class="esg-check-note">Tape it somewhere you see it every day.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eg-2"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Set your date and plan to go full-time</p><p class="esg-check-note">A goal without a date is just a wish.</p></div></div>
+            <div class="esg-check-item" onclick="esgToggle(this)" data-id="eg-3"><div class="esg-check-box"><span class="esg-check-icon">✓</span></div><div><p class="esg-check-label">Have your Fast Start duplication meeting with your trainer</p><p class="esg-check-note">Cover: get licensed → meet spouse/influencer → share list → field presentations → personal FNA → qualify 3/15 → duplication.</p></div></div>
+          </div>
+          <div class="esg-tip-box" style="margin-top:14px"><span style="font-size:18px;flex-shrink:0">💬</span><p><em>"You don't have to be great to start, but you have to start to be great."</em> — Zig Ziglar. One team. One mission. Total Revolution.</p></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="esg-footer">
+          <p class="esg-footer-text">financialrevolution.com/agent-toolbox · PIN: 6030 &nbsp;|&nbsp; Agent site: mywfg.com</p>
+          <button class="esg-reset-btn" onclick="esgResetAll()">Reset all ↺</button>
+        </div>
+      </div>
+
+      <script>
+      (function() {
+        var ESG_KEY = 'rfm_easy_start_v2';
+        var esgChecked = {};
+        var ESG_TOTAL = 25;
+
+        function esgSave() { try { sessionStorage.setItem(ESG_KEY, JSON.stringify(esgChecked)); } catch(e){} }
+        function esgLoad() { try { var d=sessionStorage.getItem(ESG_KEY); if(d) esgChecked=JSON.parse(d); } catch(e){} }
+
+        window.esgToggle = function(el) {
+          var id = el.dataset.id;
+          if (esgChecked[id]) { delete esgChecked[id]; el.classList.remove('esg-done'); }
+          else { esgChecked[id]=true; el.classList.add('esg-done'); }
+          esgSave(); esgUpdateProgress();
+        };
+
+        window.esgUpdateProgress = function() {
+          var done = Object.keys(esgChecked).length;
+          var pct = Math.round((done/ESG_TOTAL)*100);
+          var bar = document.getElementById('esg-prog-bar');
+          var lbl = document.getElementById('esg-prog-label');
+          if (bar) bar.style.width = pct + '%';
+          if (lbl) lbl.textContent = done + ' of ' + ESG_TOTAL + ' steps completed (' + pct + '%)';
+        };
+
+        window.esgShowPhase = function(idx, btn) {
+          document.querySelectorAll('.esg-phase-content').forEach(function(el,i){ el.classList.toggle('esg-visible', i===idx); });
+          document.querySelectorAll('.esg-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+        };
+
+        window.esgResetAll = function() {
+          if (!confirm('Reset all Easy Start checkboxes?')) return;
+          esgChecked = {}; esgSave();
+          document.querySelectorAll('.esg-check-item').forEach(function(el){ el.classList.remove('esg-done'); });
+          esgUpdateProgress();
+        };
+
+        esgLoad();
+        document.querySelectorAll('.esg-check-item').forEach(function(el){
+          if (esgChecked[el.dataset.id]) el.classList.add('esg-done');
+        });
+        esgUpdateProgress();
+      })();
+      </script>
     </div>
-  </div>
+  </div><!-- end sub-res-fast -->
 
   <!-- ===== KEY CONTACTS & LINKS ===== -->
   <div class="sub-section" id="sub-res-contacts">
-    <div class="card card-navy">
-      <div class="badge badge-navy">Support contacts</div>
-      <h3>Key Emails &amp; Phone Numbers</h3>
-      <div style="display:grid;gap:8px;margin-top:14px">
-        <div class="warn-chip"><span class="warn-icon">📧</span><div><strong style="display:block;font-size:12px;margin-bottom:2px">Pending Requirements — CA &amp; HI</strong><span style="font-size:12px;color:var(--gray)">Turn around ~4hrs. Can also upload docs to TLIC portal: <a href="mailto:cahicasemgmt@transamerica.com" style="color:var(--navy-mid)">cahicasemgmt@transamerica.com</a></span></div></div>
-        <div class="warn-chip"><span class="warn-icon">📧</span><div><strong style="display:block;font-size:12px;margin-bottom:2px">Background Questions — Onboarding</strong><span style="font-size:12px;color:var(--gray)"><a href="mailto:WFGIA@TRANSAMERICA.COM" style="color:var(--navy-mid)">WFGIA@TRANSAMERICA.COM</a></span></div></div>
-        <div class="warn-chip"><span class="warn-icon">📧</span><div><strong style="display:block;font-size:12px;margin-bottom:2px">License Renewals / LTC</strong><span style="font-size:12px;color:var(--gray)"><a href="mailto:lic_commemail@transamerica.com" style="color:var(--navy-mid)">lic_commemail@transamerica.com</a> &nbsp;|&nbsp; <a href="mailto:license@nationwide.com" style="color:var(--navy-mid)">license@nationwide.com</a> &nbsp;|&nbsp; <a href="mailto:dataview@amsfsg.com" style="color:var(--navy-mid)">dataview@amsfsg.com</a></span></div></div>
-        <div class="warn-chip"><span class="warn-icon">📧</span><div><strong style="display:block;font-size:12px;margin-bottom:2px">WFG License Apps / Fast Track</strong><span style="font-size:12px;color:var(--gray)"><a href="mailto:wfglicenseapps@transamerica.com" style="color:var(--navy-mid)">wfglicenseapps@transamerica.com</a> &nbsp;|&nbsp; <a href="mailto:wfgfast@transamerica.com" style="color:var(--navy-mid)">wfgfast@transamerica.com</a></span></div></div>
-        <div class="warn-chip"><span class="warn-icon">📞</span><div><strong style="display:block;font-size:12px;margin-bottom:2px">Phone Support</strong><span style="font-size:12px;color:var(--gray)">Transamerica Licensing: (800) 322-3796 Dial 4 &nbsp;|&nbsp; Nationwide Licensing: (614) 435-3049 Dial 1 &amp; 5 &nbsp;|&nbsp; Crump Licensing: (888) 232-4872 Dial 3</span></div></div>
+    <div class="section-header" style="margin-bottom:20px">
+      <div class="eyebrow">Support contacts</div>
+      <h2>Key Emails &amp; Phone Numbers</h2>
+      <p>Bookmark this page. These are the contacts you'll use for licensing, onboarding, and ongoing support.</p>
+    </div>
+
+    <!-- EMAIL CONTACTS -->
+    <div style="margin-bottom:6px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-deep);display:flex;align-items:center;gap:10px"><span style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold-pale),transparent)"></span>EMAIL CONTACTS<span style="flex:1;height:1px;background:linear-gradient(270deg,var(--gold-pale),transparent)"></span></div>
+
+    <div style="display:grid;gap:10px;margin-bottom:20px">
+
+      <!-- Card 1 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-m);padding:16px 20px;box-shadow:var(--sh-xs);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start">
+        <div style="width:38px;height:38px;background:var(--navy-subtle);border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gray-500);margin-bottom:4px">Pending Requirements — CA &amp; HI</div>
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:8px">Turn around ~4 hrs. Can also upload docs directly to the TLIC portal.</div>
+          <a href="mailto:cahicasemgmt@transamerica.com" style="display:inline-block;background:var(--navy);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none;letter-spacing:.01em">cahicasemgmt@transamerica.com</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-m);padding:16px 20px;box-shadow:var(--sh-xs);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start">
+        <div style="width:38px;height:38px;background:var(--navy-subtle);border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gray-500);margin-bottom:4px">Background Questions — Onboarding</div>
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:8px">For background check questions during the onboarding process.</div>
+          <a href="mailto:WFGIA@TRANSAMERICA.COM" style="display:inline-block;background:var(--navy);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none;letter-spacing:.01em">WFGIA@TRANSAMERICA.COM</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-m);padding:16px 20px;box-shadow:var(--sh-xs);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start">
+        <div style="width:38px;height:38px;background:var(--navy-subtle);border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gray-500);margin-bottom:4px">License Renewals / LTC</div>
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:8px">Use these for license renewals and long-term care related inquiries.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <a href="mailto:lic_commemail@transamerica.com" style="display:inline-block;background:var(--navy);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none">lic_commemail@transamerica.com</a>
+            <a href="mailto:license@nationwide.com" style="display:inline-block;background:var(--navy-light);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none">license@nationwide.com</a>
+            <a href="mailto:dataview@amsfsg.com" style="display:inline-block;background:var(--navy-light);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none">dataview@amsfsg.com</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-m);padding:16px 20px;box-shadow:var(--sh-xs);display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start">
+        <div style="width:38px;height:38px;background:var(--navy-subtle);border-radius:var(--r-s);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📧</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;color:var(--gray-500);margin-bottom:4px">WFG License Apps / Fast Track</div>
+          <div style="font-size:13px;color:var(--gray-700);margin-bottom:8px">Submit license applications and use the fast track process here.</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <a href="mailto:wfglicenseapps@transamerica.com" style="display:inline-block;background:var(--navy);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none">wfglicenseapps@transamerica.com</a>
+            <a href="mailto:wfgfast@transamerica.com" style="display:inline-block;background:var(--navy-light);color:var(--white);font-size:13px;font-weight:600;padding:6px 14px;border-radius:var(--r-s);text-decoration:none">wfgfast@transamerica.com</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PHONE CONTACTS -->
+    <div style="margin-bottom:14px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-deep);display:flex;align-items:center;gap:10px"><span style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold-pale),transparent)"></span>PHONE SUPPORT<span style="flex:1;height:1px;background:linear-gradient(270deg,var(--gold-pale),transparent)"></span></div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:20px">
+      <div style="background:var(--navy);border-radius:var(--r-m);padding:18px 20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Transamerica Licensing</div>
+        <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--white);margin-bottom:4px">(800) 322-3796</div>
+        <div style="display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">Dial 4</div>
+      </div>
+      <div style="background:var(--navy);border-radius:var(--r-m);padding:18px 20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Nationwide Licensing</div>
+        <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--white);margin-bottom:4px">(614) 435-3049</div>
+        <div style="display:inline-flex;gap:6px">
+          <span style="background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">Dial 1</span>
+          <span style="background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">then 5</span>
+        </div>
+      </div>
+      <div style="background:var(--navy);border-radius:var(--r-m);padding:18px 20px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Crump Licensing</div>
+        <div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--white);margin-bottom:4px">(888) 232-4872</div>
+        <div style="display:inline-block;background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">Dial 3</div>
       </div>
     </div>
 
+    <!-- QUICK LINKS -->
+    <div style="margin-bottom:14px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-deep);display:flex;align-items:center;gap:10px"><span style="flex:1;height:1px;background:linear-gradient(90deg,var(--gold-pale),transparent)"></span>QUICK REFERENCE LINKS<span style="flex:1;height:1px;background:linear-gradient(270deg,var(--gold-pale),transparent)"></span></div>
     <div class="card card-gold" style="margin-top:4px">
       <div class="badge badge-gold">Quick links</div>
       <h3>Reference Links</h3>
@@ -5001,6 +5279,18 @@ function buildSearchIndex() {
   SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'Resources', title: 'TLTC Recruit Close', text: 'TLTC Recruit Close — Help a Family tab. Move the recruit from curiosity to a booked meeting with your broker. Emotional discovery, cost of inaction, readiness question, qualifying commitment, broker transition close.', subId: 'res-helpfamily', hfId: 'hf-tltc' });
   SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'Resources', title: 'TLTC Meeting Close', text: 'TLTC Meeting Close — recruiting close script. Goal: move the recruit from curiosity to a booked meeting. Slow your pace. Let silence do the work. Book the meeting.', subId: 'res-helpfamily', hfId: 'hf-tltc' });
   SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'Resources', title: 'AMA / TLTC Business Close', text: 'AMA TLTC Business Close — business opportunity close. Walk through Training, Licensing, Time, Investment in sequence. Each section builds agreement before the next.', subId: 'res-helpfamily', hfId: 'hf-ama' });
+
+  // Hard-coded BPM Presentation entries — content lives inside an iframe so DOM indexing can't reach it
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: '3 Buckets of Money', text: 'BPM Slide 7: The 3 Buckets of Money — Fixed accounts (safe, FDIC insured, 0–3% return, inflation eats buying power), Variable accounts (high risk, potential 10%+ returns, unlimited downside, can lose everything in market crash), Indexed accounts (best of both worlds, 0% floor never lose principal, captures market gains, locks in gains each year, returns capped typically 10–15%, must qualify). Risk management strategy. Indexed accounts mirror the market on the way up but when market crashes you don\'t lose a penny floor is zero. Capture upside without downside.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Indexed Accounts — Capped Returns', text: 'BPM Presentation: Indexed accounts have returns capped typically 10–15%. Returns are capped in exchange for zero downside floor protection. You never lose principal but cap limits how much you can gain in any single year. The cap is the cost of the floor. Fixed indexed accounts capped growth upside.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Rule of 72 — Doubling Money', text: 'BPM Slide 6: Rule of 72. Divide 72 by your interest rate to find out how many years it takes to double your money. At 1% (savings account) = 72 years to double. At 6% = 12 years to double. At 10% = 7.2 years to double. Time value of money compound interest growth.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Taxes — 3 Buckets: Taxable, Tax-Deferred, Tax-Advantaged', text: 'BPM Slide 7 Taxes: Three tax buckets. Taxable (grade C) — savings CDs stocks crypto, taxed every year on gains, short-term liquidity. Tax-Deferred (grade B) — 401k Traditional IRA Pension, pre-tax contributions pay taxes at retirement. Tax-Advantaged (grade A+) — Roth IRA indexed life insurance, after-tax now grows AND withdraws tax-free. Pay now or pay more later. Do you think taxes will be higher or lower in 20 years? Get as much into tax-free as possible NOW.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'BPM — Business Presentation Meeting Overview', text: 'BPM Business Presentation Meeting full 17-slide interactive deck. Slides: Business Presentation intro, 3 Eyes Framework, Who We Are WFG, The Problem financial crisis, 3-Legged Stool pension social security savings broken, Rule of 72, 3 Buckets fixed variable indexed, Taxes taxable deferred advantaged, 5 Business Concerns investment time knowledge market risk, Cash Flow Quadrant Kiyosaki ESBI, Business Opportunity, Compensation earnings, Baby Boomer timing wave, Success Stories backgrounds, How to Get Started solve 5 concerns, Values Culture faith family, Next Steps action items.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Cash Flow Quadrant — E S B I', text: 'BPM Slide: Robert Kiyosaki Cash Flow Quadrant. E = Employee left side 90% of people 10% of wealth, boss controls time and income limited upside. S = Self-Employed left side own a job not a business stop working stop earning trading time for money. B = Business Owner right side 10% of people 90% of wealth own a system money flows whether there or not true leverage. I = Investor right side money makes money financial knowledge greatest asset. Move from left side E/S to right side B/I inside the financial industry.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: '3-Legged Stool — Pension Social Security Savings', text: 'BPM Slide: The 3-Legged Stool of retirement is broken. Pensions almost gone unless government worker. Social Security SSA could run short by 2032. Personal savings most Americans living paycheck to paycheck. The whole stool is broken. Retirement security problem.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Business Opportunity — 4 Ways to Earn', text: 'BPM Slide 10: Business Opportunity. Own a Financial Agency. Not MLM not a side hustle. Licensed regulated recession-proof business. 4 ways to earn: 1. Client commissions paid 2x per week, 2. Supervisory overrides earn on team production, 3. Passive residual income recurring from existing policies, 4. Bonuses company incentives trips watches cars recognition. 100% commission no salary ceiling. Work part-time or full-time. No cold calling 100% referral based. Work from anywhere via Zoom.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Baby Boomer Wave — Timing', text: 'BPM Slide 12: Baby Boomer Wave timing. 77 million baby boomers. 10000+ turn 65 every single day. $84 trillion wealth transfer over next 20 years. Born 1946 retiring now 2011+. Financial services you are here. Best time to be in the financial industry.', subId: 'res-bpm-slides', hfId: null });
+  SEARCH_INDEX.push({ tab: 'resources', tabLabel: 'BPM Presentation', title: 'Compensation — Real Numbers', text: 'BPM Slide 11: Compensation real numbers. Associate part-time $4000/month $48000/year help 4 families. Broker higher contract level $7000/month $85000/year. Broker plus team of 5 supervisory overrides $15000/month $186000/year. You plus team of 5 full agency model $22000+/month $270000+/year. Based on helping 4 families per month save $185/month into a plan.', subId: 'res-bpm-slides', hfId: null });
 }
 
 function highlight(text, query) {
@@ -5034,7 +5324,7 @@ function expandQuery(q) {
     'iul':  'indexed universal life',
     'fia':  'fixed index annuity',
     'rila': 'registered index-linked annuity',
-    'bpm':  'business presentation meeting',
+    'bpm':  'business presentation meeting 3 buckets capped indexed fixed variable taxes quadrant stool rule 72',
     'fna':  'financial needs analysis',
     'emd':  'executive marketing director',
     'smd':  'senior marketing director',
@@ -5414,7 +5704,108 @@ const glossary = [
   { term:'Death Benefit', def:'The tax-free lump sum paid to beneficiaries upon the insured\'s death.' },
   { term:'Premium', def:'The amount a policyholder pays for insurance coverage, typically monthly or annually.' },
   { term:'Beneficiary', def:'The person(s) designated to receive the death benefit or policy proceeds.' },
-  { term:'Underwriting', def:'The process insurance companies use to assess risk and determine eligibility and pricing for coverage.' }
+  { term:'Underwriting', def:'The process insurance companies use to assess risk and determine eligibility and pricing for coverage.' },
+{ term:'Risk Mitigation', def:'The strategic reduction of financial exposure to market loss, taxation, volatility, lawsuits, inflation, or catastrophic life events.' },
+
+{ term:'Tax Efficiency', def:'Structuring wealth so clients keep more of what they earn through strategic tax positioning and tax-advantaged vehicles.' },
+
+{ term:'Tax Diversification', def:'Building multiple buckets of retirement income — taxable, tax-deferred, and tax-free — to maximize flexibility and reduce future tax exposure.' },
+
+{ term:'Tax-Free Retirement Income', def:'Retirement income structured to be received without triggering income taxation when designed properly.' },
+
+{ term:'Tax-Equivalent Return', def:'The taxable rate of return required to equal the value of a tax-free return. Used to demonstrate the hidden value of tax-free accumulation.' },
+
+{ term:'Future Tax Liability', def:'The taxes owed in the future on qualified retirement accounts such as 401(k)s and IRAs. Often called the hidden retirement tax bomb.' },
+
+{ term:'Financial Architecture', def:'The overall design and structure of a family’s financial strategy, including protection, cash flow, tax positioning, and wealth accumulation.' },
+
+{ term:'Capital Preservation', def:'A strategy focused on protecting principal while still allowing for strategic long-term growth.' },
+
+{ term:'Downside Protection', def:'Protecting assets from market loss while still participating in potential upside growth.' },
+
+{ term:'Volatility Management', def:'Reducing the negative impact of market fluctuations on long-term financial outcomes.' },
+
+{ term:'Sequence Risk', def:'The danger of suffering major market losses near or during retirement, which can permanently damage portfolio longevity.' },
+
+{ term:'Income Distribution Strategy', def:'A retirement strategy focused on how assets are withdrawn efficiently and sustainably over time.' },
+
+{ term:'Strategic Wealth Accumulation', def:'A long-term approach to building wealth using disciplined, tax-efficient, and risk-conscious financial strategies.' },
+
+{ term:'Cash Flow Optimization', def:'Improving how income is managed, directed, and utilized to maximize financial efficiency and growth.' },
+
+{ term:'Liquidity Strategy', def:'Maintaining accessible capital while still allowing long-term assets to grow efficiently.' },
+
+{ term:'Capital Allocation', def:'Strategically positioning money across different financial vehicles based on risk, taxes, liquidity, and growth objectives.' },
+
+{ term:'Financial Independence', def:'The ability to sustain one’s lifestyle without dependence on active employment income.' },
+
+{ term:'Generational Wealth', def:'Assets, values, and financial structures intentionally designed to benefit future generations.' },
+
+{ term:'Legacy Planning', def:'The process of structuring wealth transfer, protection, and family impact for future generations.' },
+
+{ term:'Estate Efficiency', def:'Strategies designed to minimize taxes, delays, and erosion of assets during wealth transfer.' },
+
+{ term:'Family Wealth Continuity', def:'Ensuring wealth, assets, and financial values successfully transfer across generations.' },
+
+{ term:'Economic Security', def:'A family’s ability to withstand financial disruptions while maintaining stability and quality of life.' },
+
+{ term:'Market Participation with Protection', def:'Participating in portions of market upside while avoiding direct exposure to full market losses.' },
+
+{ term:'Protected Growth Strategy', def:'A financial strategy designed to capture growth opportunities while minimizing downside exposure.' },
+
+{ term:'Financial Stewardship', def:'Managing money responsibly and intentionally to create long-term impact and legacy.' },
+
+{ term:'Financial Literacy Crisis', def:'The widespread lack of financial education preventing families from building long-term economic security.' },
+
+{ term:'No Family Left Behind', def:'The core crusade and mission of helping families achieve financial education, protection, and independence regardless of income level.' },
+
+{ term:'Identity Expansion', def:'The personal growth process where an individual elevates their self-image, confidence, and belief system to operate at higher levels.' },
+
+{ term:'Borrowed Belief', def:'Leveraging the confidence and conviction of mentors and leaders until personal certainty is developed.' },
+
+{ term:'Leadership Multiplication', def:'Building organizations by developing leaders who can independently train, mentor, and duplicate others.' },
+
+{ term:'Mission-Driven Entrepreneurship', def:'Building a business centered around purpose, impact, and service rather than purely income.' },
+
+{ term:'Entrepreneurial Platform', def:'A scalable business system allowing individuals to create ownership, leverage, and long-term residual income.' },
+
+{ term:'Time Leverage', def:'Creating income and impact beyond the limitations of personal hours worked.' },
+
+{ term:'Residual Income', def:'Ongoing income generated from previously built systems, teams, or assets.' },
+
+{ term:'Scalable Impact', def:'The ability to positively affect increasingly larger numbers of families through leadership and systems.' },
+
+{ term:'Strategic Positioning', def:'Presenting financial solutions in a way that aligns with a client’s long-term goals, psychology, and identity.' },
+
+{ term:'Affluent Market', def:'Professionals, business owners, and high-income earners seeking advanced financial efficiency and wealth strategies.' },
+
+{ term:'High-Identity Market', def:'Individuals who operate with high standards, leadership capacity, ambition, and long-term vision.' },
+
+{ term:'Economic Leverage', def:'Using systems, teams, capital, or financial structures to multiply output and results.' },
+
+{ term:'Financial Efficiency', def:'Maximizing the amount of wealth retained and utilized after taxes, fees, and unnecessary risk.' },
+
+{ term:'Long-Term Economic Security', def:'A stable and sustainable financial future protected against inflation, taxation, volatility, and unforeseen events.' },
+
+{ term:'Financial Impact', def:'The measurable improvement created in a family’s financial future through strategic planning and education.' },
+
+{ term:'Lifestyle by Design', def:'Intentionally creating a life centered around faith, family, freedom, and purpose rather than reacting to circumstances.' },
+
+{ term:'Quality of Life', def:'The overall level of freedom, fulfillment, health, relationships, and time experienced by an individual or family.' },
+
+{ term:'Crusade', def:'The larger mission and purpose behind the business — helping families win financially while developing leaders.' },
+
+{ term:'Vision Casting', def:'Helping individuals see a larger future possibility for their lives, family, finances, and impact.' },
+
+{ term:'Possibility Projection', def:'Projecting a compelling future vision that inspires belief, action, and personal expansion.' },
+
+{ term:'Leadership from the Front', def:'Leading through personal example, production, consistency, and activity rather than words alone.' },
+
+{ term:'Conviction', def:'Unshakable belief in the mission, products, platform, and impact of the business.' },
+
+{ term:'Value-Based Conversation', def:'A conversation focused on outcomes, impact, and transformation rather than products or transactions.' },
+
+{ term:'Strategic Discovery', def:'The process of uncovering a client’s goals, risks, inefficiencies, and opportunities through questions.' },
 ];
 const gl = document.getElementById('glossary-list');
 glossary.forEach(g => {
