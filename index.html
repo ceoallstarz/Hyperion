@@ -255,8 +255,8 @@ body {
   margin: 0 auto;
   padding: 0 var(--pad);
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  /* 12 tabs → 2 rows of 6 */
+  grid-template-columns: repeat(7, 1fr);
+  /* 13 tabs → 2 rows: 7 + 6 */
 }
 .nav-btn {
   padding: 11px 8px;
@@ -274,7 +274,7 @@ body {
 }
 .nav-btn:first-child  { border-top: none; }
 /* Subtle dividers between rows */
-.nav-btn:nth-child(n+7) {
+.nav-btn:nth-child(n+8) {
   border-top: 1px solid rgba(12,29,48,0.06);
 }
 .nav-btn:hover {
@@ -719,7 +719,7 @@ button.secondary-btn:hover { background: var(--off-white); }
   .card { padding: 18px 18px; }
   .nav-inner { grid-template-columns: repeat(4, 1fr); }
   .nav-btn:nth-child(n+5) { border-top: 1px solid rgba(12,29,48,0.06); }
-  .nav-btn:nth-child(n+7) { border-top: none; }
+  .nav-btn:nth-child(n+8) { border-top: none; }
   .nav-btn { padding: 10px 6px; font-size: 10.5px; }
   .section-header h2 { font-size: 22px; }
   .overview-metrics { grid-template-columns: repeat(2, 1fr); }
@@ -780,6 +780,7 @@ button.secondary-btn:hover { background: var(--off-white); }
     <button class="nav-btn" onclick="showTab('list',this)">📋 Build the List</button>
     <button class="nav-btn" onclick="showTab('contact',this)">📞 Contact Scripts</button>
     <button class="nav-btn" onclick="showTab('appt',this)">📅 Lock Appointments</button>
+    <button class="nav-btn" id="rfm-flipchart-nav-btn" onclick="openRFMFlipChart()">📊 RFM Flip Chart</button>
     <button class="nav-btn" onclick="showTab('close',this)">🤝 Close & Partner</button>
     <button class="nav-btn" onclick="showTab('objections',this)">🛡️ Objections</button>
     <button class="nav-btn" onclick="showTab('timeline',this)">📈 SMD→EMD Path</button>
@@ -6383,5 +6384,1001 @@ glossary.forEach(g => {
 // Build search index now that all dynamic content has been injected into the DOM
 buildSearchIndex();
 </script>
+
+<!-- ===== RFM FLIP CHART MODAL ===== -->
+<div id="rfm-flipchart-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(12,29,48,0.82);backdrop-filter:blur(6px);align-items:center;justify-content:center;">
+  <div style="position:relative;width:96vw;height:93vh;max-width:1320px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 32px 80px rgba(12,29,48,0.45);display:flex;flex-direction:column;">
+    <div style="background:#0C1D30;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;flex-shrink:0;border-bottom:2px solid #C9A84C;">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">📊</span>
+        <span style="font-size:13px;font-weight:700;letter-spacing:.06em;color:#C9A84C">RFM — FLIP CHART</span>
+      </div>
+      <button onclick="closeRFMFlipChart()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.85);padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">✕ Close</button>
+    </div>
+    <iframe id="rfm-flipchart-frame" style="flex:1;border:none;width:100%;height:100%" srcdoc=""></iframe>
+  </div>
+</div>
+
+<template id="rfm-flipchart-tpl"><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RFM — Master Presentation Script v3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B4B;--navy2:#162055;--navy3:#1e2d6e;
+  --gold:#C9A84C;--gold2:#E8C97A;--gold-bg:rgba(201,168,76,.10);
+  --crimson:#8B1A1A;--crimson2:#B22222;--crimson-bg:#FAECE7;
+  --white:#FFFFFF;--off:#F7F8FC;--lgray:#E8ECF2;--mgray:#7A8399;--dgray:#3A4260;
+  --dtext:#1A2038;--green:#16A34A;--green-bg:#EAF3DE;
+  --amber:#D97706;--amber-bg:#FEF3C7;
+  --blue-bg:#E6F1FB;--blue-text:#0C447C;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#edf0f7;min-height:100vh;color:var(--dtext)}
+
+/* ---- TOP BAR ---- */
+.topbar{background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:2px solid var(--gold);position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-name{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.08em}
+.brand-tag{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.06em}
+.timer-wrap{display:flex;align-items:center;gap:8px}
+.timer-num{font-size:22px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;min-width:60px;text-align:right}
+.tbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.8);padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;transition:all .15s}
+.tbtn:hover{background:rgba(255,255,255,.2);color:#fff}
+.tbtn.danger{border-color:rgba(220,38,38,.4);color:#FCA5A5}
+.section-badge{font-size:11px;font-weight:700;letter-spacing:.08em;padding:4px 14px;border-radius:20px;background:rgba(201,168,76,.2);color:var(--gold2);border:1px solid rgba(201,168,76,.35)}
+
+/* ---- FLOW NAV ---- */
+.flowbar{background:var(--navy2);display:flex;align-items:center;overflow-x:auto;border-bottom:1px solid rgba(201,168,76,.18);padding:0 4px}
+.fstep{padding:11px 13px;font-size:11px;font-weight:600;color:rgba(255,255,255,.38);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .18s;letter-spacing:.04em;flex-shrink:0}
+.fstep:hover{color:rgba(255,255,255,.75);background:rgba(255,255,255,.04)}
+.fstep.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(201,168,76,.08)}
+.fstep.done{color:rgba(255,255,255,.3)}
+.fstep.done::before{content:'✓ ';color:var(--green)}
+.fdiv{color:rgba(255,255,255,.2);font-size:14px;padding:0 2px;flex-shrink:0}
+
+/* ---- LAYOUT ---- */
+.main{display:grid;grid-template-columns:1fr 290px;min-height:calc(100vh - 88px)}
+.script-area{padding:22px 26px;overflow-y:auto;background:var(--off)}
+.sidebar{background:#fff;border-left:.5px solid var(--lgray);padding:16px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:14px}
+
+/* ---- SECTION HEADER ---- */
+.sec-label{font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--gold);text-transform:uppercase;margin-bottom:5px}
+.sec-title{font-size:21px;font-weight:700;color:var(--navy);margin-bottom:18px;line-height:1.25;font-family:Georgia,serif}
+
+/* ---- SCRIPT BLOCKS ---- */
+.sblock{background:#fff;border:.5px solid var(--lgray);border-radius:10px;padding:15px 17px;margin-bottom:11px;cursor:pointer;transition:all .15s;position:relative}
+.sblock:hover{border-color:rgba(201,168,76,.45);background:#FFFDF7}
+.sblock.active-block{background:#FFFBF0;border-color:rgba(201,168,76,.75);border-left:3px solid var(--gold)}
+.sblock.done-block{opacity:.42}
+.sblock.done-block::after{content:'✓';position:absolute;top:13px;right:14px;color:var(--green);font-size:13px;font-weight:700}
+.btype{font-size:10px;font-weight:700;letter-spacing:.1em;display:inline-block;padding:2px 9px;border-radius:3px;margin-bottom:9px;text-transform:uppercase}
+.bt-speak{background:#EAF3DE;color:#27500A}
+.bt-ask{background:#FAEEDA;color:#633806}
+.bt-story{background:#E6F1FB;color:#0C447C}
+.bt-close{background:#FAECE7;color:#712B13}
+.bt-trans{background:#EEEDFE;color:#3C3489}
+.bt-fire{background:#FEF3C7;color:#92400E}
+.bt-pause{background:#F1EFE8;color:#444441}
+.bt-engage{background:#FBEAF0;color:#72243E}
+
+/* ---- SCRIPT TEXT ---- */
+.stext{font-size:14px;line-height:1.82;color:#2A3050}
+.stext strong{color:var(--crimson2);font-weight:700}
+.stext em{color:var(--mgray);font-style:italic;font-size:13px}
+.stext .pn{display:inline-block;background:#FEF3C7;color:#92400E;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:700;font-style:normal;margin:0 2px}
+.stext .tl{display:block;background:linear-gradient(90deg,rgba(201,168,76,.13),transparent);border-left:3px solid var(--gold);padding:9px 13px;border-radius:0 6px 6px 0;margin:11px 0;font-size:13px;font-style:italic;color:#3C3010;font-weight:600}
+.stext .quote{display:block;border-left:3px solid var(--crimson2);padding:8px 13px;margin:10px 0;background:var(--crimson-bg);border-radius:0 6px 6px 0;font-style:italic;color:#712B13;font-size:13.5px}
+
+/* ---- SPECIAL BOXES ---- */
+.fire-box{background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border:1.5px solid #F59E0B;border-radius:10px;padding:15px 17px;margin-bottom:13px}
+.fire-box-title{font-size:10px;font-weight:700;letter-spacing:.12em;color:#92400E;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.fire-box p{font-size:13.5px;line-height:1.72;color:#431407;font-weight:600;font-style:italic}
+
+.engage-box{background:#FFFBF0;border:1px solid rgba(201,168,76,.4);border-radius:10px;padding:13px 16px;margin-bottom:11px}
+.engage-label{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.epulse{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.4s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.engage-text{font-size:13px;line-height:1.68;color:var(--dtext)}
+.engage-text strong{color:var(--crimson2)}
+
+.mission-bar{border-left:3px solid var(--crimson2);padding:12px 16px;background:var(--crimson-bg);border-radius:0 8px 8px 0;margin:11px 0}
+.mission-bar p{font-size:13.5px;color:#712B13;line-height:1.72;font-style:italic}
+
+/* ---- NAV ROW ---- */
+.nav-row{display:flex;gap:8px;margin-top:20px;align-items:center;flex-wrap:wrap}
+.nbtn{padding:8px 20px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.nbtn-prev{background:rgba(13,27,75,.08);color:var(--navy);border:1px solid rgba(13,27,75,.2)}
+.nbtn-prev:hover{background:rgba(13,27,75,.14)}
+.nbtn-next{background:var(--navy);color:#fff;padding:8px 26px}
+.nbtn-next:hover{background:#1A2D6B}
+.nbtn-crim{background:var(--crimson2);color:#fff;padding:8px 22px}
+.nbtn-crim:hover{background:#991515}
+.nbtn-green{background:var(--green);color:#fff;padding:8px 22px}
+.step-info{font-size:11px;color:var(--mgray);margin-left:auto}
+
+/* ---- PATH CHOOSER ---- */
+.path-chooser{background:#fff;border:.5px solid var(--lgray);border-radius:12px;padding:18px;margin-bottom:18px}
+.pc-title{font-size:12px;font-weight:700;color:var(--mgray);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pc-card{padding:16px;border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .2s;text-align:center}
+.pc-card:hover{transform:translateY(-1px)}
+.pc-card.edu{background:#EAF3DE;border-color:#639922}
+.pc-card.biz{background:var(--crimson-bg);border-color:#D85A30}
+.pc-card-icon{font-size:24px;margin-bottom:7px}
+.pc-card-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.pc-card.edu .pc-card-title{color:#27500A}
+.pc-card.biz .pc-card-title{color:#712B13}
+.pc-card-sub{font-size:11px}
+.pc-card.edu .pc-card-sub{color:#3B6D11}
+.pc-card.biz .pc-card-sub{color:#993C1D}
+
+/* ---- SIDEBAR CARDS ---- */
+.sb-card{border:.5px solid var(--lgray);border-radius:10px;padding:13px 14px;background:#fff}
+.sb-title{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--gold);text-transform:uppercase;margin-bottom:11px}
+
+/* OBJECTIONS */
+.obj-item{padding:7px 0;border-bottom:.5px solid var(--lgray);cursor:pointer}
+.obj-item:last-child{border-bottom:none}
+.obj-q{font-size:12px;color:var(--mgray);font-weight:500;transition:color .15s}
+.obj-item:hover .obj-q{color:var(--crimson2)}
+.obj-item.open .obj-q{color:var(--crimson2)}
+.obj-a{display:none;font-size:11.5px;color:#444;line-height:1.62;margin-top:6px;padding-left:9px;border-left:2px solid var(--gold)}
+.obj-item.open .obj-a{display:block}
+
+/* COMP TABLE */
+.comp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:.5px solid var(--lgray);font-size:11.5px}
+.comp-row:last-child{border-bottom:none;font-weight:700;color:var(--crimson2)}
+.comp-label{color:var(--mgray)}
+.comp-val{color:var(--dtext);font-weight:600}
+
+/* POWER PHRASES */
+.phrase-item{padding:5px 0;border-bottom:.5px solid var(--lgray);font-size:11.5px;color:var(--dtext);line-height:1.55}
+.phrase-item:last-child{border-bottom:none}
+
+/* FLOW MAP */
+.flow-map{display:flex;flex-direction:column;gap:6px}
+.fmap-row{display:flex;align-items:center;gap:6px}
+.fmap-node{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;flex:1;text-align:center}
+.fmap-node:hover{filter:brightness(.95)}
+.fn-edu{background:#EAF3DE;color:#27500A;border-color:#97C459}
+.fn-biz{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.fn-close{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.fn-cur{outline:2px solid var(--gold);outline-offset:2px}
+.fmap-arrow{color:var(--mgray);font-size:14px;flex-shrink:0}
+
+/* TLTC GRID */
+.tltc-grid{display:grid;gap:8px}
+.tltc-card{border-radius:8px;padding:10px 12px;border:1px solid transparent}
+.tc-t{background:#EAF3DE;border-color:#97C459}
+.tc-l{background:#E6F1FB;border-color:#85B7EB}
+.tc-tc{background:#EEEDFE;border-color:#AFA9EC}
+.tltc-label{font-size:10px;font-weight:700;letter-spacing:.08em;margin-bottom:4px}
+.tc-t .tltc-label{color:#27500A}
+.tc-l .tltc-label{color:#0C447C}
+.tc-tc .tltc-label{color:#3C3489}
+.tltc-detail{font-size:11px;line-height:1.58}
+.tc-t .tltc-detail{color:#3B6D11}
+.tc-l .tltc-detail{color:#185FA5}
+.tc-tc .tltc-detail{color:#534AB7}
+</style>
+
+<div style="display:grid;grid-template-rows:auto auto 1fr;min-height:100vh">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <span class="brand-name">RFM — MASTER SCRIPT v3</span>
+    <span class="brand-tag">TEAM COPY · DUPLICATABLE</span>
+  </div>
+  <span class="section-badge" id="sec-badge">① Setup & Mindset</span>
+  <div class="timer-wrap">
+    <span class="timer-num" id="tnum">00:00</span>
+    <button class="tbtn" id="tstart" onclick="toggleTimer()">Start</button>
+    <button class="tbtn danger" onclick="resetTimer()">Reset</button>
+  </div>
+</div>
+
+<!-- FLOW BAR -->
+<div class="flowbar">
+  <div class="fstep active" id="ft-0" onclick="goTo(0)">① Mindset</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-1" onclick="goTo(1)">② Rapport</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-2" onclick="goTo(2)">③ Three Eyes</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-3" onclick="goTo(3)">④ Path</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-4" onclick="goTo(4)">⑤ Education</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-5" onclick="goTo(5)">⑥ Business</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-6" onclick="goTo(6)">⑦ TLTC Close</div>
+  <span class="fdiv">›</span>
+  <div class="fstep" id="ft-7" onclick="goTo(7)">⑧ Objections</div>
+</div>
+
+<div class="main">
+<div class="script-area" id="script-area">
+
+<!-- ═══════════════════════════════════════════════
+     SEC 0 — MINDSET & SETUP
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-0">
+  <div class="sec-label">Before You Say a Word</div>
+  <div class="sec-title">Mindset, Posture & the Pre-Game Routine</div>
+
+  <div class="path-chooser">
+    <div class="pc-title">🔑 Know your door before you walk in</div>
+    <div class="pc-grid">
+      <div class="pc-card edu">
+        <div class="pc-card-icon">📚</div>
+        <div class="pc-card-title">Education Path (Step 4 first)</div>
+        <div class="pc-card-sub">Strong client prospect. Wants financial help.</div>
+      </div>
+      <div class="pc-card biz">
+        <div class="pc-card-icon">💼</div>
+        <div class="pc-card-title">Business Path (Step 2 first)</div>
+        <div class="pc-card-sub">Entrepreneurial. Wants income. Ready for change.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fire-box">
+    <div class="fire-box-title">🔥 Presenter mindset — lock this in before every appointment</div>
+    <p>"You are not here to convince anyone of anything. You are here to share a gift. The posture is calm, confident, and selective. You already won — you found this. Tonight you're just seeing if they're ready to find it too. The most powerful thing you can do is walk in without needing anything from them."</p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The D.E.T.E. Hook — how to edify before every appointment</span>
+    <p class="stext">
+      <strong>D — Dream:</strong> "You know how most people want more time with their family, less stress, control of their income, and a bigger purpose in life. Well — I found this."<br><br>
+      <strong>E — Excited:</strong> "I'm really serious about this because it's giving me the chance to <em>[your why — retiring a parent, getting out of debt, building for your kids, quitting your job in 18 months].</em>It's not a side gig. It truly is a purpose and a mission for me"<br><br>
+      <strong>T — Takeaway:</strong> "This might not be for you, and that's completely fine. I just wanted you to know what I'm doing. At the very least, maybe you know someone to refer."<br><br>
+      <strong>E — Edification:</strong> "I was blessed to get <strong>[Trainer's name]</strong> tonight. They're a successful entrepreneur. They are incredibly busy. So I genuinely appreciate them carving out time for us tonight. Whatever they share — I'd listen closely."
+      <span class="tl">→ Transition: "I'll stop talking, take some notes let them take it from here. I'm just grateful we're all here together."</span>
+    </p>
+  </div>
+
+  <div class="engage-box">
+    <div class="engage-label"><div class="epulse"></div> The #1 rule of every great presenter</div>
+    <div class="engage-text"><strong>Calm beats hype every single time.</strong> Not hungry. Not desperate. You're sharing — not selling. Your guest should feel like they're being let in on something rare, not pitched something desperate. Low pressure. High conviction. The trainee's energy sets the ceiling — the trainer matches and elevates it.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" disabled>← Back</button>
+    <button class="nbtn nbtn-next" onclick="goTo(1)">Rapport →</button>
+    <span class="step-info">1 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 1 — RAPPORT
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-1" style="display:none">
+  <div class="sec-label">Step 1 — Rapport</div>
+  <div class="sec-title">Connect before you present. Earn the right to be heard.</div>
+
+  <div class="engage-box">
+    <div class="engage-label"><div class="epulse"></div> Master presenter rule #1</div>
+    <div class="engage-text"><strong>"People don't care how much you know until they know how much you care."</strong> Spend real time here. Don't rush to the flip chart. The rapport IS the presentation. What you uncover in the next 10 minutes becomes the ammunition you use in the last 10. The close is built in the open.</div>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Open — disarm, connect, get permission</span>
+    <p class="stext">
+      "[Name] — I'm really glad you're here. Hey, before we get started — <strong>what's new with you lately?</strong>"<br><br>
+      <em>(Genuine warmth. Lean in. Let them talk. Don't cut them off. What they share becomes your close.)</em><br><br>
+      "I love that. Is it okay if I ask you a few questions before we jump in? I want to make sure what we cover tonight is actually relevant to your life — not just generic information."
+      <span class="tl">→ When they say yes, they've made a micro-commitment to engage. The presentation just started.</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-ask">Work & Life — go deeper than the surface</span>
+    <p class="stext">
+      "Tell me about what you do for work — how long have you been in that?"<br><br>
+      "What originally got you into that field — was it intentional, or did life just take you there?"<br><br>
+      "What's your favorite part of the work?"<br><br>
+      "And the part that drains you most — what's that?"<br><br>
+      <span class="pn">PAUSE — let them feel heard. Don't rescue them from the discomfort.</span><br><br>
+      "Do you see yourself doing that until you retire — or are you open to something different down the road?"
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-ask">Pain — find the real frustration</span>
+    <p class="stext">
+      "Let me ask you something — if you could change one thing about your current situation right now — income, time, your actual daily life — what would it be?"<br><br>
+      "How long has that been bothering you?"<br><br>
+      "And why does <em>that one</em> bother you the most?"<br><br>
+      <span class="pn">PAUSE — sit in it. Don't move on too fast.</span><br><br>
+      "And honestly — if nothing changed in the next five years — how would you feel about that?"<br><br>
+      <em>(Most people say "not good." That's your anchor for everything that follows.)</em>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-ask">Dream — paint the picture with them</span>
+    <p class="stext">
+      "Okay — let me ask you something a little different. If money and time were completely off the table — no limitations — what would your ideal life look like five or seven years from now?"<br><br>
+      "That's great. Why is that important to you?"<br><br>
+      "And who else benefits when you get there — your family, your kids, your parents?"<br><br>
+      "What's the number one thing standing between you and that life right now?"
+      <span class="tl">💡 Lock this in. This is their why. You'll use it word-for-word in the close.</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-trans">Bridge — transition into the presentation</span>
+    <p class="stext">
+      "Does your current path realistically get you to that life? Will you genuinely have more freedom going this route?"<br><br>
+      <span class="pn">Pause. Let them be honest with themselves.</span><br><br>
+      "Here's what I've found. <strong>People don't actually want a business. What they want is to eliminate the stress, get their time back, and feel in control of their life again.</strong> The business is just the vehicle.<br><br>
+      Here's the thing — we're pretty selective about who we sit with. We're not looking to add a warm body. We're looking for the right person. So let me show you what this looks like — and we'll both figure out together if it makes sense."
+      <span class="tl">→ "Before we go any further, let me show you three ways to look at what we do tonight…"</span>
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(0)">← Mindset</button>
+    <button class="nbtn nbtn-next" onclick="goTo(2)">Three Eyes →</button>
+    <span class="step-info">2 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 2 — THREE EYES + COMPANY
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-2" style="display:none">
+  <div class="sec-label">Step 1 — Company Overview</div>
+  <div class="sec-title">Three sets of eyes. One mission. A revolution in financial services.</div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The Three Sets of Eyes — set the frame</span>
+    <p class="stext">
+      "As you listen tonight, I want you to look at this from <strong>three completely perspectives.</strong> All three are valuable. Only one might be right for you right now — and honestly, that's completely fine."<br><br>
+      <strong>First — Referrals</strong> As you hear this, who do you know that could benefit from financial education? We're 100% referral-based — no cold calling, no door knocking, no buying leads. If a name comes to mind, just hold onto it. We'll come back to it.<br><br>
+      <strong>Second — Can this help me and my family:</strong> We're about to share some powerful but straightforward financial concepts that most families were never taught. If it resonates and you'd like a complimentary financial game plan for your own family — it's completely free, no pressure. We'll offer that at the end.<br><br>
+      <strong>Third — Who do you know</strong> We're expanding nationally and looking for quality people to onboard. No background in finance required — only the right character. <strong>If you or someone you know wants more time freedom, more income, and a bigger purpose — we'd love to have a conversation. We're not looking for everyone. We're looking for the right ones.</strong>
+      <span class="tl">→ "Hold all three in mind. Now let me show you who we are and why we are different from every other financial firm you've seen."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Who We Are — credibility without arrogance</span>
+    <p class="stext">
+      "Our company is <strong>Revolution Financial Management</strong> — backed by Transamerica and the Aegon Group have been around since the 1800's. Over <strong>$700 billion in assets</strong>. You've probably seen that pointy iconic building in San Francisco — that's the Transamerica building. That's us.<br><br>
+      In fact — there's a good chance we're already managing the 401(k) at your current job and you don't even know it.<br><br>
+      But what we're most proud of is this: <strong>we're revolutionizing the way financial information is distributed to everyday families.</strong> Amazon did it to retail. Uber did it to transportation. Starbucks did it to coffee. We're doing it to financial services — and we're just getting started.<br><br></span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">What We Do — the four pillars</span>
+    <p class="stext">
+      "We help families with four things:<br><br>
+      <strong>① Short and long-term savings</strong> — emergency funds, retirement accounts, college planning.<br>
+      <strong>② Insurance protection</strong> — life insurance, long-term care, income replacement. Never being a burden to our families<br>
+      <strong>③ Debt elimination</strong> — like credit cards and student loans.<br>
+      <strong>④ Wealth preservation</strong> — wills, trusts, making sure what you build doesn't get eaten by probate or estate taxes when you're gone.<br><br>
+      And we do all of it <strong>through education and awareness.</strong> We show families what they didn't know they didn't know. And then we help them fix it.<br><br>
+      Most Americans are living paycheck to paycheck. About half of their income goes to living expenses like rent, gas, and food. A quarter goes to taxes. Another quarter goes to debt, leaving very little to save.<br><br>
+      We help them decrease taxes, eliminate debt so they can save more to do the things they want. Like save more for retirement, their kids education, and making sure to protect their families and their money, and in your case.....<br><br>
+      We do this for free. Zero sit-down fee. Since we're a broker dealer and not captive to just one company, we offer solutions and strategies from the top 200 A rated companies in the industry. And, when we find a company that best fits our client's needs, we get paid — the same companies you've probably heard of: Transamerica, Nationwide, Pacific Life, Fidelity. They pay us to bring them clients — which means our clients never pay a dime to us directly. It's a genuine win-win."
+      <span class="tl">→ "Now let me ask you — which of these areas do you think would help you the most right now?"</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-ask">The 990 Out of 1,000 — the gut punch</span>
+    <p class="stext">
+      "Let me ask you — were you ever actually taught in school how money works? How to invest? How taxes erode your retirement? How to protect what you build?"<br><br>
+      <span class="pn">Let them answer. Almost always no.</span><br><br>
+      "Nobody was. So here's a question — if we put <strong>1,000 Americans</strong> in a room right now, how many do you think have ever sat down with a licensed financial professional and actually built a financial plan?"<br><br>
+      <span class="pn">Pause. Let them guess.</span><br><br>
+      "It's about <strong>10 out of 1,000.</strong> Which means <strong>990 families</strong> Which means 990 families — teachers, nurses, contractors, people exactly like the ones in this room — are out here trying to figure it out on their own. Because the traditional financial industry usually only opens its doors to people with $250,000 or more in liquid assets just to have the conversation. They’re built to serve the top 1%. We’re here for the other 99%.<br><br> 
+      <strong>America needs a different kind of financial company — one that actually educates and serves everyday families.That's who we are.</strong><br><br>
+      Would you agree that everyone you know — maybe including yourself — could benefit from this kind of information?"
+      <span class="pn">Let them agree. Let it land quietly.</span>
+      <br><br>And from a business standpoint, it's a wide open market. Our mission is to serve this huge underserved market.
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(1)">← Rapport</button>
+    <button class="nbtn nbtn-next" onclick="goTo(3)">Path Choice →</button>
+    <span class="step-info">3 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 3 — PATH DECISION
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-3" style="display:none">
+  <div class="sec-label">Decision Point</div>
+  <div class="sec-title">Read the room. Choose the route. Let them lead.</div>
+
+  <div class="engage-box">
+    <div class="engage-label"><div class="epulse"></div> The most powerful question in the whole presentation</div>
+    <div class="engage-text"><strong>"So tell me — are you more interested in learning how we help families save more and protect what they have… or are you more curious about how people are building their own income and businesses here? Or honestly — both?"</strong><br><br><em>Shut up and listen. Their answer tells you everything. Most say both — but how they say it tells you which to lead with. The one they mention first with the most energy — that's your path. Energy never lies.</em></div>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-trans">If they lean EDUCATION first →</span>
+    <p class="stext">
+      "I love that. The financial concepts side is where most people's eyes open the widest — because they realize nobody ever taught them this. Let me show you three principles the wealthy have lived by for decades that most middle-class families never get access to. This is going to make total sense."
+      <span class="tl">→ Proceed to Section 5 — Education</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-trans">If they lean BUSINESS first →</span>
+    <p class="stext">
+      "Perfect — let's go there first. I want to show you how people from every background imaginable — teachers, dental hygienists, speech therapists, construction workers, professional athletes, people with zero finance experience — are building real income and real freedom here. And then we'll loop back to the financial education side so you see the full picture."
+      <span class="tl">→ Proceed to Section 6 — Business</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-trans">Standard path — cover both →</span>
+    <p class="stext">
+      "Great. We'll cover both — and here's the order I'd suggest: let's start with the financial concepts, because once you understand how money actually works, the business side makes complete sense. And then I'll show you the opportunity — which, honestly, is where most people get the most excited."
+      <span class="tl">→ Education first, then Business</span>
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(2)">← Three Eyes</button>
+    <button class="nbtn nbtn-next" onclick="goTo(4)">Education →</button>
+    <button class="nbtn nbtn-crim" onclick="goTo(5)" style="margin-left:4px">Business →</button>
+    <span class="step-info">4 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 4 — EDUCATION / FLIP CHART
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-4" style="display:none">
+  <div class="sec-label">Step 4 — Financial Education</div>
+  <div class="sec-title">The broken stool. Three principles the wealthy live by.</div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The Three-Legged Stool — why the old system is broken</span>
+    <p class="stext">
+      "Retirement used to be described as a three-legged stool. Three legs. All three had to hold for you to be stable.<br><br>
+      <strong>Leg 1 — Pensions.</strong> Companies used to pay you for life after you retired. Guaranteed income for the rest of your days. But here's the reality: most companies can no longer afford that. People are living to 85, 90, even 100 years old now — and a pension that was designed to pay out for five or ten years suddenly has to run thirty. That leg is gone for most of us unless you're working for the government.<br><br>
+      <strong>Leg 2 — Social Security.</strong> Here's something most people don't know. If you go to the Social Security website it will actually tell you — in writing — that the trust fund could run out by 2032. That's why we call it Social Insecurity.<br><br>
+      <strong>Leg 3 — YOU.</strong> Your own savings. Your own investments. Your own decisions. <strong>This is the only leg you actually control.</strong><br><br>
+      So the real question becomes: how do we build YOUR third leg strong enough that you never have to depend on a job or a government program to tell you when you're allowed to stop working?"
+      <span class="tl">→ "That's what the three principles are for. Let's go through them."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Principle 1 — Rate of Return (Rule of 72)</span>
+    <p class="stext">
+      "<strong>Principle 1: Make your money work harder than you do.</strong><br><br>
+      Albert Einstein figured out a formula called the <strong>Rule of 72.</strong> Take 72, divide it by whatever interest rate your money is earning, and that tells you how many years it takes your money to double.<br><br>
+      At <strong>1%</strong> — which is more than what most banks actually pay right now — your money doubles every <em>72 years.</em> So if you put $10,000 in the bank at 29 years old, it becomes $20,000 when you're 101. <span class="pn">Pause. Let that land.</span><br><br>
+      We'll be dead. And if we're not — I don't know what $20,000 is going to get us at that point.<br><br>
+      Now at <strong>10% rate of return</strong>, your money doubles every <em>7.2 years.</em> That same $10,000 at age 29 becomes <strong>$320,000 by the time you're 65.</strong> Same person. Same money. Same amount of time. <strong>The only difference is where you put it.</strong><br><br>
+      <span class="pn">Ask:</span> 'So why aren't people getting 10% returns?
+      <span class="tl">→ "Because they don't know where or the think it's too risky. Which brings us to our second wealth principle"</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Principle 2 — Risk Management (Three Buckets)</span>
+    <p class="stext">
+      "<strong>Principle 2: Protect money grow — because the best money you ever make is the money you never lose.</strong><br><br>
+      Your money can grow in three different ways. Most people only know two of them.<br><br>
+      <strong>Fixed accounts</strong> — bank savings, CDs, money market. Your money is safe, guaranteed. But here's the problem nobody talks about: inflation runs about 2 to 5% per year. Your money grows slow, but it's losing buying power in real life. We have a phrase for it: <strong>you're going broke safely.</strong><br><br>
+      <strong>Variable accounts</strong> — stocks, mutual funds, your 401(k), crypto. When the market's up, great — you're happy, you're making money. But it can have <em>unlimited downside</em> as well?  Do you know someone who was about to retire in 2008 when the market dropped 38 to 40%? <span class="pn">Pause. Let them respond.</span> They had to go back to work for 7 or 8 more years. And, finally...<br><br>
+      <strong>Indexed accounts</strong> — this is the one most families have never heard of.<br><br>
+      Your money mirrors the market going up and you capture the gains. When the market drops — <strong>You don't lose a single penny.</strong> Like a staircase — always moving forward, never going backward. It locks in your gains so your principle never loses.<br><br>
+      <span class="pn">Ask:</span> 'So, where do you want most of your money to grow - Fixed, variable, or indexed?'"
+      <span class="pn">Let them choose indexed. Let the insight be theirs.</span>
+      <span class="tl">→ "Now here's the final wealth principle. Taxes."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Principle 3 — Taxes (The Tax-Exempt Strategy)</span>
+    <p class="stext">
+      "<strong>Principle 3: Keep more of what you earn. It's not about what you make — it's about what you keep.</strong><br><br>
+      Three tax categories. Every dollar you save will fall into one of these:<br><br>
+      <strong>Tax-Now</strong> — savings accounts, brokerage accounts, crypto. You pay taxes on your gains every single year. Good for short-term liquidity, but terrible for long-term growth.<br><br>
+      <strong>Tax-Later</strong> — your 401(k), traditional IRA. You put the money in pre-tax, it grows tax free, and you pay taxes when you retire and pull it out. Sounds great, but here's the real question: if taxes go up in the next 20 or 30 years, and you're pulling out your 401(k) income in retirement — are you going to pay more taxes then, or less?<br><br>
+      <span class="pn">Ask: Do you think taxes are going up or down in the future? Let them answer.</span><br><br>
+      Exactly. Nobody knows for sure — but you're writing a blank check to Uncle Sam and saying, 'Cash this when I retire. Tell me then how much I owe you.'<br><br>
+      <strong>Tax-Exempt</strong> — this is where the wealthy put their money first. You pay taxes on the seed, not the harvest. Your money grows completely tax-free. When you retire and pull it out — <strong>that money is entirely yours. Doesn't matter who's in the White House, what Congress does, what the IRS decides to do next — it's tax-free.</strong><br><br>
+      Two vehicles make this possible: the <strong>Roth IRA</strong> and the <strong>IUL</strong> — an indexed universal life policy with a cash accumulation component.<br><br>
+      'So — if I could show you a way to get a good rate of return, never lose money in the market, and never pay taxes — who in your life needs to know about this right now?'"
+      <span class="pn">Get referrals here. Pause long enough for them to name people.</span>
+      <span class="tl">→ "This is exactly the kind of clarity we provide families in a complimentary financial plan. Now let me show you what that next step looks like."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">Post-Education Bridge — from interest to appointment</span>
+    <p class="stext">
+      <strong>"Out of everything we just went through — What stood out the most?"</strong> <span class="pn">Wait. Let them process. Then dig deeper.</span><br><br>
+      "That makes total sense — and honestly, I hear that from almost every family we sit with. Can I ask — why do you think that one grabbed you the most?" <span class="pn">Lean in. Lower your voice slightly. Make it personal.</span><br><br>
+      "Got it. And here's what I want you to understand — everyone's situation is different. What we do is put together a complimentary financial needs analysis — it's not a product pitch, it's more like a financial roadmap. We look at where you are now, where you want to go, and what gaps exist between here and there. Even if you don't change a single thing, at least you'll <strong>know.</strong> And knowing is everything.<br><br>
+      How would having that kind of clarity — actually knowing your number — how would that change things for your family right now?"<br><br>
+      <span class="pn">PAUSE — let that breathe.</span><br><br>
+      "Perfect. So let's lock in a time. What works better for you — later this week or early next week?" <em>(Pull out the calendar. This is an appointment, not a maybe.)</em>
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(3)">← Path</button>
+    <button class="nbtn nbtn-next" onclick="goTo(5)">Business Opportunity →</button>
+    <span class="step-info">5 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 5 — BUSINESS OPPORTUNITY
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-5" style="display:none">
+  <div class="sec-label">Step 2 — Business Opportunity</div>
+  <div class="sec-title">The system. The income. The life on the other side of the decision.</div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The Dream vs. Reality — why most people stay stuck</span>
+    <p class="stext">
+      "Most people dream about owning their own business. And if you ask them why, what they're really chasing is <strong>freedom — the freedom to control their time, grow their income without a ceiling, and build something they're genuinely proud of.</strong><br><br>
+      So why doesn't everyone do it? Five things stop them: <strong>Investment. Time. Knowledge. Need. Risk.</strong><br><br>
+      They think about it. They talk about it. They watch other people do it. And then they do nothing.<span class="pn">Pause.</span><br><br>
+      I'm gonna show you how we address those concerns and come back to this. But first...
+      <span class="tl">→ "Let me start with how most people make money — and why most will never achieve true financial freedom."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The Cash Flow Quadrant — which side are you on?</span>
+    <p class="stext">
+      "Robert Kiyosaki wrote a book called <em>Rich Dad Poor Dad</em> — if you haven't read it, it needs to be on your list. His follow-up, <em>Cash Flow Quadrant</em>, breaks down the four ways people generate income. And here's what's crazy: <strong>90% of people do the work the left side — but 90% of wealth is on the right side.</strong><br><br>
+      <strong>Employee</strong> — You trade time for money. 40 hours in, 40 hours paid. Your boss controls your schedule, your ceiling, your vacation time, and your sense of security.<br><br>
+      <strong>Self-employed</strong> — More freedom, but you own a job. The dentist. The barber. The real estate agent. The personal trainer. Great, but the moment they're not cleaning teeth, actively cutting hair or selling a house or running that class. What happens? The income stops. They don't own a business. They own a high-pressure job.<br><br>
+      <strong>Business Owner</strong> — You own a <em>system.</em> Think of McDonald's. You ever see the owner of McDonald's flipping burgers? No, they recruit a buncha teenagers and enjoy a system that produces revenue whether they're in the building or on a beach in Hawaii. <strong>That's leverage.</strong><br><br>
+      <strong>Investor</strong> — Money makes money for you. This is what we help our clients build.<br><br>
+      Our model moves you from the left side of this quadrant to the right side — inside one of the fastest-growing, highest paid, most recession-proof industries in American history."
+      <span class="tl">→ "And here's how the system actually works."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The System — scalable, duplicatable, and it works</span>
+    <p class="stext">
+      "Some of you might think — 'I don't have a passion for financial services.' That's actually fine. Because the owner of a McDonald's franchise may not have a passion for a Big Mac. <strong>It's not the burger. It's the system that generates the income.</strong><br><br>
+      Our model is structured exactly like real estate — but without the high cost of entry or commission droughts:<br><br>
+      — Get your <strong>license</strong> (state-issued, regulated — just like a real estate license)<br>
+      — Become an <strong>agent</strong> — help families with financial plans, earn commission directly from the companies we represent<br>
+      — Become a <strong>broker</strong> — build a team, earn supervisory overrides on every transaction your agents complete<br><br>
+      Here's what makes this unlike every traditional business: <strong>scalability with zero overhead.</strong> To double a restaurant, you buy another restaurant, deal with more employees, more headache. To double your income here — you bring on one quality business partner. Zero additional capital. Zero rent. Zero inventory. <strong>Instant leverage.</strong><br><br>
+      It's simple, it's duplicatable, and it's been proven by thousands of people from every background you can imagine — people who came in with no experience in finance whatsoever. Our system is the equalizer."
+      <span class="tl">→ "Now let me show you exactly what the income looks like."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">How We Get Paid — five income streams</span>
+    <p class="stext">
+      "We get paid five ways.<br><br>
+      <strong>1. Production income</strong> — When you help a family put together a plan at around $185 to $200 a month, the company we place that plan with pays you approximately <strong>$1,000.</strong> Help one family per week: $1,000 a week. Help a few families a day — and you've replaced your income.<br><br>
+      <span class="pn">Slowly. Pause here.</span> 'Imagine an extra thousand dollars per week. What would that change for your family right now?'<br><br>
+      <strong>2. Trails and renewals</strong> — Every month, you receive a residual payment. Like a royalty on work you completed once. You get paid while you sleep — literally.<br><br>
+      <strong>3. Agency override income</strong> — Build a team of just 5 licensed agents, each helping 4 families a month: <strong>$15,500 a month in supervisory overrides</strong> — on work you didn't personally do yourself. You plus that team of five: over <strong>$22,500 a month. $270,000 a year.</strong><br><br>
+      <strong>4. Performance bonuses</strong> — No quotas, no politics. Just results rewarded directly.<br><br>
+      <strong>5. Trips and lifestyle recognition</strong> — We get paid twice a week — Tuesdays and Fridays. That's 8 to 9 paydays a month. And we go to Hawaii, Europe, the Bahamas — company-paid — for hitting production goals with your team.<br><br>
+      <span class="pn">Slowly. Let it land:</span> 'Imagine building that part-time over the next 18 months. How does your life look different than it does today?'"
+      <span class="tl">→ "And here's why the timing of this decision has never been more powerful in American history."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">The Baby Boomer Wave — why the timing is right NOW</span>
+    <p class="stext">
+      "77 million Americans were born between 1946 and 1964 — the <strong>Baby Boomers.</strong> The largest generation this country has ever seen. Every major industry that positioned itself to serve that generation as they moved through life created massive, generational wealth.<br><br>
+      When they were babies: baby food companies exploded. Gerber. Johnson & Johnson.<br>
+      When they were toddlers: Toys 'R Us. Mattel. Barbie.<br>
+      When they were teenagers: fast food. McDonald's built its empire serving 77 million hungry kids who didn't want to eat at home.<br>
+      When they needed cars: the Ford Mustang became the #1 selling car in America — not because it was the best car ever built, but because 77 million people wanted it.<br>
+      When they needed homes: real estate in the 1980s. You could have barely known what you were doing and sold a house a day. Just follow the 77 million people.<br><br>
+      Now here's where we are today: <strong>as of January 1st, 2011, the first Baby Boomer turned 65.</strong> And right now — every few seconds — another one is hitting retirement age. They are sitting on trillions of dollars in 401(k)s, IRAs, and pension accounts that need to be restructured, protected, and transferred. And by law — none of that can happen without the help of a licensed financial professional.<br><br>
+      <strong>This wave is not coming. This wave is here.</strong> And our challenge isn't finding clients. Our challenge is not having enough trained, licensed, quality people to service the need. That is why we're here."
+      <span class="tl">→ "And the people we're looking for — let me tell you exactly who thrives here."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">Who We Look For — character above all else</span>
+    <p class="stext">
+      "The reason people who onboard with us stay and grow comes down to one thing: <strong>culture.</strong><br><br>
+      We're built on five core values:<br>
+      <strong>Personal growth</strong> — you'll grow more in 90 days here than most people grow in years outside of this environment.<br>
+      <strong>Faith and family first</strong> — always. Non-negotiable. Faith, family, then business — in that exact order.<br>
+      <strong>Strength of character</strong> — doing the right thing when nobody's watching. We can teach anyone this business. We cannot teach someone to be a good person. That has to come in the door with you.<br>
+      <strong>Teamwork</strong> — you don't win alone here, and we don't ask you to.<br>
+      <strong>Recognition</strong> — because when you feel seen, you do great work.<br><br>
+      <strong>We are not looking for everyone. We are looking for the right ones.</strong><br><br>
+      The people who do best here? Medical professionals. Military. Teachers. Customer service. Church leaders. People who already know how to serve other people — because at its core, that's all this work is. <strong>We serve families. And people who are built to serve become unstoppable here.</strong>"
+      <span class="tl">→ "Let me show you some real people — and their real backgrounds — who are doing this."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-story">Real People, Real Backgrounds — make it believable</span>
+    <p class="stext">
+      "These aren't manufactured success stories.<br><br>
+      <strong>From Malaysia, English as a second language, no financial background</strong> — now the highest-paid woman in our company at over $6 million a year.<br><br>
+      <strong>Taxi cab driver from India, migrated to Canada</strong> — now making over $14 million a year in our company. Same system.<br><br>
+      <strong>Professional NFL Super Bowl Champ and Hall of Famer</strong> — Runs the San Diego branch making multiple 6 figures<br><br>
+      <strong>From living in a trailer in Montana and a surfer living in his car</strong> — to Making $3.5 million living a life of Faith, Family First<br><br>
+      <strong>Nurse Practioners from Africa</strong> - Making over 8 figures.<br><br>
+      Not one of them came from a background in finance. Not one of them had a financial degree. <strong>They followed a system. And the system works.</strong>"
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">Business Close — pull the emotional anchor</span>
+    <p class="stext">
+      <strong>"Out of everything I've shared tonight — what hit you? What resonated the most?"</strong> <span class="pn">Wait. Dig. Tie it to their family, their time, their dreams from the rapport section.</span><br><br>
+      <strong>"I appreciate you sharing that. Now — if you actually built this, what would that do for your life? What would change for your family specifically?"</strong> <span class="pn">Pause. Let them sit in the possibility.</span><br><br>
+      <strong>"Picture this — 18 months from now, you actually did it. How does your day look different? What are you doing that you can't do today?"</strong><br><br>
+      <strong>"So here's the honest question. If there was a clear first step, with full support from people who've already done it, and it didn't cost you anything to even find out if it's the right fit — what's the reason you wouldn't at least explore it?"</strong><br><br>
+      <strong>"If we brought you in — what do you bring to the table? What makes you the right person for this?"</strong> <span class="pn">Let them sell themselves to you. This is powerful.</span><br><br>
+      <strong>"Those are exactly the qualities we look for. So — does it make more sense to start now, or do you have questions you'd want answered first before we move forward?"</strong>
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(4)">← Education</button>
+    <button class="nbtn nbtn-crim" onclick="goTo(6)">TLTC Close →</button>
+    <span class="step-info">6 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 6 — TLTC CLOSE
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-6" style="display:none">
+  <div class="sec-label">The Close — TLTC</div>
+  <div class="sec-title">Training &nbsp;·&nbsp; Licensing &nbsp;·&nbsp; Time Commitment</div>
+
+  <div class="fire-box">
+    <div class="fire-box-title">🔥 Set the tone before you go into TLTC</div>
+    <p>"I'm going to be straight with you. This is going to stretch you. You'll do uncomfortable things. It won't feel natural at first. People start and some don't finish. But the ones who give it a real, genuine shot — their lives change. Period. What I'm about to show you isn't a guarantee — it's an opportunity. What you do with it is entirely yours to decide."</p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">T — Training</span>
+    <p class="stext">
+      "Let me ask you something — if you're going to do this, would you agree that having a great training system is the difference between struggling and thriving?" <span class="pn">Let them agree.</span><br><br>
+      "We have classroom Training twice a week:<br>
+      — <strong>Tuesdays 6–7:30pm</strong> and <strong>Saturdays 9–10:30am</strong> — Zoom or in-person. You choose what fits your life.<br><br>
+      You're learning directly from people who are already making six and seven figures in this business — people who started exactly where you're sitting right now. No experience, no background, no connections. <strong>How valuable is that kind of info?</strong>" <span class="pn">Build the value. Let them respond.</span><br><br>
+      "And then there's <strong>field training</strong> — this is where real world experience comes from. The first time you sit through an appointment, you're like 'wow, that's a lot of information.' The second time — 'oh wait, didn't they say that the last time?' The fifth time — 'here comes that corny joke, move over — I've got this one.' <em>(smile)</em><br><br>
+      Instead of throwing you in the deep end alone, you come watch real appointments. You hear the questions clients actually ask. You see live how every scenario gets handled. <strong>By the time you're running it yourself, you're not guessing. You're executing.</strong>"
+      <span class="tl">→ "Now — the only thing that makes everything I just described legal and legitimate is the license."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">L — Licensing & Investment Breakdown</span>
+    <p class="stext">
+      "Here's the thing about financial services — the state requires a license to protect the families we serve. Have you ever had to get licensed for anything — nursing, real estate, a commercial driver's license — anything at all?" <span class="pn">Gauge comfort. Build familiarity.</span><br><br>
+      "Same concept. And two things matter most:<br>
+      <strong>You don't pay everything at once</strong> — it's fully pay-as-you-go.<br>
+      And as a 1099 independent contractor, <strong>every dollar you invest in this process is a legitimate business tax write-off.</strong><br><br>
+      Here's the complete breakdown:<br>
+      Background check: <strong>$125</strong> — goes directly to the compliance platform, not to us.<br>
+      Online classroom course: <strong>$37</strong><br>
+      State exam fee: <strong>$98</strong><br>
+      Fingerprints: ~<strong>$67</strong><br>
+      State license fee: <strong>$193</strong><br>
+      Certification courses (AML, LTC, Annuities): <strong>$90</strong><br>
+      E&O insurance (quarterly): <strong>$130</strong><br><br>
+      Total in California: roughly <strong>$600–700.</strong> Texas and other states: often less.<br><br>
+      Now let me ask you this: your very first client will pay you approximately $1,000. Every dollar you spent on licensing is a tax deduction. Does the math make sense?" <span class="pn">Pause. Let them say yes. They always do.</span>
+      <span class="tl">→ "Last piece — time. This is where most people overthink it."</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-speak">TC — Time Commitment</span>
+    <p class="stext">
+      "Almost everyone who starts with us does this part-time first. I started working 60 hours a week at my job and could only give this 4 to 6 hours. And that was enough to get momentum.<br><br>
+      Based on your current schedule — is carving out <strong>8 to 10 hours a week</strong> realistic? That covers classroom twice a week, license study time, and shadowing a field appointment." <span class="pn">Let them answer. If hesitation — explore their schedule with questions, don't push.</span><br><br>
+      "So Tuesday evenings, Saturday mornings, and a few pockets here and there — does that feel workable for where you are right now?"
+      <span class="pn">When they say yes — move to the close immediately. No lingering.</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">The Plant — getting started today</span>
+    <p class="stext">
+      "Okay — Training makes sense. Licensing makes sense. Time Commitment is workable.<br><br>
+      The very next step is a quick electronic application — it's the background check and your official registration with the company. That's the <strong>$125</strong> — goes directly to the compliance and contracting platform. Tuesday/Saturday classrooms and all field training are <strong>completely free.</strong><br><br>
+      Registration: <strong>registration.wfglaunch.com</strong><br><br>
+      <strong>"Can you see any reason why you wouldn't want to at least get that started today?"</strong><br><br>
+      <em>(If no objection — pull out the phone, go to the link together, do it right now. If objection — section 8.)</em><br><br>
+      <strong>"Perfect. Let's knock that out together while we're here."</strong>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">If they're not ready for business — pivot to client path</span>
+    <p class="stext">
+      "That's completely okay — and I genuinely respect where you are. Not everyone is at the same place in life, and we would never push someone into something they're not ready for.<br><br>
+      But here's what I do want to offer you: remember how we talked about [insert their specific pain point from rapport]? Our complimentary financial checkup is 30 to 45 minutes and it costs nothing. We look at your where you are today and where you want to be. Give you options A, B, or C, keep doing what you're doing.<br><br>
+      Worst case — you walk away knowing exactly where you stand financially, which most people never do. Best case — we find a hole in your boat or a gap, we close it, and we change your family's trajectory.<br><br>
+      Either way, you win. <strong>When's a good time this week to sit down?</strong>"
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(5)">← Business</button>
+    <button class="nbtn nbtn-green" onclick="goTo(7)">Objections →</button>
+    <span class="step-info">7 of 8</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SEC 7 — OBJECTIONS
+══════════════════════════════════════════════════ -->
+<div class="section" id="sec-7" style="display:none">
+  <div class="sec-label">Objection Handling</div>
+  <div class="sec-title">Every objection is a question in disguise — and a door left open.</div>
+
+  <div class="engage-box">
+    <div class="engage-label"><div class="epulse"></div> Master presenter mindset on objections</div>
+    <div class="engage-text"><strong>An objection is not a rejection. It's a request for more clarity.</strong> Welcome it. Stay calm. Never get defensive. The person who controls their emotion in the close controls the outcome. Hear it fully before you respond. Use their own words back to them. The goal isn't to win an argument — it's to help them make a decision they won't regret.</div>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"I don't have time."</span>
+    <p class="stext">
+      "I hear you — you sound like someone who's already stretched thin. Can I ask — what's keeping you the busiest right now?" <span class="pn">Let them answer. Don't rush past this.</span><br><br>
+      "That makes total sense. Let me ask you something honest — in the next year or two, if nothing changes, do you see yourself having <em>more</em> free time, or about the same?"<br><br>
+      <span class="pn">They'll say 'about the same.' Let them feel the weight of that.</span><br><br>
+      "Right. And isn't that exactly why you were open to hearing something like this — to eventually create the time you don't have right now?<br><br>
+      So here's what I'd suggest: if we structured this around your schedule — 8 to 10 hours a week in pockets — would that be worth at least exploring?"
+      <span class="tl">→ Anchor back to their 'why' from the rapport section. Use their exact words.</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"It's too expensive."</span>
+    <p class="stext">
+      "Completely understandable. And I want to make sure I understand what you mean — when you say 'too expensive,' are you more concerned about paying it all at once, or is it the idea of putting any money in at all?" <span class="pn">Most people worry about upfront, not total.</span><br><br>
+      "Here's what matters: you don't pay everything at once — it starts at $125. Every dollar is tax-deductible as a business expense. And your very first client pays you approximately $1,000.<br><br>
+      So let me ask you honestly — is $700 really the barrier between you and a business that could generate $1,000 a week?"
+      <span class="pn">Pause. Let them do the math in their head.</span>
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"I need to think about it."</span>
+    <p class="stext">
+      "Of course — and I respect that. I just want to make sure I'm pointing you in the right direction. When you say you need to think — are you more thinking about whether this is the right <em>fit</em> for you, or more about the right <em>timing</em>?" <span class="pn">This question diagnoses the real objection.</span><br><br>
+      "Okay. And if you decided it was the right fit — what would you be doing this for? Extra income? Career change? Getting your family in a different position?" <em>(Anchor them back to their why from rapport.)</em><br><br>
+      "Here's what I'd suggest: the very first step is just the background check — $125, a few minutes online. You can still be thinking about the bigger picture while that's processing. That way you're not losing time on a decision you're already leaning toward."
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"Is this an MLM or pyramid scheme?"</span>
+    <p class="stext">
+      "I get why that comes up — there's a lot of noise out there. Honest answer: pyramid schemes are illegal, and WFG/Revolution Financial Management is licensed in all 50 states and regulated by state insurance departments and federally through FINRA. We work with major companies like Nationwide, Pacific Life, and Transamerica. You’d have to agree those companies wouldn’t partner with us if that were true, would they? Think of it more like Keller Williams or a medical practice — you build a team, your team helps families, and everyone earns. The solutions and services are legit — financial blueprints for real families."
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"I'm not a salesperson."</span>
+    <p class="stext">
+      "Good news — neither am I, really. We're a professional financial educators. We don't sell anything — we sit down with families, understand their situation, and help them design a plan. Most of our best people were teachers, nurses, coaches — people who care about others. That's the skillset here."
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"What if I don't pass the licensing exam?"</span>
+    <p class="stext">
+      "That's a fair concern — and I respect that you're being honest with me. Let me ask: have you ever walked into a test not sure you'd pass — and passed anyway?" <span class="pn">They'll say yes. Now they've just reminded themselves they can do hard things.</span><br><br>
+      "Here's the reality: it's 150 questions and you need 60% to pass. That's basically a D-minus. And we give you the study materials, the practice exams, and a mentor who walks you through every section step by step. With that kind of support — do you honestly think you couldn't pull off a 60%?"
+    </p>
+  </div>
+
+  <div class="sblock" onclick="toggleBlock(this)">
+    <span class="btype bt-close">"I already have a financial advisor."</span>
+    <p class="stext">
+      See Objections TAB
+    </p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nbtn nbtn-prev" onclick="goTo(6)">← TLTC</button>
+    <button class="nbtn nbtn-green" onclick="goTo(0)">↺ Restart</button>
+    <span class="step-info">8 of 8</span>
+  </div>
+</div>
+
+</div><!-- end script-area -->
+
+<!-- ═══ SIDEBAR ═══ -->
+<div class="sidebar">
+
+  <div class="sb-card">
+    <div class="sb-title">Flow map</div>
+    <div class="flow-map">
+      <div class="fmap-row">
+        <div class="fmap-node fn-edu fn-cur" id="fm-0" onclick="goTo(0)">① Mindset</div>
+        <span class="fmap-arrow">→</span>
+        <div class="fmap-node fn-edu" id="fm-1" onclick="goTo(1)">② Rapport</div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--mgray);margin:2px 0">↓</div>
+      <div class="fmap-row">
+        <div class="fmap-node fn-edu" id="fm-2" onclick="goTo(2)">③ Three Eyes</div>
+        <span class="fmap-arrow">→</span>
+        <div class="fmap-node fn-edu" id="fm-3" onclick="goTo(3)">④ Path</div>
+      </div>
+      <div style="display:flex;justify-content:space-around;font-size:10px;color:var(--mgray);margin:2px 0">
+        <span>↙ Education</span><span>Business ↘</span>
+      </div>
+      <div class="fmap-row">
+        <div class="fmap-node fn-edu" id="fm-4" onclick="goTo(4)">⑤ Step 4</div>
+        <div class="fmap-node fn-biz" id="fm-5" onclick="goTo(5)">⑥ Step 2</div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--mgray);margin:2px 0">↓ paths converge</div>
+      <div class="fmap-row">
+        <div class="fmap-node fn-close" id="fm-6" onclick="goTo(6)">⑦ TLTC</div>
+        <span class="fmap-arrow">→</span>
+        <div class="fmap-node fn-close" id="fm-7" onclick="goTo(7)">⑧ Objections</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-card">
+    <div class="sb-title">TLTC at a glance</div>
+    <div class="tltc-grid">
+      <div class="tltc-card tc-t">
+        <div class="tltc-label">T — Training</div>
+        <div class="tltc-detail">Tues 6–8pm + Sat 9–11am. Zoom or in-person. Field training: shadow real appointments on your schedule.</div>
+      </div>
+      <div class="tltc-card tc-l">
+        <div class="tltc-label">L — Licensing</div>
+        <div class="tltc-detail">State Life & Health license. 150-question exam, need 60%. 12-hr online course. ~2 weeks to complete.</div>
+      </div>
+      <div class="tltc-card tc-tc">
+        <div class="tltc-label">TC — Time</div>
+        <div class="tltc-detail">8–10 hrs/week part-time. Everything on Zoom. You control your schedule.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sb-card">
+    <div class="sb-title">Licensing cost (CA)</div>
+    <div class="comp-row"><span class="comp-label">Background check</span><span class="comp-val">$125</span></div>
+    <div class="comp-row"><span class="comp-label">Online course</span><span class="comp-val">$37</span></div>
+    <div class="comp-row"><span class="comp-label">State exam</span><span class="comp-val">$98</span></div>
+    <div class="comp-row"><span class="comp-label">Fingerprints</span><span class="comp-val">~$67</span></div>
+    <div class="comp-row"><span class="comp-label">State license fee</span><span class="comp-val">$193</span></div>
+    <div class="comp-row"><span class="comp-label">Certificates</span><span class="comp-val">$90</span></div>
+    <div class="comp-row"><span class="comp-label">E&O (quarterly)</span><span class="comp-val">$130</span></div>
+    <div class="comp-row"><span class="comp-label">CA Total</span><span class="comp-val">~$700</span></div>
+  </div>
+
+  <div class="sb-card">
+    <div class="sb-title">Comp quick reference</div>
+    <div style="font-size:11.5px;line-height:1.72;color:var(--dtext)">
+      <div style="margin-bottom:6px"><strong style="color:var(--crimson2)">1 family ($185–200/mo)</strong><br>→ ~$1,000 to you</div>
+      <div style="margin-bottom:6px"><strong style="color:var(--crimson2)">4 families/mo (associate)</strong><br>→ ~$4,000/mo · $47K/yr</div>
+      <div style="margin-bottom:6px"><strong style="color:var(--crimson2)">4 families/mo (broker)</strong><br>→ ~$7,000/mo · $85K/yr</div>
+      <div style="margin-bottom:6px"><strong style="color:var(--crimson2)">Team of 5 (4 fam each)</strong><br>→ ~$15,500/mo · $186K/yr</div>
+      <div><strong style="color:var(--crimson2)">You + team of 5</strong><br>→ ~$22,500/mo · $270K/yr</div>
+    </div>
+  </div>
+
+  <div class="sb-card">
+    <div class="sb-title">Power phrases — always ready</div>
+    <div class="phrase-item">"You're going broke safely."</div>
+    <div class="phrase-item">"We take Wall Street to Main Street."</div>
+    <div class="phrase-item">"The best money you make is the money you don't lose."</div>
+    <div class="phrase-item">"You can't aim at a target you can't see."</div>
+    <div class="phrase-item">"People don't want a business — they want their time back."</div>
+    <div class="phrase-item">"90% of wealth is on the right side of the quadrant."</div>
+    <div class="phrase-item">"We're not looking for everyone — we're looking for the right ones."</div>
+    <div class="phrase-item">"If it's free, it's for me."</div>
+    <div class="phrase-item">"Social Insecurity."</div>
+    <div class="phrase-item">"Writing a blank check to Uncle Sam."</div>
+    <div class="phrase-item">"Mission over commission."</div>
+    <div class="phrase-item">"No family left behind."</div>
+  </div>
+
+  <div class="sb-card">
+    <div class="sb-title">Objections — quick access</div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "No time"</div><div class="obj-a">Will you have more time in 2 years if nothing changes? Tie back to their why. 8–10 hrs/week is doable around any schedule.</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "Too expensive"</div><div class="obj-a">Pay-as-you-go. 100% tax deductible. First client covers it. Is $700 the real barrier to $1,000/week?</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "Need to think"</div><div class="obj-a">Is it fit or timing? Anchor their why. Start with the $125 background check while they think — don't lose momentum.</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "MLM / pyramid?"</div><div class="obj-a">State-licensed. Can't serve clients without it. Paid by financial companies — not by the person who recruited you. Same regs as banks.</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "Won't pass the exam"</div><div class="obj-a">150 questions, 60% to pass. That's a D-minus. Study materials + mentor support. Ask: "Have you ever passed something you weren't sure about?"</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "Not a salesperson"</div><div class="obj-a">"Did tonight feel like sales or education?" We educate. We don't pressure. The system closes.</div></div>
+    <div class="obj-item" onclick="toggleObj(this)"><div class="obj-q">▸ "Have an advisor"</div><div class="obj-a">Second opinion — like a second doctor for heart surgery. Ask: Do you have LTC? Tax-free income? Indexed accounts? Gaps exist everywhere.</div></div>
+  </div>
+
+</div><!-- end sidebar -->
+</div><!-- end main -->
+</div><!-- end shell -->
+
+<script>
+let cur=0,total=8;
+const badges=['① Mindset & Setup','② Rapport Building','③ Three Eyes + Overview','④ Path Decision','⑤ Step 4 — Education','⑥ Step 2 — Business','⑦ TLTC Close','⑧ Objection Handling'];
+
+function goTo(n){
+  document.getElementById('sec-'+cur).style.display='none';
+  document.getElementById('ft-'+cur).classList.remove('active');
+  if(cur>0)document.getElementById('ft-'+cur).classList.add('done');
+  document.getElementById('fm-'+cur).classList.remove('fn-cur');
+  cur=n;
+  document.getElementById('sec-'+cur).style.display='block';
+  document.getElementById('ft-'+cur).classList.add('active');
+  document.getElementById('ft-'+cur).classList.remove('done');
+  document.getElementById('fm-'+cur).classList.add('fn-cur');
+  document.getElementById('sec-badge').textContent=badges[cur];
+  document.getElementById('script-area').scrollTop=0;
+  window.scrollTo({top:0,behavior:'instant'});
+  document.documentElement.scrollTop=0;
+  document.body.scrollTop=0;
+}
+
+function toggleBlock(el){
+  const isActive=el.classList.contains('active-block');
+  document.querySelectorAll('#sec-'+cur+' .sblock.active-block').forEach(b=>{b.classList.remove('active-block');b.classList.add('done-block');});
+  if(isActive){el.classList.remove('active-block');el.classList.remove('done-block');}
+  else{el.classList.remove('done-block');el.classList.add('active-block');}
+}
+
+function toggleObj(el){
+  const open=el.classList.contains('open');
+  document.querySelectorAll('.obj-item').forEach(o=>o.classList.remove('open'));
+  if(!open)el.classList.add('open');
+}
+
+let tSec=0,tRun=false,tInt=null;
+function toggleTimer(){
+  if(tRun){clearInterval(tInt);tRun=false;document.getElementById('tstart').textContent='Resume';}
+  else{tInt=setInterval(()=>{tSec++;const m=String(Math.floor(tSec/60)).padStart(2,'0');const s=String(tSec%60).padStart(2,'0');document.getElementById('tnum').textContent=m+':'+s;},1000);tRun=true;document.getElementById('tstart').textContent='Pause';}
+}
+function resetTimer(){clearInterval(tInt);tRun=false;tSec=0;document.getElementById('tnum').textContent='00:00';document.getElementById('tstart').textContent='Start';}
+</script></template>
+
+<script>
+(function(){
+  var loaded = false;
+  window.openRFMFlipChart = function() {
+    var modal = document.getElementById('rfm-flipchart-modal');
+    var frame = document.getElementById('rfm-flipchart-frame');
+    if (!loaded) {
+      frame.srcdoc = document.getElementById('rfm-flipchart-tpl').innerHTML;
+      loaded = true;
+    }
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeRFMFlipChart = function() {
+    document.getElementById('rfm-flipchart-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  };
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') window.closeRFMFlipChart();
+  });
+})();
+</script>
+
 </body>
 </html>
