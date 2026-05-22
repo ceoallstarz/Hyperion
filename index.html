@@ -730,6 +730,432 @@ button.secondary-btn:hover { background: var(--off-white); }
   .metric-box .num { font-size: 22px; }
   .metric-box { padding: 14px 12px; }
 }
+
+/* ── CONTACT SCRIPTS (embedded) ─────────────────── */
+
+  :root {
+    --navy: #0f2540;
+    --navy-mid: #1a3a5c;
+    --navy-light: #2a5080;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-pale: #fdf6e3;
+    --cream: #f9f6f0;
+    --white: #ffffff;
+    --gray: #7a8593;
+    --gray-light: #f2f4f6;
+    --border: #e2e6ea;
+    --green: #2a7d5f;
+    --green-light: #e8f5ef;
+    --green-text: #1a5c44;
+    --red-soft: #8b1a1a;
+    --red-light: #fdf0f0;
+    --amber: #d4861a;
+    --amber-light: #fef6e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--navy);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* HEADER */
+  .top-bar {
+    background: var(--navy);
+    padding: 18px 16px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .top-bar h1 {
+    font-family: 'Syne', sans-serif;
+    color: var(--gold-light);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .top-bar p {
+    color: rgba(255,255,255,0.45);
+    font-size: 11px;
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  /* MAIN NAV PILLS */
+  .main-nav {
+    background: var(--navy);
+    padding: 10px 16px 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .main-nav::-webkit-scrollbar { display: none; }
+  .nav-pill {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 24px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.55);
+    transition: all 0.18s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .03em;
+    white-space: nowrap;
+  }
+  .nav-pill.active {
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+
+  /* CONTENT AREA */
+  .content {
+    background: var(--cream);
+    border-radius: 20px 20px 0 0;
+    min-height: calc(100vh - 120px);
+    padding: 16px 14px 24px;
+    margin-top: 4px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .section-sub {
+    font-size: 12px;
+    color: var(--gray);
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  /* SCRIPT CARDS */
+  .script-card {
+    background: var(--white);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(15,37,64,0.07);
+    border: 1px solid var(--border);
+  }
+  .script-card-header {
+    padding: 13px 15px 11px;
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .script-card-header.expanded {
+    border-bottom: 1px solid var(--border);
+  }
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .icon-navy { background: rgba(15,37,64,0.08); }
+  .icon-gold { background: rgba(201,168,76,0.15); }
+  .icon-green { background: var(--green-light); }
+  .script-card-meta { flex: 1; }
+  .script-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 3px;
+  }
+  .script-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.25;
+  }
+  .chevron {
+    color: var(--gray);
+    font-size: 14px;
+    transition: transform 0.2s;
+    margin-top: 3px;
+    flex-shrink: 0;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .script-body {
+    display: none;
+    padding: 14px 15px;
+  }
+  .script-body.open { display: block; }
+
+  /* SCRIPT TEXT */
+  .script-text {
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: rgba(255,255,255,0.92);
+    font-size: 15px;
+    line-height: 1.7;
+    font-weight: 400;
+    margin-bottom: 10px;
+    letter-spacing: .01em;
+  }
+  .script-text strong {
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+  .script-text em {
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .script-divider {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin: 10px 0 7px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .script-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ALTERNATE SCRIPT */
+  .alt-script {
+    background: rgba(15,37,64,0.04);
+    border-radius: 10px;
+    padding: 13px 14px;
+    color: var(--navy);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--gold);
+  }
+  .alt-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  /* TIP BOX */
+  .tip-box {
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font-size: 13px;
+    color: var(--amber);
+    line-height: 1.6;
+    display: flex;
+    gap: 8px;
+  }
+  .tip-icon { flex-shrink: 0; }
+
+  /* HESITANCY BRANCHES */
+  .branch {
+    border-radius: 10px;
+    padding: 11px 13px;
+    margin-bottom: 8px;
+  }
+  .branch-yes { background: var(--green-light); border-left: 3px solid var(--green); }
+  .branch-maybe { background: var(--amber-light); border-left: 3px solid var(--amber); }
+  .branch-no { background: var(--red-light); border-left: 3px solid var(--red-soft); }
+  .branch-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .branch-yes .branch-label { color: var(--green-text); }
+  .branch-maybe .branch-label { color: var(--amber); }
+  .branch-no .branch-label { color: var(--red-soft); }
+  .branch-text { font-size: 14px; line-height: 1.65; color: var(--navy); }
+
+  /* 3-CALL SYSTEM */
+  .call-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .call-tabs::-webkit-scrollbar { display: none; }
+  .call-tab {
+    flex-shrink: 0;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .call-tab.active { background: var(--navy); color: var(--gold-light); border-color: var(--navy); }
+
+  .type-toggle {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    align-items: center;
+  }
+  .type-label { font-size: 11px; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: .06em; }
+  .type-btn {
+    padding: 6px 13px;
+    border-radius: 16px;
+    border: 1.5px solid var(--border);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--white);
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .type-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
+
+  .call-panel { display: none; }
+  .call-panel.active { display: block; }
+
+  /* CALL STEP HEADER */
+  .call-step-header {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 13px 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-num.c2 { background: #2a7d5f; color: #fff; }
+  .step-num.c3 { background: rgba(255,255,255,0.15); color: var(--gold-light); }
+  .call-step-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #fff; }
+  .call-step-sub { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+  /* COACH BOX */
+  .coach-box {
+    background: var(--gray-light);
+    border-radius: 10px;
+    padding: 12px 13px;
+    margin-top: 10px;
+  }
+  .coach-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--navy-mid);
+    margin-bottom: 8px;
+  }
+  .coach-item {
+    font-size: 13px;
+    color: var(--gray);
+    padding: 3px 0;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .coach-item::before { content: "→"; color: var(--gold); flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+
+  /* COMPARE TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .compare-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+    background: var(--cream);
+  }
+  .compare-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+  .compare-table td:first-child { font-weight: 600; color: var(--navy-mid); font-size: 12px; }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .badge-warm { background: rgba(201,168,76,0.15); color: var(--amber); border-radius: 14px; padding: 2px 9px; font-size: 10px; font-weight: 700; display: inline-block; letter-spacing: .04em; }
+  .badge-cold { background: var(--green-light); color: var(--green-text); border-radius: 14px; padding: 2px 9px; font-size: 10px; font-weight: 700; display: inline-block; letter-spacing: .04em; }
+
+  /* hidden panels */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* QUICK KEY */
+  .quick-key {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .qk-icon { font-size: 20px; flex-shrink: 0; }
+  .qk-text { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.55; }
+  .qk-text strong { color: var(--gold-light); font-weight: 600; }
+
 </style>
 </head>
 <body>
@@ -928,6 +1354,39 @@ button.secondary-btn:hover { background: var(--off-white); }
           <p style="font-size:13px;color:var(--gray)">You don't trade time for money here — you build a team that serves thousands of families. Top earners in WFG aren't working more hours, they're leading more people. The model was designed specifically to scale through people, not products.</p>
         </div>
 
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">Your WHY's</div>
+          <p style="font-size:11px;font-weight:600;color:var(--gold-deep);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">THE "5 LEVELS DEEP" WHY </p>    <h3>Excavate the real motivation</h3>
+        <ul class="step-list" style="margin-top:14px">
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L1</div><div class="step-body"><h4>"Why did you join RFM?"</h4><p>Common answer: "To make extra money." — This is not enough to sustain action.</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L2</div><div class="step-body"><h4>"Why do you need the extra money?"</h4><p>Typical: "To pay off debt / help my family."</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L3</div><div class="step-body"><h4>"What does helping your family look like specifically?"</h4><p>Getting specific: "My mom is struggling. I want to buy her a house."</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L4</div><div class="step-body"><h4>"What would that mean to you?"</h4><p>Emotional: "She sacrificed everything for me. She's never had financial security."</p></div></li>
+          <li class="step-item"><div class="step-num gold" style="font-size:11px;font-weight:700">L5</div><div class="step-body"><h4>"So when things get hard, what are you really fighting for?"</h4><p>The real why: "I'm fighting to change the story for my family — forever." <em style="color:var(--green-text)">THIS is what you write on your mirror.</em></p></div></li>
+        </ul>
+      </div>
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">Newbie</div>
+          <h3 style="font-size:16px">Time &amp; freedom</h3>
+          <p>Usually motivated by escaping the 9-5, being present for kids, or paying off early debt. Anchor them to a vivid future moment, not an income number.</p>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-gold">Seasoned</div>
+          <h3 style="font-size:16px">Legacy &amp; leadership</h3>
+          <p>Often motivated by building a team, creating generational wealth, or proving something to themselves. Connect prospecting to building a team that outlasts them.</p>
+          <p style="font-size:13px;color:var(--gray)">You don't trade time for money here — you build a team that serves thousands of families. Top earners in WFG aren't working more hours, they're leading more people. The model was designed specifically to scale through people, not products.</p>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-gold">Facts</div>
+          <h3 style="font-size:16px">TransAmerica/Aegon</h3>
+          <p>Transamerica/Aegon is one of the world's largest retirements, insurance and asset management companies, managing hundreds of billions globally. We’re licensed in all 50 states and regulated by state insurance departments and federally through FINRA. Over 200 of the best A Rated financial and insurance companies in the world chose to work within our platform. We have over 95,000 licensed agents. (2026) <br><br>We also offer ownership. And ability to transfer ownership to your beneficiaries. </p>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-gold">Beware</div>
+          <h3 style="font-size:16px">Candy Companies / General Agencies</h3>
+          <p>The financial services industry is full of traps — traditional companies that cap your growth and hand all the real money to a handful of regional managers, general agencies that just train their own competition until agents leave to open a shop at the other end of the strip mall, and now more than ever, candy companies flooding your phone promising flashy numbers designed to lure you away from something real. <br><br>They know exactly how to make their offer look better, but just like candy, it's colorful on the outside and hollow — or worse, poisonous — on the inside. When a competitor claims to pay 133%, 152%, or 175%, the first question you ask is "133% of what?" — because they're quoting points, not your actual contract, and when you convert their numbers to a true 100% table, WFG wins every single time, because nobody can make 100 cents become 130 cents. <br><br>Then look at their spread structure — most candy companies flank you all the way up to executive level, meaning every time someone on your team gets promoted you lose that override, while WFG's generational overrides above SMD are permanent, unchangeable, and you can even override someone with a higher title than you. Most of these companies also have one or two product carriers — one recruiting your people right now just had their only IUL carrier give them a 90-day cancellation notice for unethical behavior — while WFG has 189 providers, 379+ products, a full broker-dealer, and 25+ years of never missing a payout, with $1.37 billion paid to the field in 2023 alone. A higher contract number means nothing if it's on a smaller pizza, with a temporary structure, from a company that might not exist next year.</p>
+        </div>
       </div>
     </div>
 
@@ -937,7 +1396,7 @@ button.secondary-btn:hover { background: var(--off-white); }
       <div class="script-box" style="margin-top:10px"><span class="script-label">When they question your credibility</span>"I want to tell you something about this platform. Ed Mylett — who most people know today as one of the most respected voices in the world on wealth, success, and personal growth — he didn't discover WFG. He started here. Exactly where I'm standing right now. New, building, figuring it out. Everything he became grew from this foundation. I'm not telling you you'll be Ed Mylett. I'm telling you the platform that launched him is the same one I'm inviting you into."</div>
     </div>
   </div>
-
+</div>
 </div>
 
 <!-- ==================== BUILD THE LIST ==================== -->
@@ -1082,370 +1541,483 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
   </div>
 </div>
 
-<!-- ==================== CONTACT SCRIPTS ==================== -->
+<!-- ==================== CONTACT SCRIPTS ====================  -->
 <div class="tab" id="tab-contact">
-  <div class="section-header">
-    <div class="eyebrow">Step 2</div>
-    <h2>Contact Scripts</h2>
-    <p>The goal is never to pitch. Lead with curiosity, care, and connection. NEPQ = questions that make people feel understood, not sold.</p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">First touch — Call, they will answer</div>
-    <h3>Hot Market</h3>
-    <div class="script-box">
-      <span class="script-label">Script</span>
-      "Hey what's new? [normal small talk, listen] I'm working on a program with a friend of mine — I want to show you. When's a good time to jump on a quick Zoom for 20–30 minutes? [If they ask "What is it?"]  Say, "It's an educational platform about money. So does Tuesday or Thursday work better? Set a time & date, get their best email for the Zoom link."<br><br>[If they have some hesitancy] <br> Tell them, "It's not one of those things. I'm not here to sell you anything or sign you up for anything. I not going waste your time. I just want to share what I'm doing so I can earn your referrals if you know anyone who could benefit.
-
-What's your schedule like today or tomorrow? Quick Zoom — that's it.
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, low-pressure. The goal is only the meeting. Nothing else. </p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">New Associate Invitation</div>
-    <h3>New Associate - Hot Market</h3>
-    <div class="script-box">
-      <span class="script-label">Script</span>
-      "Hey [Name]! Hope you're doing well! So I just partnered with a new company and I'm honestly really excited about it. It's been helping me [insert 2–3 personal goals — e.g., spend more time with my family, create an extra income stream, and actually learn how money works].
-I wanted to reach out because I'd love to share what I'm doing with you — not to pressure you into anything, but so that if you know anyone who could benefit from the information, you can send them my way and I can earn your referrals.
-It's just a quick 20–30 minutes on Zoom. What does your schedule look like today or tomorrow? Perfect — what's your email? - that's it.
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, low-pressure. The goal is only the meeting. Nothing else. </p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">New Associate Invitation</div>
-    <h3>3-Way Text - New Associate - Hot Market</h3>
-    <div class="script-box">
-      <span class="script-label">3-Way Text Intro</span>
-      "Hey [Name], I wanted to introduce you to my friend and mentor [Mentor Name]. She/He is a very successful business owner that I deeply respect and have learned a lot from.
-[Mentor Name], this is my friend [Prospect Name] — the one I told you about. She/He is such a hard worker and is always open to new opportunities. I just knew you two needed to connect. - that's it.
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, a little more pressure. The goal is to keep conversation going keeping them accountable. Nothing else. </p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">3. BPM Invitation</div>
-    <h3>BPM INVITE - Hot/Warm Market</h3>
-    <div class="script-box">
-      <span class="script-label">Script</span>
-      </strong>(Jayson version)<strong> "Hey [Name]! I'm collaborating on a project with a friend and I immediately thought of you. We're hosting a free educational webinar — this Thursday at 6PM and Saturday at 9AM Pacific on Zoom. Completely free, no strings attached. It covers financial topics most people were never taught — practical, eye-opening stuff. I really think you'd get a lot out of it. Are you free Thursday or Saturday?
-<br><br>
-</strong>(Jinkie version<strong> — small talk first)
-Hey, I was literally just thinking about you! My team is hosting a free Zoom event this Thursday and Saturday at [time]. It's educational, genuinely practical, and most people walk away saying they wish they'd learned this sooner. I'd love for you to be there. Want me to send you the link?
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, a no-pressure. The goal is to quick conversation. Nothing else. </p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">Experienced Associate Invitation</div>
-    <h3></strong>Experienced Associate<strong> - Hot/Warm Market</h3>
-    <div class="script-box">
-      <span class="script-label">Script</span>
-      "Hey [Name], hope you're doing well! I've been meaning to reach out and ask if I can share with you what I do for work and business, so if you know anyone who could benefit from the information, I can earn your referrals. No pressure — and if it's not for you, no big deal. It's just a quick 20–30 minutes on Zoom. What does your schedule look like today or tomorrow? - that's it.<br><br>
-      </strong>Alternate Experienced Associate Invitation<strong> "Hey, when are you free for like 20-30 minutes? I just want to show you what I'm building and what I'm looking for. No pressure at all — I genuinely just thought of you. - that's it.
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, a no-pressure. The goal is to quick conversation. Nothing else. </p>
-  </div>
-
-  <div class="card">
-    <div class="badge badge-navy">Hesitancy?</div>
-    <h3>Reassurance</h3>
-    <div class="script-box">
-      <span class="script-label">Script</span>
-      "Hey, I totally get it — and I want to be upfront with you. This is not a sales pitch. I'm not going to ask you to buy anything or sign up for anything. I wouldn't disrespect our relationship like that.
-I just want to share some information I think is genuinely valuable. If it resonates, great. If not, no hard feelings at all. I just want to earn your referrals, sound fair? We can do a quick 20-30 minutes on Zoom. What's your email? 
-<br><br>If They Ask Again
-Totally fair question. It's an educational platform centered around financial literacy — budgeting, protection, building wealth — things most families were never taught growing up. I'm not here to make you do anything. I just believe in what I'm doing and I thought of you. If nothing else, you'll walk away with information you can actually use. What's your schedule like for a quick Zoom?
-
-    </div>
-    <p style="font-size:12px;color:var(--gray)">Key: genuine, personal, a no-pressure. The goal is to quick conversation. Nothing else. </p>
-  </div>
 
 
+<div class="top-bar">
+  <h1>📞 Contact Scripts</h1>
+  <p>Step 2 — Lead with curiosity, care, and connection</p>
+</div>
 
+<div class="main-nav">
+  <button class="nav-pill active" onclick="csShowTab('quick')">Quick Scripts</button>
+  <button class="nav-pill" onclick="csShowTab('reconnect')">3-Call System</button>
+  <button class="nav-pill" onclick="csShowTab('hesitancy')">Hesitancy</button>
+  <button class="nav-pill" onclick="csShowTab('compare')">Warm vs Cold</button>
+</div>
 
+<div class="content">
 
+  <!-- ===== TAB: QUICK SCRIPTS ===== -->
+  <div id="cs-quick" class="tab-panel active">
 
-
-  <!-- RECONNECT TRAINER — replaces NEPQ 6-step card -->
-  <style>
-    .rc-tabs { display:flex; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap; }
-    .rc-tab { padding:7px 15px; border-radius:20px; border:1.5px solid var(--border); font-size:12px; font-weight:600; cursor:pointer; background:var(--white); color:var(--navy-mid); transition:all 0.15s; font-family:'DM Sans',sans-serif; letter-spacing:.02em; }
-    .rc-tab:hover { background:var(--gray-light); }
-    .rc-tab.rc-active { background:var(--navy); color:var(--gold-light); border-color:var(--navy-mid); }
-    .rc-toggle { display:flex; align-items:center; gap:8px; margin-bottom:1.25rem; flex-wrap:wrap; }
-    .rc-toggle-lbl { font-size:12px; color:var(--gray); font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
-    .rc-btn { padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); font-size:12px; cursor:pointer; background:var(--white); color:var(--gray); transition:all 0.15s; font-family:'DM Sans',sans-serif; font-weight:500; }
-    .rc-btn.rc-active { background:var(--green); color:#fff; border-color:var(--green); }
-    .rc-call-card { background:var(--white); border:1.5px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:1rem; box-shadow:var(--shadow); }
-    .rc-call-header { padding:.9rem 1.2rem; border-bottom:1.5px solid var(--border); display:flex; align-items:center; gap:12px; background:var(--cream); }
-    .rc-badge { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; font-family:var(--serif); }
-    .rc-badge.c1 { background:rgba(201,168,76,0.15); color:var(--gold-deep); }
-    .rc-badge.c2 { background:var(--green-light); color:var(--green-text); }
-    .rc-badge.c3 { background:rgba(15,37,64,0.08); color:var(--navy); }
-    .rc-badge.cx { background:var(--gray-light); color:var(--gray); border-radius:8px; width:auto; padding:0 10px; font-size:11px; letter-spacing:.04em; }
-    .rc-call-title { font-size:15px; font-weight:600; color:var(--navy); }
-    .rc-call-sub { font-size:12px; color:var(--gray); margin-top:2px; }
-    .rc-body { padding:1.2rem; }
-    .rc-sec-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--gray); margin-bottom:8px; }
-    .rc-line { background:var(--gray-light); border-radius:8px; padding:11px 14px; font-size:14px; color:var(--navy); line-height:1.65; margin-bottom:8px; border-left:3px solid transparent; }
-    .rc-line.opener { border-left-color:var(--navy-mid); }
-    .rc-line.question { border-left-color:var(--green); }
-    .rc-line.bridge { border-left-color:var(--gold); }
-    .rc-line.close { border-left-color:#c0392b; }
-    .rc-line em { font-style:normal; color:var(--gray); font-size:12px; display:block; margin-top:5px; }
-    .rc-tip { background:var(--gold-pale); border:1px solid rgba(201,168,76,0.3); border-radius:8px; padding:10px 14px; font-size:13px; color:var(--gold-deep); line-height:1.6; display:flex; gap:8px; align-items:flex-start; margin-bottom:10px; }
-    .rc-tip::before { content:"💡"; flex-shrink:0; }
-    .rc-coach { background:var(--gray-light); border-radius:8px; padding:1rem; margin-top:1rem; }
-    .rc-coach-title { font-size:11px; font-weight:700; color:var(--navy-mid); margin-bottom:8px; text-transform:uppercase; letter-spacing:.06em; }
-    .rc-coach-item { font-size:13px; color:var(--gray); padding:3px 0; display:flex; gap:8px; align-items:flex-start; line-height:1.5; }
-    .rc-coach-item::before { content:"→"; color:var(--gold); flex-shrink:0; margin-top:1px; font-weight:700; }
-    .rc-branch-item { border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; margin-bottom:8px; background:var(--white); }
-    .rc-branch-lbl { font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; margin-bottom:6px; }
-    .rc-branch-lbl.yes { color:var(--green-text); }
-    .rc-branch-lbl.maybe { color:var(--gold-deep); }
-    .rc-branch-lbl.no { color:#8b1a1a; }
-    .rc-branch-text { font-size:13px; color:var(--navy); line-height:1.6; }
-    .rc-diff-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:.5rem; }
-    .rc-diff-table th { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--gray); padding:8px 12px; text-align:left; border-bottom:1.5px solid var(--border); }
-    .rc-diff-table td { padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--navy); line-height:1.5; }
-    .rc-diff-table tr:last-child td { border-bottom:none; }
-    .rc-diff-table .fc { color:var(--navy-mid); font-weight:600; }
-    .rc-bw { background:rgba(201,168,76,0.15); color:var(--gold-deep); border-radius:20px; padding:2px 9px; font-size:11px; font-weight:600; display:inline-block; }
-    .rc-bc { background:var(--green-light); color:var(--green-text); border-radius:20px; padding:2px 9px; font-size:11px; font-weight:600; display:inline-block; }
-    .rc-hidden { display:none; }
-    .rc-panel { }
-  </style>
-
-  <div class="card">
-    <div class="badge badge-gold">3-Call Reconnect System — NEPQ Framework</div>
-    <h3>The 3-Call Reconnect Script</h3>
-    <p style="font-size:13px;color:var(--gray);margin-bottom:1rem">Build trust → Uncover pain → Earn permission. <strong>Never pitch before Call 3.</strong></p>
-
-    <div class="rc-tabs">
-      <button class="rc-tab rc-active" onclick="rcTab('rc-call1')">Call 1 — Reconnect</button>
-      <button class="rc-tab" onclick="rcTab('rc-call2')">Call 2 — Deepen</button>
-      <button class="rc-tab" onclick="rcTab('rc-call3')">Call 3 — Invite</button>
-      <button class="rc-tab" onclick="rcTab('rc-compare')">Warm vs Cold</button>
+    <div class="quick-key">
+      <div class="qk-icon">🎯</div>
+      <div class="qk-text"><strong>The goal is only the meeting.</strong> Never pitch. Lead with curiosity and care. NEPQ = questions that make people feel understood.</div>
     </div>
 
-    <div class="rc-toggle">
-      <span class="rc-toggle-lbl">Contact type:</span>
-      <button class="rc-btn rc-active" id="rc-btn-warm" onclick="rcType('warm')">Warm (Old Friends)</button>
-      <button class="rc-btn" id="rc-btn-cold" onclick="rcType('cold')">Cold / Referral</button>
+    <!-- Hot Market -->
+    <div class="script-card">
+      <div class="script-card-header" onclick="csToggleCard(this)">
+        <div class="card-icon icon-navy">🔥</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">Program Script · Call / They'll Answer</div>
+          <div class="script-card-title">New Associate - Hot Market</div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="script-body">
+        <div class="script-text">
+          "Hey what's new? [<em>small talk — listen</em>] I'm working on a program with a friend of mine — I want to show you what we're doing. When's a good time to jump on a quick Zoom with for 20–30 minutes?<br><br>
+          [<em>If they ask "What is it?"</em>] It's an educational platform about money. So does Tuesday or Thursday work better? [<em>Set a time, get their email.</em>]"
+        </div>
+        <div class="script-divider">If hesitant</div>
+        <div class="script-text">
+          "It's not one of those things. I'm not here to sell you anything or sign you up for anything. I'm not going to waste your time. I just want to share what we're doing so I can earn your referrals if you know anyone who could benefit.<br><br>
+          What's your schedule like today or tomorrow? Quick Zoom — that's it."
+        </div>
+        <div class="tip-box"><span class="tip-icon">💡</span> Genuine, personal, low-pressure. The goal is only the meeting — nothing else.</div>
+      </div>
+    </div>
+
+    <!-- New Associate Hot Market -->
+    <div class="script-card">
+      <div class="script-card-header" onclick="csToggleCard(this)">
+        <div class="card-icon icon-gold">⭐</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">Partnered Up - New Associate Invitation</div>
+          <div class="script-card-title">New Associate — Hot Market</div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="script-body">
+        <div class="script-text">
+          "Hey [Name]! Hope you're doing well! So I just partnered with a new company and I'm really excited about it. It's been helping me [<em>2–3 personal goals — e.g., spend more time with my family, create extra income, actually learn how money works</em>].<br><br>
+          I wanted to reach out because I'd love to share with you what we're doing — no pressure, but so if you know anyone who could benefit, you can send them my way and I can earn your referrals.<br><br>
+          It's just a quick 20–30 minutes on Zoom. What does your schedule look like today or tomorrow? Perfect — what's your email? That's it."
+        </div>
+        <div class="tip-box"><span class="tip-icon">💡</span> Genuine, personal, low-pressure. The goal is only the meeting — nothing else.</div>
+      </div>
+    </div>
+
+    <!-- 3-Way Text -->
+    <div class="script-card">
+      <div class="script-card-header" onclick="csToggleCard(this)">
+        <div class="card-icon icon-navy">💬</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">New Associate · Text Intro</div>
+          <div class="script-card-title">3-Way Text — Hot Market</div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="script-body">
+        <div class="script-text">
+          "Hey [Name], I wanted to introduce you to my friend and mentor [Mentor Name]. She/He is a very successful business owner that I respect and have learned a lot from.<br><br>
+          [Mentor Name], this is my friend [Prospect Name] — the one I told you about. She/He is such a hard worker and is always open to new opportunities. I just knew you two needed to connect. That's it."
+        </div>
+        <div class="tip-box"><span class="tip-icon">💡</span> Genuine, personal, a little more accountability. Goal is to keep the conversation going.</div>
+      </div>
+    </div>
+
+    <!-- BPM Invite -->
+    <div class="script-card">
+      <div class="script-card-header" onclick="csToggleCard(this)">
+        <div class="card-icon icon-gold">📅</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">BPM Invitation · Hot / Warm</div>
+          <div class="script-card-title">BPM Invite — Webinar</div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="script-body">
+        <div class="alt-label">Version A — Jayson</div>
+        <div class="script-text">
+          "Hey [Name]! I'm collaborating on a project with a friend and I genuinely thought of you. We're hosting a free educational webinar — this Thursday at 6PM and Saturday at 9AM Pacific on Zoom. Completely free, no strings attached. It covers financial topics most people were never taught — practical, eye-opening stuff. I really think you'd get a lot out of it. Are you free Thursday or Saturday?"
+        </div>
+        <div class="alt-label" style="margin-top:10px">Version B — Jinkie (small talk first)</div>
+        <div class="script-text">
+          "Hey, I was literally just thinking about you! My team is hosting a free Zoom event this Thursday and Saturday at [time]. It's educational, genuinely practical, and most people walk away saying they wish they'd learned this sooner. I'd love for you to be there. Want me to send you the link?"
+        </div>
+        <div class="tip-box"><span class="tip-icon">💡</span> No-pressure, quick conversation. Goal is getting them to say yes to the link.</div>
+      </div>
+    </div>
+
+    <!-- Experienced Associate -->
+    <div class="script-card">
+      <div class="script-card-header" onclick="csToggleCard(this)">
+        <div class="card-icon icon-green">🏆</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">Experienced Associate · Hot / Warm</div>
+          <div class="script-card-title">Experienced Associate Invite</div>
+        </div>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="script-body">
+        <div class="script-text">
+          "Hey [Name], hope you're doing well! I've been meaning to reach out and ask if I can share with you what I do for work and business, so if you know anyone who could benefit from the information, I can earn your referrals. No pressure — and if it's not for you, no big deal. It's just a quick 20–30 minutes on Zoom. What does your schedule look like today or tomorrow? That's it."
+        </div>
+        <div class="script-divider">Alternate</div>
+        <div class="script-text">
+          "Hey, when are you free for like 20–30 minutes? I just want to show you what we're building and what we're looking for. No pressure at all — I genuinely just thought of you. That's it."
+        </div>
+        <div class="tip-box"><span class="tip-icon">💡</span> Genuine, no-pressure. Quick conversation only.</div>
+      </div>
+    </div>
+  <!-- WHY -->
+    <div class="prosp-section" id="prosp-why" style="display:none">
+      <div class="card card-gold" style="margin-bottom:16px">
+        <div class="badge badge-gold">Purpose-driven prospecting</div>
+        <h3>A weak "why" quits after the first rejection. A powerful "why" talks to 10 more people.</h3>
+        <p>Before you train your team to prospect, you must excavate their real why — not the surface answer. The real why lives 3–5 levels down.</p>
+      </div>
+      <div class="card card-navy" style="margin-bottom:16px">
+        <div class="badge badge-navy">The "5 Levels Deep" why exercise</div>
+        <h3>Excavate the real motivation</h3>
+        <ul class="step-list" style="margin-top:14px">
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L1</div><div class="step-body"><h4>"Why did you join WFG?"</h4><p>Common answer: "To make extra money." — This is not enough to sustain action.</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L2</div><div class="step-body"><h4>"Why do you need the extra money?"</h4><p>Typical: "To pay off debt / help my family."</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L3</div><div class="step-body"><h4>"What does helping your family look like specifically?"</h4><p>Getting specific: "My mom is struggling. I want to buy her a house."</p></div></li>
+          <li class="step-item"><div class="step-num" style="font-size:11px;font-weight:700">L4</div><div class="step-body"><h4>"What would that mean to you?"</h4><p>Emotional: "She sacrificed everything for me. She's never had financial security."</p></div></li>
+          <li class="step-item"><div class="step-num gold" style="font-size:11px;font-weight:700">L5</div><div class="step-body"><h4>"So when things get hard, what are you really fighting for?"</h4><p>The real why: "I'm fighting to change the story for my family — forever." <em style="color:var(--green-text)">THIS is what you write on your mirror.</em></p></div></li>
+        </ul>
+      </div>
+      <div class="grid2">
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-navy">Newbie</div>
+          <h3 style="font-size:16px">Time &amp; freedom</h3>
+          <p>Usually motivated by escaping the 9-5, being present for kids, or paying off early debt. Anchor them to a vivid future moment, not an income number.</p>
+        </div>
+        <div class="card" style="margin-bottom:0">
+          <div class="badge badge-gold">Seasoned</div>
+          <h3 style="font-size:16px">Legacy &amp; leadership</h3>
+          <p>Often motivated by building a team, creating generational wealth, or proving something to themselves. Connect prospecting to building a team that outlasts them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: HESITANCY ===== -->
+  <div id="cs-hesitancy" class="tab-panel">
+
+    <div class="quick-key">
+      <div class="qk-icon">🛡️</div>
+      <div class="qk-text"><strong>Handle hesitancy with calm confidence.</strong> Never push. Acknowledge, reassure, then redirect to the meeting — not the pitch.</div>
+    </div>
+
+    <div class="script-card" style="display:block">
+      <div class="script-card-header expanded">
+        <div class="card-icon icon-navy">🤔</div>
+        <div class="script-card-meta">
+          <div class="script-card-label">When They're Not Sure</div>
+          <div class="script-card-title">Reassurance Script</div>
+        </div>
+      </div>
+      <div class="script-body open">
+        <div class="script-text">
+          "It's not one of those things. I'm not going to ask you to buy anything or sign up for anything. I wouldn't disrespect our relationship like that.<br><br>
+          I just want to share some information I think is genuinely valuable. If it resonates, great. If not, no hard feelings at all. I just want to earn your referrals — sound fair? We can do a quick 20–30 minutes on Zoom. What's your email?"
+        </div>
+
+        <div class="script-divider">If they ask again</div>
+        <div class="script-text">
+          "Totally fair question. It's an educational platform about money — things most families were never taught growing up. I'm not here to make you do anything. I just believe in what I'm doing and I thought of you. If nothing else, you'll walk away with information you can actually use. What's your schedule like for a quick Zoom?"
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 6px; margin-bottom: 12px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy)">Response Branches</div>
+
+    <div class="branch branch-yes">
+      <div class="branch-label">✓ They say yes</div>
+      <div class="branch-text">"Cool — no pressure at all. I can walk you through exactly what I've been doing in about 20–30 minutes. You can decide then if it even makes sense for your life. What works better — evenings or daytime?"</div>
+    </div>
+    <div class="branch branch-maybe">
+      <div class="branch-label">~ Still hesitant</div>
+      <div class="branch-text">"Totally understand — a lot of people feel the same way at first. What would need to be true for you to even be curious about something like this?"<br><br>
+      <span style="font-size:13px;color:var(--gray)">Or simply: "No worries at all — I respect that. If anything changes, you know where to find me."</span></div>
+    </div>
+    <div class="branch branch-no">
+      <div class="branch-label">✗ Clean no</div>
+      <div class="branch-text">"No problem whatsoever — I'm genuinely glad we reconnected either way. Let's keep in touch."<br><br>
+      <span style="font-size:13px;color:var(--gray);font-style:italic">Never push past a clean no. Your integrity is your brand.</span></div>
+    </div>
+
+  </div>
+
+  <!-- ===== TAB: 3-CALL SYSTEM ===== -->
+  <div id="cs-reconnect" class="tab-panel">
+
+    <div class="quick-key">
+      <div class="qk-icon">📋</div>
+      <div class="qk-text"><strong>Never pitch before Call 3.</strong> Build trust → Uncover pain → Earn permission. NEPQ framework.</div>
+    </div>
+
+    <div class="call-tabs">
+      <button class="call-tab active" onclick="csShowCall('call1', this)">Call 1 — Reconnect</button>
+      <button class="call-tab" onclick="csShowCall('call2', this)">Call 2 — Deepen</button>
+      <button class="call-tab" onclick="csShowCall('call3', this)">Call 3 — Invite</button>
+    </div>
+
+    <div class="type-toggle">
+      <span class="type-label">Type:</span>
+      <button class="type-btn active" id="btn-warm" onclick="csSetType('warm')">Warm</button>
+      <button class="type-btn" id="btn-cold" onclick="csSetType('cold')">Cold / Referral</button>
     </div>
 
     <!-- CALL 1 -->
-    <div id="rc-call1" class="rc-panel">
-      <div class="rc-call-card">
-        <div class="rc-call-header">
-          <div class="rc-badge c1">1</div>
-          <div>
-            <div class="rc-call-title">Pure Reconnect &amp; Trust Building</div>
-            <div class="rc-call-sub">No exploration. No hint of business. 100% about them.</div>
-          </div>
+    <div id="call1" class="call-panel active">
+      <div class="call-step-header">
+        <div class="step-num">1</div>
+        <div>
+          <div class="call-step-title">Pure Reconnect &amp; Trust Building</div>
+          <div class="call-step-sub">No business. 100% about them.</div>
         </div>
-        <div class="rc-body">
-          <div id="rc-c1-warm">
-            <div class="rc-sec-label">Opener</div>
-            <div class="rc-line opener">"Hey [Name], it's Glenn — I was thinking about you the other day. Remember when [brief shared memory — be specific]? How have you been?"<em>Pause. Let them talk freely. Resist filling the silence.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Listening phase</div>
-            <div class="rc-line question">"Wow, that sounds [positive / interesting / challenging]. What have you been most focused on lately?"<em>NEPQ cue: ask 1–2 follow-ups — "How's that been going?" / "What's that like lately?"</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Close</div>
-            <div class="rc-line close">"It was really good catching up. I won't keep you long — just wanted to reconnect. Let's not let so much time pass again."</div>
-          </div>
-          <div id="rc-c1-cold" class="rc-hidden">
-            <div class="rc-sec-label">Opener</div>
-            <div class="rc-line opener">"Hey [Name], this is Glenn — I was chatting with [Mutual/Context] and your name came up. I just wanted to reach out and introduce myself. How are you?"<em>Pause. Keep it short. They didn't expect this call.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Common ground</div>
-            <div class="rc-line question">"[Mutual] mentioned you're in [industry/role] — how long have you been doing that? What do you enjoy most about it?"<em>Lead with curiosity about them. Find something real to relate to.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Close</div>
-            <div class="rc-line close">"It was great getting to know you a bit. I'll stay in touch — feel free to reach out anytime."</div>
-          </div>
-          <div class="rc-tip">NEPQ principle: your only job on call 1 is to make them feel heard. Ask questions. Take mental notes. Never mention what you're working on or building.</div>
-          <div class="rc-coach">
-            <div class="rc-coach-title">🎙 Tonality coaching</div>
-            <div class="rc-coach-item">Speak at 70% of your normal pace — warmth comes through slowness</div>
-            <div class="rc-coach-item">Pause 2 full seconds after they finish before responding</div>
-            <div class="rc-coach-item">Match their energy — if they're casual, be casual; if busy, keep it brief</div>
-            <div class="rc-coach-item">Never say "actually," "honestly," or "to be transparent" — these signal a pivot is coming</div>
-          </div>
-        </div>
+      </div>
+
+      <div id="c1-warm">
+        <div class="script-divider">Opener</div>
+        <div class="script-text">"Hey [Name], it's Glenn — I was thinking about you the other day. Remember when [<em>brief shared memory</em>]? How have you been?"<br><br><em>Pause. Let them talk. Resist filling silence.</em></div>
+        <div class="script-divider">Listening Phase</div>
+        <div class="script-text">"Wow, that sounds [positive/interesting/challenging]. What have you been most focused on lately?"<br><br><em>Ask 1–2 follow-ups: "How's that been going?" / "What's that like lately?"</em></div>
+        <div class="script-divider">Close</div>
+        <div class="script-text">"It was really good catching up. I won't keep you long — just wanted to reconnect. Let's not let so much time pass again."</div>
+      </div>
+
+      <div id="c1-cold" class="rc-hidden" style="display:none">
+        <div class="script-divider">Opener</div>
+        <div class="script-text">"Hey [Name], this is Glenn — I was chatting with [Mutual] and your name came up. I just wanted to reach out and introduce myself. How are you?"<br><br><em>Keep it short. They didn't expect this call.</em></div>
+        <div class="script-divider">Common Ground</div>
+        <div class="script-text">"[Mutual] mentioned you're in [industry/role] — how long have you been doing that? What do you enjoy most about it?"<br><br><em>Lead with curiosity. Find something real to relate to.</em></div>
+        <div class="script-divider">Close</div>
+        <div class="script-text">"It was great getting to know you a bit. I'll stay in touch — feel free to reach out anytime."</div>
+      </div>
+
+      <div class="tip-box"><span class="tip-icon">💡</span> Your only job on Call 1 is to make them feel heard. Never mention what you're building.</div>
+      <div class="coach-box">
+        <div class="coach-title">🎙 Tonality Coaching</div>
+        <div class="coach-item">Speak at 70% of your normal pace — warmth comes through slowness</div>
+        <div class="coach-item">Pause 2 full seconds after they finish before responding</div>
+        <div class="coach-item">Match their energy — casual if they're casual, brief if they're busy</div>
+        <div class="coach-item">Never say "actually," "honestly," or "to be transparent" — these signal a pivot</div>
       </div>
     </div>
 
     <!-- CALL 2 -->
-    <div id="rc-call2" class="rc-panel rc-hidden">
-      <div class="rc-call-card">
-        <div class="rc-call-header">
-          <div class="rc-badge c2">2</div>
-          <div>
-            <div class="rc-call-title">Deepen Connection + NEPQ Exploration</div>
-            <div class="rc-call-sub">Help them verbalize their own gaps. Zero selling.</div>
-          </div>
+    <div id="call2" class="call-panel">
+      <div class="call-step-header">
+        <div class="step-num c2">2</div>
+        <div>
+          <div class="call-step-title">Deepen + NEPQ Exploration</div>
+          <div class="call-step-sub">Help them verbalize their own gaps. Zero selling.</div>
         </div>
-        <div class="rc-body">
-          <div id="rc-c2-warm">
-            <div class="rc-sec-label">Callback opener — reference what they shared</div>
-            <div class="rc-line opener">"Hey [Name], it's Glenn — good talking last time. I've been thinking about what you mentioned about [their specific thing]. How's that been going?"<em>This shows you actually listened. It immediately deepens trust.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Situational question (NEPQ)</div>
-            <div class="rc-line question">"On a scale of 1–10, how satisfied are you with [that area — e.g., your financial picture / work-life balance / where things are headed] right now?"<em>Let them explain why they gave that number. Don't rush past it.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Problem awareness (NEPQ)</div>
-            <div class="rc-line bridge">"What would need to be different for that to feel more like an 8 or 9?"<em>This is where they start to co-author their own solution. Just listen.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Future pacing (NEPQ)</div>
-            <div class="rc-line bridge">"Interesting… and if things stayed exactly the way they are over the next couple of years — how would you feel about that?"<em>This creates natural emotional urgency without you manufacturing it.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Close — light and trustworthy</div>
-            <div class="rc-line close">"I really appreciate you sharing that with me. Let's stay in touch — I'll check in again soon."</div>
-          </div>
-          <div id="rc-c2-cold" class="rc-hidden">
-            <div class="rc-sec-label">Opener</div>
-            <div class="rc-line opener">"Hey [Name], Glenn again — glad we connected last time. What does a typical week look like for you lately?"<em>Professional but personal. You're positioning as someone who thinks about people.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Exploratory question</div>
-            <div class="rc-line question">"A lot of people in [their field] tell me that [common pain point] is something they're navigating. Is that something you're experiencing at all?"<em>Normalize the problem so they feel safe opening up.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Scale + future pacing</div>
-            <div class="rc-line bridge">"If you had to rate your [financial flexibility / income growth / work-life alignment] right now, where would it land on a 1–10? And what's the plan if things stay on this same trajectory?"</div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Close</div>
-            <div class="rc-line close">"I appreciate you being open with me. I'm looking to connect with people who are genuinely thinking about their future — sounds like you're one of them."</div>
-          </div>
-          <div class="rc-tip">NEPQ sequence: Situational → Problem awareness → Future pacing. Each question builds on the last. You're a guide, not a salesperson.</div>
-          <div class="rc-coach">
-            <div class="rc-coach-title">👂 What to listen for</div>
-            <div class="rc-coach-item">Any mention of "I wish I had more..." — time, money, options, freedom</div>
-            <div class="rc-coach-item">Frustration with their income ceiling or retirement plan</div>
-            <div class="rc-coach-item">Family obligations creating financial pressure</div>
-            <div class="rc-coach-item">A desire to do something different but no clear path</div>
-          </div>
-        </div>
+      </div>
+
+      <div id="c2-warm">
+        <div class="script-divider">Callback Opener</div>
+        <div class="script-text">"Hey [Name], it's Glenn — good talking last time. I've been thinking about what you mentioned about [<em>their specific thing</em>]. How's that been going?"<br><br><em>Shows you actually listened. Immediately deepens trust.</em></div>
+        <div class="script-divider">Situational — NEPQ</div>
+        <div class="script-text">"On a scale of 1–10, how satisfied are you with [<em>e.g., your financial picture / work-life balance</em>] right now?"<br><br><em>Let them explain why they gave that number. Don't rush past it.</em></div>
+        <div class="script-divider">Problem Awareness — NEPQ</div>
+        <div class="script-text">"What would need to be different for that to feel more like an 8 or 9?"<br><br><em>They start to co-author their own solution. Just listen.</em></div>
+        <div class="script-divider">Future Pacing — NEPQ</div>
+        <div class="script-text">"Interesting… and if things stayed exactly the way they are over the next couple of years — how would you feel about that?"<br><br><em>Creates natural emotional urgency without manufacturing it.</em></div>
+        <div class="script-divider">Close</div>
+        <div class="script-text">"I really appreciate you sharing that with me. Let's stay in touch — I'll check in again soon."</div>
+      </div>
+
+      <div id="c2-cold" style="display:none">
+        <div class="script-divider">Opener</div>
+        <div class="script-text">"Hey [Name], Glenn again — glad we connected last time. What does a typical week look like for you lately?"</div>
+        <div class="script-divider">Exploratory</div>
+        <div class="script-text">"A lot of people in [their field] tell me that [common pain point] is something they're navigating. Is that something you're experiencing at all?"<br><br><em>Normalize the problem so they feel safe opening up.</em></div>
+        <div class="script-divider">Scale + Future Pacing</div>
+        <div class="script-text">"If you had to rate your [financial flexibility / income growth / work-life alignment] right now, where would it land on a 1–10? And what's the plan if things stay on this same trajectory?"</div>
+        <div class="script-divider">Close</div>
+        <div class="script-text">"I appreciate you being open with me. I'm looking to connect with people genuinely thinking about their future — sounds like you're one of them."</div>
+      </div>
+
+      <div class="tip-box"><span class="tip-icon">💡</span> NEPQ sequence: Situational → Problem Awareness → Future Pacing. You're a guide, not a salesperson.</div>
+      <div class="coach-box">
+        <div class="coach-title">👂 What to Listen For</div>
+        <div class="coach-item">Any mention of "I wish I had more..." — time, money, options, freedom</div>
+        <div class="coach-item">Frustration with their income ceiling or retirement plan</div>
+        <div class="coach-item">Family obligations creating financial pressure</div>
+        <div class="coach-item">A desire to do something different but no clear path</div>
       </div>
     </div>
 
     <!-- CALL 3 -->
-    <div id="rc-call3" class="rc-panel rc-hidden">
-      <div class="rc-call-card">
-        <div class="rc-call-header">
-          <div class="rc-badge c3">3</div>
-          <div>
-            <div class="rc-call-title">Permission + Gentle Invitation</div>
-            <div class="rc-call-sub">Only after they've verbalized their own gap. Lowest possible pressure.</div>
-          </div>
-        </div>
-        <div class="rc-body">
-          <div id="rc-c3-warm">
-            <div class="rc-sec-label">Opener</div>
-            <div class="rc-line opener">"Hey [Name], quick question — got a minute?"<em>Short. Respectful of their time. Sets a low-stakes frame immediately.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Neutral recap of their gap</div>
-            <div class="rc-line bridge">"From what you shared last time about [their situation], it sounds like [neutral recap]. Is that still accurate?"<em>Let them confirm or correct. Shows you listened — earns you the right to continue.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">The low-pressure invite</div>
-            <div class="rc-line question">"If there was a way to [the exact thing they want — e.g., create additional income without it taking over your life] — would you be open to taking a quick look at how I've been doing it? Or are you pretty set where you're at for now?"<em>Tonality: curious and genuinely neutral. Not excited. Not salesy. The "or are you set" signals you're fine with no.</em></div>
-          </div>
-          <div id="rc-c3-cold" class="rc-hidden">
-            <div class="rc-sec-label">Opener</div>
-            <div class="rc-line opener">"Hey [Name], Glenn — appreciate your time again. I want to be straight with you."<em>Cold contacts respect directness more than a slow build at this stage.</em></div>
-            <div class="rc-sec-label" style="margin-top:.9rem">Neutral recap</div>
-            <div class="rc-line bridge">"Based on what you've shared — I think there may actually be something worth a conversation. I'm looking for leaders in [their area], and you came to mind for a reason."</div>
-            <div class="rc-sec-label" style="margin-top:.9rem">The invite</div>
-            <div class="rc-line question">"I'm not here to sell you on anything. I just want to show you what I'm doing in about 20–30 minutes and let you decide if it makes sense. Would you be open to that?"</div>
-          </div>
-
-          <div style="margin-top:1rem">
-            <div class="rc-sec-label">How to handle their response</div>
-            <div class="rc-branch-item">
-              <div class="rc-branch-lbl yes">✓ If Yes / Open</div>
-              <div class="rc-branch-text">"Cool — no pressure at all. I can walk you through exactly what I've been doing in about 20–30 minutes. You can decide then if it even makes sense for your life. What works better — evenings or daytime?"</div>
-            </div>
-            <div class="rc-branch-item">
-              <div class="rc-branch-lbl maybe">~ If Maybe / Hesitant</div>
-              <div class="rc-branch-text">"Totally understand — a lot of people feel the same way at first. What would need to be true for you to even be curious about something like this?"<br><br><span style="font-size:12px;color:var(--gray)">Or simply: "No worries at all — I respect that. If anything changes, you know where to find me."</span></div>
-            </div>
-            <div class="rc-branch-item">
-              <div class="rc-branch-lbl no">✗ If No</div>
-              <div class="rc-branch-text">"No problem whatsoever — I'm genuinely glad we reconnected either way. Let's keep in touch."<br><br><span style="font-size:12px;color:var(--gray)">Never push past a clean no. Your integrity is your brand.</span></div>
-            </div>
-          </div>
-
-          <div class="rc-tip" style="margin-top:1rem">The phrase "or are you pretty set where you're at?" is doing heavy lifting — it communicates confidence, respect for their autonomy, and zero desperation all at once. Never skip it.</div>
-          <div class="rc-coach">
-            <div class="rc-coach-title">⚠ Common Call 3 mistakes</div>
-            <div class="rc-coach-item">Jumping to call 3 too early — they haven't articulated their own gap yet</div>
-            <div class="rc-coach-item">Over-explaining what you do before they've said yes to a conversation</div>
-            <div class="rc-coach-item">Sounding excited about the opportunity — it reads as pressure</div>
-            <div class="rc-coach-item">Pitching income numbers before a meeting is set</div>
-          </div>
+    <div id="call3" class="call-panel">
+      <div class="call-step-header">
+        <div class="step-num c3">3</div>
+        <div>
+          <div class="call-step-title">Permission + Gentle Invitation</div>
+          <div class="call-step-sub">Only after they've verbalized their own gap.</div>
         </div>
       </div>
-    </div>
 
-    <!-- COMPARE -->
-    <div id="rc-compare" class="rc-panel rc-hidden">
-      <div class="rc-call-card">
-        <div class="rc-call-header">
-          <div class="rc-badge cx">COMPARE</div>
-          <div>
-            <div class="rc-call-title">Warm vs Cold — Key Differences by Call</div>
-            <div class="rc-call-sub">Same NEPQ framework, different tone and entry point.</div>
-          </div>
-        </div>
-        <div class="rc-body">
-          <table class="rc-diff-table">
-            <thead>
-              <tr>
-                <th>Feature</th>
-                <th><span class="rc-bw">Warm Contact</span></th>
-                <th><span class="rc-bc">Cold / Referral</span></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="fc">Call 1 focus</td><td>Nostalgia &amp; life updates. Lean on shared history to open the door.</td><td>Context &amp; common ground. Use the mutual connection as social proof.</td></tr>
-              <tr><td class="fc">The hook</td><td>"Remember when we…"</td><td>"I was chatting with [Mutual] and your name came up…"</td></tr>
-              <tr><td class="fc">Call 2 strategy</td><td>High vulnerability. They'll share more because you have history.</td><td>High professionalism. Match their industry language. Be more structured.</td></tr>
-              <tr><td class="fc">The ask (Call 3)</td><td>"I thought of you specifically because of what you shared…"</td><td>"I'm looking for leaders in [area] — you came to mind for a reason."</td></tr>
-              <tr><td class="fc">Trust baseline</td><td>High. Starting with an existing relationship.</td><td>Low–Medium. Building from a referral bridge.</td></tr>
-              <tr><td class="fc">Ideal call 1 length</td><td>10–20 min. Let it breathe — they want to catch up.</td><td>5–10 min. Focused. Don't overstay a cold intro.</td></tr>
-              <tr><td class="fc">NEPQ timing</td><td>Light in call 2. They open up faster.</td><td>Slower burn. May need an extra check-in before call 3.</td></tr>
-            </tbody>
-          </table>
-          <div class="rc-tip" style="margin-top:1.25rem">The 3-call system works for both — the sequence never changes. What changes is your tone, your entry point, and how quickly they open up. Let them set the pace.</div>
-          <div class="rc-coach" style="margin-top:1rem">
-            <div class="rc-coach-title">🎯 The Golden Rule</div>
-            <div class="rc-coach-item">You earn the right to talk about your opportunity only after they've told you what's missing in theirs</div>
-            <div class="rc-coach-item">Every call should leave them thinking "that was a great conversation" — not "they're trying to recruit me"</div>
-            <div class="rc-coach-item">Your listening and tonality are the script. The words are just scaffolding.</div>
-          </div>
-        </div>
+      <div id="c3-warm">
+        <div class="script-divider">Opener</div>
+        <div class="script-text">"Hey [Name], quick question — got a minute?"<br><br><em>Short. Respectful. Sets a low-stakes frame immediately.</em></div>
+        <div class="script-divider">Neutral Recap</div>
+        <div class="script-text">"From what you shared last time about [their situation], it sounds like [neutral recap]. Is that still accurate?"<br><br><em>Let them confirm or correct. Shows you listened — earns you the right to continue.</em></div>
+        <div class="script-divider">The Invite</div>
+        <div class="script-text">"If there was a way to [<em>the exact thing they want — e.g., create additional income without it taking over your life</em>] — would you be open to taking a quick look at how I've been doing it? Or are you pretty set where you're at for now?"<br><br><em>"Or are you set?" = confidence + respect for their autonomy. Never skip it.</em></div>
+      </div>
+
+      <div id="c3-cold" style="display:none">
+        <div class="script-divider">Opener</div>
+        <div class="script-text">"Hey [Name], Glenn — appreciate your time again. I want to be straight with you."<br><br><em>Cold contacts respect directness more than a slow build at this stage.</em></div>
+        <div class="script-divider">Neutral Recap</div>
+        <div class="script-text">"Based on what you've shared — I think there may actually be something worth a conversation. I'm looking for leaders in [their area], and you came to mind for a reason."</div>
+        <div class="script-divider">The Invite</div>
+        <div class="script-text">"I'm not here to sell you on anything. I just want to show you what I'm doing in about 20–30 minutes and let you decide if it makes sense. Would you be open to that?"</div>
+      </div>
+
+      <div style="margin-top:12px; margin-bottom: 10px; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy)">Handle Their Response</div>
+      <div class="branch branch-yes">
+        <div class="branch-label">✓ Open / Yes</div>
+        <div class="branch-text">"Cool — no pressure at all. I can walk you through exactly what I've been doing in about 20–30 minutes. You can decide then if it even makes sense for your life. What works better — evenings or daytime?"</div>
+      </div>
+      <div class="branch branch-maybe">
+        <div class="branch-label">~ Hesitant / Maybe</div>
+        <div class="branch-text">"Totally understand — a lot of people feel the same at first. What would need to be true for you to even be curious about something like this?"</div>
+      </div>
+      <div class="branch branch-no">
+        <div class="branch-label">✗ Clean No</div>
+        <div class="branch-text">"No problem whatsoever — I'm genuinely glad we reconnected either way. Let's keep in touch."<br><br><span style="font-size:12px;color:var(--gray);font-style:italic">Never push past a clean no. Your integrity is your brand.</span></div>
+      </div>
+
+      <div class="coach-box" style="margin-top:12px">
+        <div class="coach-title">⚠ Common Call 3 Mistakes</div>
+        <div class="coach-item">Jumping to Call 3 too early — they haven't articulated their gap yet</div>
+        <div class="coach-item">Over-explaining before they say yes to a conversation</div>
+        <div class="coach-item">Sounding excited about the opportunity — it reads as pressure</div>
+        <div class="coach-item">Pitching income numbers before a meeting is set</div>
       </div>
     </div>
 
   </div>
 
-  <script>
-  (function(){
-    var rcCurrentType = 'warm';
-    window.rcTab = function(tab) {
-      document.querySelectorAll('.rc-panel').forEach(function(p){ p.classList.add('rc-hidden'); });
-      document.querySelectorAll('.rc-tab').forEach(function(t){ t.classList.remove('rc-active'); });
-      var panel = document.getElementById(tab);
-      if (panel) panel.classList.remove('rc-hidden');
-      var map = { 'rc-call1':0, 'rc-call2':1, 'rc-call3':2, 'rc-compare':3 };
-      var tabs = document.querySelectorAll('.rc-tab');
-      if (map[tab] !== undefined && tabs[map[tab]]) tabs[map[tab]].classList.add('rc-active');
-    };
-    window.rcType = function(type) {
-      rcCurrentType = type;
-      document.getElementById('rc-btn-warm').classList.toggle('rc-active', type==='warm');
-      document.getElementById('rc-btn-cold').classList.toggle('rc-active', type==='cold');
-      ['c1','c2','c3'].forEach(function(c){
-        var w = document.getElementById('rc-'+c+'-warm');
-        var cold = document.getElementById('rc-'+c+'-cold');
-        if(w) w.classList.toggle('rc-hidden', type!=='warm');
-        if(cold) cold.classList.toggle('rc-hidden', type!=='cold');
-      });
-    };
-  })();
-  </script>
+  <!-- ===== TAB: COMPARE ===== -->
+  <div id="cs-compare" class="tab-panel">
 
-</div>
+    <div class="quick-key">
+      <div class="qk-icon">⚡</div>
+      <div class="qk-text"><strong>Same NEPQ framework.</strong> Different tone and entry point. Let them set the pace.</div>
+    </div>
+
+    <div style="overflow-x:auto; border-radius:12px; overflow:hidden; background:var(--white); box-shadow:0 2px 8px rgba(15,37,64,0.07); border:1px solid var(--border);">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th><span class="badge-warm">WARM</span></th>
+            <th><span class="badge-cold">COLD</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Call 1 Focus</td>
+            <td>Nostalgia & life updates. Lean on shared history.</td>
+            <td>Context & common ground. Use mutual connection as social proof.</td>
+          </tr>
+          <tr>
+            <td>The Hook</td>
+            <td>"Remember when we…"</td>
+            <td>"[Mutual] and your name came up…"</td>
+          </tr>
+          <tr>
+            <td>Call 2 Strategy</td>
+            <td>High vulnerability. History = they share more.</td>
+            <td>High professionalism. Match their industry language.</td>
+          </tr>
+          <tr>
+            <td>The Ask</td>
+            <td>"I thought of you because of what you shared…"</td>
+            <td>"I'm looking for leaders — you came to mind."</td>
+          </tr>
+          <tr>
+            <td>Trust Baseline</td>
+            <td>High. Existing relationship.</td>
+            <td>Low–Medium. Building from referral bridge.</td>
+          </tr>
+          <tr>
+            <td>Call 1 Length</td>
+            <td>10–20 min. Let it breathe.</td>
+            <td>5–10 min. Stay focused.</td>
+          </tr>
+          <tr>
+            <td>NEPQ Timing</td>
+            <td>Light in Call 2. Opens up faster.</td>
+            <td>Slower burn. May need extra check-in.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="coach-box" style="margin-top:14px">
+      <div class="coach-title">🎯 The Golden Rules</div>
+      <div class="coach-item">Earn the right to talk about your opportunity — only after they've told you what's missing in theirs</div>
+      <div class="coach-item">Every call should leave them thinking "great conversation" — not "they're recruiting me"</div>
+      <div class="coach-item">Your listening and tonality ARE the script. The words are just scaffolding.</div>
+    </div>
+
+  </div>
+
+</div><!-- end .content -->
+
+<script>
+  function csShowTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+    document.getElementById('cs-' + name).classList.add('active');
+    const pills = document.querySelectorAll('.nav-pill');
+    const map = { quick:0, reconnect:1, hesitancy:2, compare:3 };
+    if (map[name] !== undefined) pills[map[name]].classList.add('active');
+  }
+
+  function csToggleCard(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    header.classList.toggle('expanded', !isOpen);
+    chevron.classList.toggle('open', !isOpen);
+  }
+
+  function csShowCall(id, btn) {
+    document.querySelectorAll('.call-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.call-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  var currentType = 'warm';
+  function csSetType(type) {
+    currentType = type;
+    document.getElementById('btn-warm').classList.toggle('active', type === 'warm');
+    document.getElementById('btn-cold').classList.toggle('active', type === 'cold');
+    ['1','2','3'].forEach(n => {
+      const w = document.getElementById('c' + n + '-warm');
+      const c = document.getElementById('c' + n + '-cold');
+      if (w) w.style.display = type === 'warm' ? '' : 'none';
+      if (c) c.style.display = type === 'cold' ? '' : 'none';
+    });
+  }
+</script>
+
 </div>
 
 <!-- ==================== APPOINTMENTS ==================== -->
@@ -5875,8 +6447,7 @@ document.addEventListener('keydown',function(e){
   }, 600);
 </script>
 </body>
-</html>
-"
+</html>"
         style="width:100%;height:820px;border:none;display:block"
         title="RFM Zoom Presentation Script"
         sandbox="allow-scripts allow-same-origin"
@@ -6221,6 +6792,7 @@ const objections = [
   { q: '"I want to do research."', a: '"I love that you want to do your research — let me make that easy for you and make sure you\'re looking in the right places, because if you just Google us you might end up on a Reddit page, and honestly, anyone can post anything there. We have over 95,000 licensed agents and not everyone\'s going to have the same experience — so let me point you to the sources that actually mean something.<br><br>Pull up the Better Business Bureau — bbb.org — and search World Financial Group. We have an A+ rating. Then bookmark aegon.com — that\'s our parent company, nearly 200 years old, managing over a trillion dollars. Also bookmark tfaconnect.com, which is Transamerica, one of our main carriers. And worldfinancialgroup.com — that\'s our brokerage directly. I can also send you the full list of the 192 companies on our platform if you want.<br><br>What I\'d love to do is set up a second conversation — and I want you to come in like you\'re interviewing us. Bring every question, anything that concerned you, anything you saw — we\'ll go through it all. And then if you feel good about what you see, I\'ll have a few questions for you to make sure it\'s a mutual fit. Sound fair?"' },
   { q: '"I\'m too busy with my job."', a: '"I hear you. Can I ask — is your job giving you the financial security and time freedom you actually want for your family five years from now? Most people I work with started part-time, around their job, and within 6–12 months had a choice to make. I\'m not asking you to quit anything — just explore a door."' },
   { q: '"My spouse isn\'t on board."', a: '"I completely respect that. Can I ask — what\'s their top 2 main concerns? I\'d love to address it directly. Would it be okay if we got them on a quick call or even brought them to one of our events? Most spouses become the biggest supporters once they see the full picture."' },
+  { q: '"Candy Company, you\'re compensation is too low"', a: '"The financial services industry is full of traps — traditional companies that cap your growth and hand all the real money to a handful of regional managers, general agencies that just train their own competition until agents leave to open a shop at the other end of the strip mall, and now more than ever, candy companies flooding your phone promising flashy numbers designed to lure you away from something real. They know exactly how to make their offer look better, but just like candy, it\'s colorful on the outside and hollow — or worse, poisonous — on the inside. When a competitor claims to pay 133%, 152%, or 175%, the first question you ask is "133% of what?" — because they\'re quoting points, not your actual contract, and when you convert their numbers to a true 100% table, WFG wins every single time, because nobody can make 100 cents become 130 cents. Then look at their spread structure — most candy companies flank you all the way up to executive level, meaning every time someone on your team gets promoted you lose that override, while WFG\'s generational overrides above SMD are permanent, unchangeable, and you can even override someone with a higher title than you. Most of these companies also have one or two product carriers — one recruiting your people right now just had their only IUL carrier give them a 90-day cancellation notice for unethical behavior — while WFG has 189 providers, 379+ products, a full broker-dealer, and 25+ years of never missing a payout, with $1.37 billion paid to the field in 2023 alone. A higher contract number means nothing if it\'s on a smaller pizza, with a temporary structure, from a company that might not exist next year."'},
   { q: '"I don\'t need life insurance."', a: '"I love that confidence — it usually means you\'re healthy and doing well. Can I ask — is your family\'s financial security protected if something unexpected happened tomorrow? And beyond protection, are you aware of how people use these same vehicles to build tax-free retirement income? That might change the conversation."' }
 ];
 const objList = document.getElementById('obj-list');
