@@ -61,6 +61,7 @@ window.rm_toggleCheck = function(el) {
   --green-text:  #134d33;
   --red-bg:      #fdeaea;
   --red-text:    #7b1c1c;
+  --gray:        #6b7280;
   --gray-50:     #f8f9fa;
   --gray-100:    #f0f2f5;
   --gray-400:    #9ca3af;
@@ -293,9 +294,16 @@ body {
   max-width: var(--max-w);
   margin: 0 auto;
   padding: 40px var(--pad) 96px;
+  background: var(--cream) !important;
+  color: var(--navy) !important;
 }
 .tab { display: none; }
 .tab.active { display: block; animation: fadeUp .25s ease; }
+/* Force cream background on all tab content — counters style leaks from embedded iframes */
+.tab, .sub-section, .section-header, .step-list, .step-item, .step-body {
+  background: transparent;
+  color: inherit;
+}
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -321,7 +329,7 @@ body {
   line-height: 1.15; margin-bottom: 8px;
   letter-spacing: -0.01em;
 }
-.section-header p { color: var(--gray-700); font-size: 14.5px; max-width: 600px; line-height: 1.7; }
+.section-header p { color: #2d3a4a !important; font-size: 15px; max-width: 600px; line-height: 1.75; }
 
 /* ── MISSION HQ OVERVIEW GRID ─────────────────────────── */
 .overview-grid {
@@ -354,7 +362,9 @@ body {
   padding: 18px 16px; text-align: center;
   box-shadow: var(--sh-xs);
   position: relative; overflow: hidden;
+  transition: box-shadow .18s, transform .18s;
 }
+.metric-box:hover { box-shadow: var(--sh-m); transform: translateY(-2px); }
 .metric-box::after {
   content: '';
   position: absolute; bottom: 0; left: 0; right: 0;
@@ -446,15 +456,15 @@ body {
 /* ── STEP LIST ────────────────────────────────────────── */
 .step-list { list-style: none; }
 .step-item {
-  display: flex; gap: 14px; align-items: flex-start;
-  padding: 13px 0;
-  border-bottom: 1px solid rgba(12,29,48,0.06);
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(12,29,48,0.08);
 }
 .step-item:last-child { border-bottom: none; }
 .step-num {
-  width: 30px; height: 30px; border-radius: 50%;
-  background: var(--navy); color: var(--white);
-  font-size: 12px; font-weight: 700;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gold); color: var(--navy);
+  font-size: 14px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; margin-top: 2px;
   font-family: var(--serif);
@@ -462,13 +472,23 @@ body {
 .step-num.gold  { background: var(--gold); color: var(--navy); }
 .step-num.green { background: var(--green); color: var(--white); }
 .step-num.arrow { background: var(--navy-light); font-size: 13px; }
-.step-body h4 { font-size: 13.5px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
-.step-body p  { font-size: 13px; color: var(--gray-700); margin: 0; line-height: 1.65; }
+.step-body h4 { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px; line-height: 1.3; }
+.step-body p  { font-size: 14px; color: #2d3a4a; margin: 0; line-height: 1.75; }
 
-/* Dark card step list */
-.card-navy .step-body h4 { color: rgba(255,255,255,0.97); }
-.card-navy .step-body p  { color: rgba(255,255,255,0.82); }
-.card-navy .step-item { border-bottom-color: rgba(255,255,255,0.10); }
+/* Step body inside dark (navy/red) cards — white text */
+.card-navy .step-body h4 { color: rgba(255,255,255,0.97) !important; }
+.card-navy .step-body p  { color: rgba(255,255,255,0.88) !important; }
+.card-navy .step-item    { border-bottom-color: rgba(255,255,255,0.12); }
+.card-red  .step-body h4 { color: rgba(255,255,255,0.97) !important; }
+.card-red  .step-body p  { color: rgba(255,255,255,0.88) !important; }
+
+/* Fix inline var(--gray) text inside dark cards */
+.card-navy [style*="color:var(--gray)"],
+.card-red  [style*="color:var(--gray)"] { color: rgba(255,255,255,0.78) !important; }
+
+/* cta-btn inside navy card */
+.card-navy .cta-btn { background: rgba(255,255,255,0.10) !important; color: rgba(255,255,255,0.92) !important; border-color: rgba(255,255,255,0.25) !important; }
+.card-navy .cta-btn:hover { background: var(--gold) !important; color: var(--navy) !important; border-color: var(--gold) !important; }
 
 /* ── SCRIPT BOX ───────────────────────────────────────── */
 .script-box {
@@ -546,10 +566,10 @@ body {
   background: var(--off-white);
   border: 1px solid var(--border);
   border-radius: var(--r-s);
-  padding: 9px 12px;
-  font-size: 12px; color: var(--navy);
+  padding: 10px 14px;
+  font-size: 13.5px; color: #2d3a4a;
   display: flex; align-items: flex-start; gap: 7px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 .signal-grid {
   display: grid;
@@ -563,13 +583,15 @@ body {
   border: 1px solid rgba(201,168,76,0.22);
   border-radius: var(--r-s);
   padding: 12px 14px;
-  font-size: 13px; color: var(--navy);
+  font-size: 13.5px; color: #2d3a4a;
   display: flex; gap: 10px; align-items: flex-start;
   margin-bottom: 7px;
 }
 .warn-chip .warn-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-.warn-chip span[style*="color:var(--gray)"],
-.warn-chip span { color: var(--gray-700) !important; font-size: 13px; }
+.warn-chip span { color: #2d3a4a !important; font-size: 13.5px; }
+.warn-chip strong { color: var(--navy) !important; }
+/* Global fix: anywhere var(--gray) is used inline, force to readable dark */
+[style*="color:var(--gray)"] { color: #2d3a4a !important; }
 
 /* ── TAGS ─────────────────────────────────────────────── */
 .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 4px 11px; border-radius: 40px; margin: 2px; }
@@ -612,12 +634,12 @@ input[type=text]:focus { border-color: var(--navy-mid); box-shadow: 0 0 0 3px rg
 .cta-btn {
   display: inline-flex; align-items: center; gap: 7px;
   padding: 9px 20px; border-radius: 40px;
-  border: 1px solid var(--navy-mid); background: transparent;
-  color: var(--navy-mid); font-family: var(--sans);
-  font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1.5px solid var(--navy-mid); background: var(--white) !important;
+  color: var(--navy-mid) !important; font-family: var(--sans);
+  font-size: 13px; font-weight: 600; cursor: pointer;
   margin-top: 10px; margin-right: 8px; transition: all .15s; text-decoration: none;
 }
-.cta-btn:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+.cta-btn:hover { background: var(--navy) !important; color: var(--white) !important; border-color: var(--navy); }
 .cta-btn-gold { background: var(--gold); color: var(--navy); border-color: var(--gold); font-weight: 600; }
 .cta-btn-gold:hover { background: var(--gold-light); border-color: var(--gold-light); color: var(--navy); }
 .cta-btn .arrow { font-size: 14px; }
@@ -1218,7 +1240,7 @@ button.secondary-btn:hover { background: var(--off-white); }
   </div>
 </nav>
 
-<main class="main">
+<main class="main" style="background:var(--cream);color:var(--navy)">
 
 <!-- ==================== MISSION HQ ==================== -->
 <div class="tab active" id="tab-overview">
@@ -1670,7 +1692,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       </div>
     </div>
   <!-- WHY -->
-    <div class="prosp-section" id="prosp-why" style="display:none">
+    <div class="prosp-section" id="prosp-why-dup" style="display:none">
       <div class="card card-gold" style="margin-bottom:16px">
         <div class="badge badge-gold">Purpose-driven prospecting</div>
         <h3>A weak "why" quits after the first rejection. A powerful "why" talks to 10 more people.</h3>
@@ -2680,13 +2702,25 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
     <p>How you speak shapes how you're perceived. Speak like a financial professional. Think like a mission leader.</p>
   </div>
 
-  <div class="card card-navy">
+  <div class="card card-navy" style="margin-bottom:14px">
     <div class="badge badge-navy">Identity shift</div>
     <h3>Who You Are Now</h3>
-    <p>You are not a salesperson. You are a <strong style="color:var(--navy-mid)">financial professional, educator, and wealth advocate</strong>. You help families stop being victimized by financial ignorance and start building generational security. Every conversation is a service, not a pitch.</p>
-    <div style="margin-top:12px">
+    <p>You are not a salesperson. You are a <strong>financial professional, educator, and wealth advocate</strong>. You help families stop being victimized by financial ignorance and start building generational security. Every conversation is a service, not a pitch.</p>
+    <div style="margin-top:14px">
       <span class="tag tag-navy">Financial professional</span><span class="tag tag-navy">Wealth educator</span><span class="tag tag-navy">Mission leader</span><span class="tag tag-navy">Business builder</span><span class="tag tag-navy">Legacy creator</span>
     </div>
+  </div>
+
+  <div class="card card-gold" style="margin-bottom:14px">
+    <div class="badge badge-gold">The 5 identity pillars</div>
+    <h3>Build your professional foundation</h3>
+    <ul class="step-list" style="margin-top:14px">
+      <li class="step-item"><div class="step-num">1</div><div class="step-body"><h4>Mission over commission</h4><p>You wake up to help families. The money follows the mission. When your "why" is bigger than your fear, you talk to people naturally — not desperately.</p></div></li>
+      <li class="step-item"><div class="step-num">2</div><div class="step-body"><h4>Curious, not pitchy</h4><p>Great prospectors ask more than they tell. Adopt the mindset of a doctor: diagnose before you prescribe. Nobody is bothered by someone genuinely curious about them.</p></div></li>
+      <li class="step-item"><div class="step-num">3</div><div class="step-body"><h4>Abundance thinking</h4><p>There are 330M+ people in America and 70% are financially unprepared. There is no shortage of people to help. Release attachment to any single "yes."</p></div></li>
+      <li class="step-item"><div class="step-num">4</div><div class="step-body"><h4>Detachment from outcome</h4><p>Your only job in a cold interaction is to plant a seed and open a door — not to close. Pressure closes doors. Curiosity opens them.</p></div></li>
+      <li class="step-item"><div class="step-num">5</div><div class="step-body"><h4>Be someone worth knowing</h4><p>Invest in yourself constantly — books, events, your own finances. People are attracted to growth. Your personal brand IS your best prospecting tool.</p></div></li>
+    </ul>
   </div>
 
   <div class="card">
@@ -3598,11 +3632,6 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
   </div>
 
   <!-- ===== PITCH GUIDE ===== -->
- <div class="card card-red">
-    <div class="badge badge-red">OUR MISSION</div>
-    <h3>No family left behind</h3>
-    <p>Most families in America, including highly educated professionals have never had access to the same financial strategies that wealthy families have used for generations. WFG exists to close that gap permanently. Not as a slogan. As a daily operating principle. Every doctor, every teacher, every immigrant family, every professional who never got a seat at the table — they deserve a real plan, real protection, and a real shot at financial independence. That is why we show up every day.</p>
-  </div>
 
   <div class="sub-section" id="sub-res-pitch">
     <div class="card card-gold">
@@ -3798,7 +3827,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
 
     <ul class="step-list">
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">1</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
         <div class="step-body">
           <h4>Agent Membership Agreement — $125</h4>
           <p>Registration/affiliation fee with light background check from WFG.</p>
@@ -3806,7 +3835,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">2</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
         <div class="step-body">
           <h4>Pre-Licensing Course — XCEL Solutions — $35.95</h4>
           <p>Sign up for "California Life and Health Pre-licensing with Ethics." Add to cart → View Shopping Cart → Checkout → Create Account.</p>
@@ -3814,7 +3843,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">3</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
         <div class="step-body">
           <h4>Schedule &amp; Take State Exam — PSI — $98</h4>
           <p>Login/Register → where it asks for School/Provider, select <strong>XCEL Solutions</strong> at the bottom → Pay and Schedule → Take the exam and pass!</p>
@@ -3823,14 +3852,14 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">4</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
         <div class="step-body">
           <h4>Complete XCEL Affidavit Certificate</h4>
           <p>Finish the full 52-hour XCEL course. At the bottom of the courses, complete the XCEL affidavit certificate before applying for your license (step 5).</p>
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">5</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">5</div>
         <div class="step-body">
           <h4>Apply for Your License — NIPR — $193</h4>
           <p>Resident License → Online Application → Individual → Use SSN → Start New Application. Select: <strong>Producer License &gt; Initial &gt; Resident &gt; Accident and Health + Life-Only Agent.</strong> On state questions, answer YES. Must renew every 2 years.</p>
@@ -3839,7 +3868,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">6</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">6</div>
         <div class="step-body">
           <h4>Livescan Fingerprinting — ~$65–$80</h4>
           <p>If you weren't fingerprinted at the exam site. Must be DOJ and FBI approved vendor. Print 2 copies of the form (1 for you, 1 for vendor).</p>
@@ -3848,7 +3877,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">7</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">7</div>
         <div class="step-body">
           <h4>Create MyWFG Password &amp; Complete WFGIA Agreement — $40</h4>
           <p>Full background check as a licensed agent with WFG (separate from the state check).</p>
@@ -3857,7 +3886,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">8</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">8</div>
         <div class="step-body">
           <h4>Sign Up for CE Courses — SuccessCE — ~$55.45</h4>
           <p>Click CA, Life &amp; Health. Add all of these to cart: <strong>Agent Ethical Responsibilities (3hrs) · Comprehensive Annuity Training (8hrs) · Life Insurance Policies (4hrs) · New CA Long Term (8hrs) · AML (1hr).</strong> Use coupon code <strong>NEW</strong> for $5 off.</p>
@@ -3866,7 +3895,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">9</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">9</div>
         <div class="step-body">
           <h4>Subscribe to Platform Fee &amp; Upload AML Certificate</h4>
           <p>MyWFG Menu → Administration → Fees &amp; Payments → Payment Central → Platform Fee → Add to Cart Subscribe ($15/mo). Then: Administration → BOSS Electronic Forms → Upload AML Certification.</p>
@@ -3874,7 +3903,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">10</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">10</div>
         <div class="step-body">
           <h4>Pay for E&amp;O Insurance — Marsh — $133/quarter</h4>
           <p>Errors &amp; Omissions — malpractice insurance equivalent. Yearly subscription with quarterly installments.</p>
@@ -3882,7 +3911,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">11</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">11</div>
         <div class="step-body">
           <h4>Get Appointed with Carriers</h4>
           <p>Your trainer will help. Appointment steps for each carrier:</p>
@@ -3895,7 +3924,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
         </div>
       </li>
       <li class="step-item">
-        <div class="step-num" style="background:var(--navy-mid)">12</div>
+        <div class="step-num" style="background:var(--gold);color:var(--navy)">12</div>
         <div class="step-body">
           <h4>Call to Confirm Appointments</h4>
           <div style="margin-top:8px;display:grid;gap:6px">
@@ -3973,14 +4002,14 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <p style="margin-bottom:18px;font-style:italic;color:var(--gray)">Goal: book the financial needs analysis. Keep the energy curious and caring — you're finding their roadmap, not selling a product.</p>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">1</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
           <div class="step-body">
             <h4>Open with What Landed</h4>
             <p>"Out of everything we went through, what stood out the most to you?"</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">2</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
           <div class="step-body">
             <h4>Deepen the Emotion</h4>
             <p>"That makes sense… <em>(pause)</em> and I hear that from a lot of families in your same situation."</p>
@@ -3988,7 +4017,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">3</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
           <div class="step-body">
             <h4>Introduce the FNA as a Roadmap</h4>
             <p>"Got it. And here's the thing… everyone's situation is different. What we usually do is put together a simple financial needs analysis. <em>(slower)</em>"</p>
@@ -3996,7 +4025,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">4</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
           <div class="step-body">
             <h4>Paint the Value of Clarity</h4>
             <p>"That way you'll have a clear picture of where you stand financially — and even if you don't make any changes, at least you'll know your options…… <em>(pause)</em> …… How would having that kind of clarity help you right now?"</p>
@@ -4047,7 +4076,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <p style="margin-bottom:18px;font-style:italic;color:var(--gray)">Goal: move the recruit from curiosity to a booked meeting with your broker. Slow your pace. Let silence do the work. Take notes on Step 4 — it feeds your SMD pipeline.</p>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">1</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
           <div class="step-body">
             <h4>Emotional Discovery</h4>
             <p>"So let me ask you — out of everything I've shared, what stood out to you the most?" <em>(pause, listen — then dig deeper)</em></p>
@@ -4055,7 +4084,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">2</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
           <div class="step-body">
             <h4>Cost of Inaction / Vision Expansion</h4>
             <p>"Thanks for sharing that. Can I ask — if you had a chance to do this, what <em>(emphasize slowly)</em> impact would that have on your life and your family?" <em>(pause, let them think)</em></p>
@@ -4063,21 +4092,21 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">3</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
           <div class="step-body">
             <h4>Readiness Question</h4>
             <p>"I hear you. And let me ask… if there was a way to get started with a simple plan and support…" <em>(slight pause after 'support')</em> "…how soon would you want to start, to make that happen?"</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">4</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
           <div class="step-body">
             <h4>Qualifying Commitment</h4>
             <p>"If we were to bring you on board, what qualities would you bring to the table?" <em>(Take notes — this frames them as a potential team member and gives insight for your SMD.)</em></p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">5</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">5</div>
           <div class="step-body">
             <h4>Broker Transition Close (Authority + Scarcity)</h4>
             <p>"Awesome. I really appreciate you sharing that. Now, here's how the next step works — it's not actually up to me to make that decision."</p>
@@ -4151,7 +4180,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--navy-mid);margin-bottom:10px">📚 Section 1 — Training</div>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">1</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
           <div class="step-body">
             <h4>Frame the Training System</h4>
             <p>"Most people who start with us don't have a financial background… would it help you if we had a complete training program in place so you don't have to figure it all out yourself?" <em>(Pause, let them agree.)</em></p>
@@ -4160,7 +4189,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">2</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
           <div class="step-body">
             <h4>Sell Field Training</h4>
             <p>"The first time you hear this information, it's new. The second time — 'yeah, I remember that.' By the fifth time, you're like — 'here comes that corny joke again, scoot over, I can do this myself.'"</p>
@@ -4172,7 +4201,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--navy-mid);margin:20px 0 10px">📝 Section 2 — Licensing</div>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">3</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
           <div class="step-body">
             <h4>Normalize Licensing Costs</h4>
             <p>"To legally help families, the state does require a license. Have you ever had to get a license for work before — real estate, insurance, nursing, anything like that?" <em>(Gauge their familiarity)</em></p>
@@ -4186,7 +4215,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--navy-mid);margin:20px 0 10px">⏱️ Section 3 — Time Commitment</div>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">4</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
           <div class="step-body">
             <h4>Qualify Their Schedule</h4>
             <p>"Most people start with us part-time. Based on your current schedule, would it be realistic for you to carve out about 10–15 hours a week for training, studying, and appointments?" <em>(If they hesitate, explore schedule with problem-awareness questions.)</em></p>
@@ -4276,7 +4305,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <p style="margin-bottom:18px;font-style:italic;color:var(--gray)">Frame it as a strategy that protects and builds — not just a life insurance policy. Floor + upside + tax-free retirement income is the core story.</p>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">1</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
           <div class="step-body">
             <h4>Open — Frame the Two Jobs</h4>
             <p>"So, let's talk about Cash Accumulation in Life Insurance. It's one policy that does two key things."</p>
@@ -4285,7 +4314,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">2</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
           <div class="step-body">
             <h4>Emotional Connection — The Why</h4>
             <p>"Let me ask — how important would it be to know your family would have immediate access to tax-free funds if something ever happened to you?"</p>
@@ -4293,7 +4322,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">3</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
           <div class="step-body">
             <h4>The Floor + Upside Story</h4>
             <p>"Your cash value is linked to the market's performance — so you capture the upside when it grows. But there's a guaranteed floor, which means even if the market drops, you don't lose money. Historically, these policies have averaged around 8–9% rate of return over time."</p>
@@ -4301,7 +4330,7 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">4</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
           <div class="step-body">
             <h4>Retirement Framing</h4>
             <p>"This is where a lot of people really start to lean in. Everything growing in the policy is tax-deferred, and you can access it tax-free later. So instead of pulling money from a 401k or IRA and paying taxes, this can become a supplemental, tax-free income stream in retirement. And if you don't end up using all of it, the rest passes to your family tax-free." <em>(pause for emphasis)</em></p>
@@ -4309,14 +4338,14 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">5</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">5</div>
           <div class="step-body">
             <h4>Control &amp; Flexibility</h4>
             <p>"Unlike other accounts, there are no income limits, no age restrictions, and no penalties for access. And because it's permanent, it never expires. So whether you're planning for retirement or long-term financial security, it keeps working for you the entire time."</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">6</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">6</div>
           <div class="step-body">
             <h4>The Choice Close — Funding</h4>
             <p>"Depending on how much supplemental retirement income you want to build, there are a couple of ways we could set it up."</p>
@@ -4527,28 +4556,28 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--navy-mid);margin-bottom:12px">Simple Presentation Framework</div>
       <ul class="step-list">
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">1</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">1</div>
           <div class="step-body">
             <h4>Their Problem</h4>
             <p>"You're worried about [their words] draining your savings on care."</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">2</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">2</div>
           <div class="step-body">
             <h4>The Solution</h4>
             <p>Stand-Alone LTC or Hybrid Annuity with LTC Rider.</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">3</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">3</div>
           <div class="step-body">
             <h4>How It Works</h4>
             <p>You put in premium → Insurance company guarantees lifetime income + protected growth. If care is needed → unlocks a larger benefit pool. If care is never needed → money stays yours or goes to your heirs.</p>
           </div>
         </li>
         <li class="step-item">
-          <div class="step-num" style="background:var(--navy-mid)">4</div>
+          <div class="step-num" style="background:var(--gold);color:var(--navy)">4</div>
           <div class="step-body">
             <h4>How It Resolves Their Problem</h4>
             <p>Turns fear into guaranteed income + care coverage. No more burning through bank savings or 401k.</p>
@@ -4664,10 +4693,10 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <h3>How to Start the Conversation Without Freezing Up</h3>
       <p style="margin-bottom:16px;font-size:13px;color:var(--gray)">Goal of every first touch: ONE thing — a 20-minute appointment. Not a sale. Just a conversation.</p>
       <ul class="step-list">
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">📱</div><div class="step-body"><h4>Text (Warm Contacts)</h4><p style="font-style:italic">"Hey [Name], been thinking about you. I've been working on something I think is genuinely important — not a pitch, more of an eye-opener around protecting retirement income from long-term care costs. Would you have 20 minutes this week for coffee or a quick call?"</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">💼</div><div class="step-body"><h4>LinkedIn DM (Professional Contacts)</h4><p style="font-style:italic">"Hi [Name] — I work specifically with [professionals] helping them bulletproof retirement plans against the #1 threat most advisors never address: long-term care costs. Would a 20-minute call this week be worth your time?"</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">📞</div><div class="step-body"><h4>Phone (When You're Terrified — Do It Anyway)</h4><p style="font-style:italic">"Hi [Name], this is [Your Name] — do you have 60 seconds? … I've been helping families protect their retirement from something most people overlook until it's too late. I'd love to buy you coffee and show you something I think you'll find genuinely eye-opening. Would [Tuesday at 10] or [Thursday at 2] work better?"</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">📧</div><div class="step-body"><h4>Email (Subject: "Quick question about your retirement plan")</h4><p style="font-style:italic">"Hi [Name] — I specialize in helping successful professionals protect their wealth from long-term care costs — an area that can silently wipe out decades of savings. I've developed a hybrid strategy that covers care AND builds tax-free retirement income simultaneously. Worth 20 minutes this week?"</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">📱</div><div class="step-body"><h4>Text (Warm Contacts)</h4><p style="font-style:italic">"Hey [Name], been thinking about you. I've been working on something I think is genuinely important — not a pitch, more of an eye-opener around protecting retirement income from long-term care costs. Would you have 20 minutes this week for coffee or a quick call?"</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">💼</div><div class="step-body"><h4>LinkedIn DM (Professional Contacts)</h4><p style="font-style:italic">"Hi [Name] — I work specifically with [professionals] helping them bulletproof retirement plans against the #1 threat most advisors never address: long-term care costs. Would a 20-minute call this week be worth your time?"</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">📞</div><div class="step-body"><h4>Phone (When You're Terrified — Do It Anyway)</h4><p style="font-style:italic">"Hi [Name], this is [Your Name] — do you have 60 seconds? … I've been helping families protect their retirement from something most people overlook until it's too late. I'd love to buy you coffee and show you something I think you'll find genuinely eye-opening. Would [Tuesday at 10] or [Thursday at 2] work better?"</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">📧</div><div class="step-body"><h4>Email (Subject: "Quick question about your retirement plan")</h4><p style="font-style:italic">"Hi [Name] — I specialize in helping successful professionals protect their wealth from long-term care costs — an area that can silently wipe out decades of savings. I've developed a hybrid strategy that covers care AND builds tax-free retirement income simultaneously. Worth 20 minutes this week?"</p></div></li>
       </ul>
     </div>
 
@@ -4704,10 +4733,10 @@ Meanwhile, a hungry, humble, coachable person can explode in this business.</p><
       <h3>Your 30-Day Sprint to $20,000</h3>
       <p style="margin-bottom:16px;font-size:13px;color:var(--gray)">"$20,000 is 3–4 placed cases. That's 3–4 families protected. I can do 3–4. I will do 3–4. Starting today."</p>
       <ul class="step-list">
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">1–3</div><div class="step-body"><h4>Days 1–3: Foundation</h4><p>Build your 50-name list. Create outreach templates. Write your personal "why." Daily outreach goal: 10 contacts per day, non-negotiable.</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">4–10</div><div class="step-body"><h4>Days 4–10: Outreach Blitz</h4><p>10 touches per day — texts, calls, LinkedIn DMs, emails. Target: 12–15 appointments booked. Track every contact in a simple spreadsheet.</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">8–18</div><div class="step-body"><h4>Days 8–18: Presentations</h4><p>Run 12 appointments. Get an illustration ordered after every solid fact-find. Follow up within 24 hours of every meeting — this is where lazy agents lose the case.</p></div></li>
-        <li class="step-item"><div class="step-num" style="background:var(--navy-mid)">15–25</div><div class="step-body"><h4>Days 15–25: Close 3–4 Cases</h4><p>Present illustrations. Use all four close scripts. Submit applications same day or next morning. Expect 30–35% close rate from qualified appointments.</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">1–3</div><div class="step-body"><h4>Days 1–3: Foundation</h4><p>Build your 50-name list. Create outreach templates. Write your personal "why." Daily outreach goal: 10 contacts per day, non-negotiable.</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">4–10</div><div class="step-body"><h4>Days 4–10: Outreach Blitz</h4><p>10 touches per day — texts, calls, LinkedIn DMs, emails. Target: 12–15 appointments booked. Track every contact in a simple spreadsheet.</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">8–18</div><div class="step-body"><h4>Days 8–18: Presentations</h4><p>Run 12 appointments. Get an illustration ordered after every solid fact-find. Follow up within 24 hours of every meeting — this is where lazy agents lose the case.</p></div></li>
+        <li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">15–25</div><div class="step-body"><h4>Days 15–25: Close 3–4 Cases</h4><p>Present illustrations. Use all four close scripts. Submit applications same day or next morning. Expect 30–35% close rate from qualified appointments.</p></div></li>
         <li class="step-item"><div class="step-num gold">✓</div><div class="step-body"><h4>Days 20–30: Referral Engine</h4><p>Ask for 2 referrals per closed case + per delivery. Month 2 requires half the cold outreach because your pipeline is already building itself.</p></div></li>
       </ul>
       <div class="metrics-row" style="margin-top:16px">
@@ -5282,6 +5311,9 @@ body{font-family:&quot;Source Sans 3&quot;,sans-serif;background:var(--navy);col
     <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>No cold calling — 100% referral based</div>
     <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>Work from anywhere via Zoom</div>
     <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>Build an agency — earn while others work</div>
+    <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>Scalability with zero overhead.</div>
+    <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>Simple, duplicatable, and proven</div>
+    <div class=&quot;feat&quot;><div class=&quot;feat-dot&quot;></div>Every background even without experience. Our system is the equalizer.</div>
   </div>
   <div style=&quot;font-size:13px;font-weight:700;color:var(--gold2);margin:20px 0 12px;letter-spacing:.05em;text-transform:uppercase&quot;>The 4 Ways to Earn</div>
   <div class=&quot;earn-list&quot;>
@@ -6808,7 +6840,7 @@ const timelineData = [
 ];
 const tc = document.getElementById('timeline-cards');
 timelineData.forEach(t => {
-  tc.innerHTML += `<div class="timeline-card"><div class="timeline-month ${t.gold?'gold':''}">${t.month}</div><h3 style="font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:14px;color:var(--navy)">${t.title}</h3><ul class="step-list">${t.items.map(item=>`<li class="step-item"><div class="step-num arrow ${t.gold?'gold':''}">→</div><div class="step-body"><p style="margin:0;font-size:13px;color:var(--gray)">${item}</p></div></li>`).join('')}</ul></div>`;
+  tc.innerHTML += `<div class="timeline-card"><div class="timeline-month ${t.gold?'gold':''}">${t.month}</div><h3 style="font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:14px;color:var(--navy)">${t.title}</h3><ul class="step-list">${t.items.map(item=>`<li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy);font-size:16px">→</div><div class="step-body"><p style="margin:0;font-size:14px;color:#2d3a4a">${item}</p></div></li>`).join('')}</ul></div>`;
 });
 
 // ===== ARCHETYPES =====
@@ -6912,7 +6944,7 @@ const trainingPhases = [
 ];
 const trc = document.getElementById('training-cards');
 trainingPhases.forEach((ph, pi) => {
-  trc.innerHTML += `<div class="card" style="border-left:4px solid ${ph.accent};border-radius:0 16px 16px 0;margin-bottom:18px"><div class="badge ${ph.badge}">${ph.phase}</div><h3>${ph.title}</h3><ul class="step-list" style="margin-top:14px">${ph.items.map((item,i)=>`<li class="step-item"><div class="step-num" style="background:${ph.accent}">${i+1}</div><div class="step-body"><p style="margin:0;font-size:13px;color:var(--gray-700)">${item}</p></div></li>`).join('')}</ul></div>`;
+  trc.innerHTML += `<div class="card" style="border-left:4px solid ${ph.accent};border-radius:0 16px 16px 0;margin-bottom:18px"><div class="badge ${ph.badge}">${ph.phase}</div><h3>${ph.title}</h3><ul class="step-list" style="margin-top:14px">${ph.items.map((item,i)=>`<li class="step-item"><div class="step-num" style="background:var(--gold);color:var(--navy)">${i+1}</div><div class="step-body"><p style="margin:0;font-size:14px;color:#2d3a4a">${item}</p></div></li>`).join('')}</ul></div>`;
 });
 
 // ===== GLOSSARY =====
@@ -7614,7 +7646,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#edf0f7;min-height:1
     <span class="btype bt-speak">The System — scalable, duplicatable, and it works</span>
     <p class="stext">
       "Some of you might think — 'I don't have a passion for financial services.' That's actually fine. Because the owner of a McDonald's franchise may not have a passion for a Big Mac. <strong>It's not the burger. It's the system that generates the income.</strong><br><br>
-      Our model is structured exactly like real estate — but without the high cost of entry or commission droughts:<br><br>
+      Our model is structured exactly like real estate — but without the high cost of entry:<br><br>
       — Get your <strong>license</strong> (state-issued, regulated — just like a real estate license)<br>
       — Become an <strong>agent</strong> — help families with a solutions and earn income directly from the companies we represent<br>
       — Become a <strong>broker</strong> — build a team, earn supervisory overrides on every family your agency helps.<br><br>
