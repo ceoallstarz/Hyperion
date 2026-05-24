@@ -78,7 +78,7 @@ window.rm_toggleCheck = function(el) {
   --serif:  'Cormorant Garamond', 'Georgia', serif;
   --sans:   'Inter', system-ui, -apple-system, sans-serif;
   /* Layout */
-  --max-w:  1160px;
+  --max-w:  1100px;
   --pad:    clamp(20px, 4.5vw, 60px);
   /* Radii */
   --r-s:  6px;
@@ -92,12 +92,22 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--sans);
-  background: var(--cream);
+  background: #d8d4cc;
   color: var(--navy);
   font-size: 15px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Constrain entire page to max-width, centered */
+.page-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: var(--cream);
+  min-height: 100vh;
+  box-shadow: 0 0 60px rgba(12,29,48,0.18);
+  position: relative;
 }
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -113,6 +123,15 @@ body {
   color: var(--white);
   position: relative;
   overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.3s ease, padding 0.35s ease;
+  max-height: 600px;
+  opacity: 1;
+}
+.hero.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
 }
 .hero::before {
   content: '';
@@ -255,9 +274,8 @@ body {
   max-width: var(--max-w);
   margin: 0 auto;
   padding: 0 var(--pad);
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  /* 13 tabs → 2 rows: 7 + 6 */
+  display: flex;
+  flex-wrap: wrap;
 }
 .nav-btn {
   padding: 11px 8px;
@@ -1181,6 +1199,7 @@ button.secondary-btn:hover { background: var(--off-white); }
 </style>
 </head>
 <body>
+<div class="page-shell">
 
 <!-- HERO -->
 <header class="hero">
@@ -5507,6 +5526,7 @@ document.addEventListener('keydown',function(e){
 });
 </script>
 
+</div><!-- end page-shell -->
 </body>
 </html>"
         style="width:100%;height:860px;border:none;display:block"
@@ -6473,6 +6493,7 @@ document.addEventListener('keydown',function(e){
     });
   }, 600);
 </script>
+</div><!-- end page-shell -->
 </body>
 </html>"
         style="width:100%;height:820px;border:none;display:block"
@@ -6764,6 +6785,21 @@ function showTab(id, btn) {
   if (btn) btn.classList.add('active');
   window.scrollTo({top: 0, behavior:'smooth'});
 }
+
+// Hide hero on scroll, reveal when back at top
+(function() {
+  var hero = document.querySelector('.hero');
+  var lastY = 0;
+  window.addEventListener('scroll', function() {
+    var y = window.scrollY || window.pageYOffset;
+    if (y > 80) {
+      hero.classList.add('hidden');
+    } else {
+      hero.classList.remove('hidden');
+    }
+    lastY = y;
+  }, { passive: true });
+})();
 
 function showHF(id) {
   document.querySelectorAll('.hf-sub-section').forEach(s => s.classList.remove('active'));
@@ -8070,5 +8106,6 @@ function resetTimer(){clearInterval(tInt);tRun=false;tSec=0;document.getElementB
 })();
 </script>
 
+</div><!-- end page-shell -->
 </body>
 </html>
