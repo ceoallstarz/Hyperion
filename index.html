@@ -6,389 +6,428 @@
 <title>🎤 Karaoke Night</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#0d0818;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-body{display:flex;flex-direction:column;align-items:center;min-height:100vh}
+html,body{height:100%;background:#09060f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden}
+.bg{position:fixed;inset:0;pointer-events:none}
+.bg::before{content:'';position:absolute;top:-200px;left:20%;width:700px;height:500px;background:radial-gradient(ellipse,rgba(120,110,230,.13) 0%,transparent 65%)}
+.app{position:relative;z-index:1;display:grid;grid-template-columns:400px 1fr;height:100vh}
 
-.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.ambient::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(127,119,221,.18) 0%,transparent 65%)}
-.ambient::after{content:'';position:absolute;bottom:0;right:5%;width:500px;height:350px;background:radial-gradient(ellipse,rgba(29,158,117,.09) 0%,transparent 65%)}
-
-/* ── SETUP SCREEN ── */
-#setup{position:relative;z-index:1;width:100%;max-width:520px;padding:3rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:0}
-.setup-icon{font-size:52px;margin-bottom:1.25rem}
-.setup-title{font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:.4rem;text-align:center}
-.setup-sub{font-size:14px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;margin-bottom:2rem}
-.steps{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.5rem}
-.steps h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:rgba(255,255,255,.35);margin-bottom:.9rem}
-.step{display:flex;align-items:flex-start;gap:12px;margin-bottom:.85rem;font-size:13px;line-height:1.5;color:rgba(255,255,255,.7)}
-.step:last-child{margin-bottom:0}
-.sn{width:22px;height:22px;border-radius:50%;background:rgba(127,119,221,.25);color:#afa9ec;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
-.step a{color:#afa9ec;text-decoration:none}
-.step a:hover{color:#d4d0f6;text-decoration:underline}
-.key-wrap{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.key-label{font-size:12px;color:rgba(255,255,255,.4);font-weight:500}
-.key-row{display:flex;gap:8px}
-#keyInput{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;font-size:13px;color:#fff;font-family:inherit;outline:none;transition:border-color .15s}
-#keyInput:focus{border-color:rgba(127,119,221,.6)}
-#keyInput::placeholder{color:rgba(255,255,255,.2)}
-.save-btn{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:filter .15s}
-.save-btn:hover{filter:brightness(1.12)}
-.save-btn:disabled{opacity:.4;cursor:default}
-.key-err{font-size:12px;color:#f87171;display:none}
-.skip-link{font-size:12px;color:rgba(255,255,255,.25);margin-top:.5rem;cursor:pointer;text-decoration:underline}
-.skip-link:hover{color:rgba(255,255,255,.5)}
-
-/* ── PLAYER SCREEN ── */
-#player{position:relative;z-index:1;width:100%;max-width:660px;padding:1.25rem 1rem 0;display:none;flex-direction:column}
-
-.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:rgba(255,255,255,.7)}
-.logo em{font-style:normal;font-size:22px}
-.pill{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(127,119,221,.15);color:#afa9ec;border:1px solid rgba(127,119,221,.25);transition:all .4s}
-.pill.ok{background:rgba(29,158,117,.15);color:#5dcaa5;border-color:rgba(93,202,165,.3)}
-.pill.new{background:rgba(255,200,0,.15);color:#ffd95e;border-color:rgba(255,200,0,.3)}
-.pill.err{background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.25)}
-.hdr-btns{display:flex;gap:6px}
-.hbtn{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
-.hbtn:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
-.hbtn.spin svg{animation:spin .7s linear infinite}
+/* ── LEFT ── */
+.left{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);padding:1rem;gap:10px;overflow:hidden}
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.logo em{font-style:normal;font-size:20px}
+.hdr-r{display:flex;gap:6px;align-items:center}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;border:1px solid transparent;transition:all .4s;white-space:nowrap}
+.pill.loading{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.08)}
+.pill.ok{background:rgba(29,158,117,.12);color:#5dcaa5;border-color:rgba(93,202,165,.2)}
+.pill.new{background:rgba(255,200,0,.12);color:#ffd95e;border-color:rgba(255,200,0,.2)}
+.pill.err{background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)}
+.ibtn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);border-radius:7px;padding:4px 9px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
+.ibtn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.ibtn.spin svg{animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.vid-wrap{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
-#yt{width:100%;height:100%}
+/* Now Playing */
+.now-card{background:linear-gradient(135deg,rgba(120,110,230,.14),rgba(60,50,140,.06));border:1px solid rgba(120,110,230,.25);border-radius:14px;padding:14px 16px;flex-shrink:0}
+.now-eye{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:#afa9ec;display:flex;align-items:center;gap:6px;margin-bottom:.5rem}
+.npulse{width:6px;height:6px;border-radius:50%;background:#afa9ec;animation:blink 1.5s ease infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.now-song{font-size:18px;font-weight:700;line-height:1.2;letter-spacing:-.3px}
+.now-requester{font-size:14px;color:#afa9ec;font-weight:600;margin-top:5px;display:flex;align-items:center;gap:6px}
+.now-requester em{font-style:normal;font-size:16px}
+.now-pos{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
 
-.now{display:flex;align-items:center;gap:12px;background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.25);border-radius:14px;padding:12px 16px;margin-top:10px}
-.now-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#afa9ec;white-space:nowrap;line-height:1.6}
-.now-divider{width:1px;height:30px;background:rgba(127,119,221,.25);flex-shrink:0}
-.now-info{flex:1;min-width:0}
-.now-title{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.now-pos{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
-.live{display:none;align-items:center;gap:5px;font-size:11px;color:#5dcaa5;flex-shrink:0}
-.live.on{display:flex}
-.ldot{width:6px;height:6px;border-radius:50%;background:#5dcaa5;animation:pulse 1.4s ease infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
-
-.next-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
-.nc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .15s}
-.nc:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)}
-.nc.dim{opacity:.3;pointer-events:none}
-.nb{width:26px;height:26px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nb1{background:rgba(255,255,255,.12);color:rgba(255,255,255,.65)}
-.nb2{background:rgba(255,255,255,.07);color:rgba(255,255,255,.35)}
+/* Up Next */
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.3);flex-shrink:0}
+.next-cards{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+.nc{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:10px 12px;cursor:pointer;transition:all .15s}
+.nc:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+.nc.dim{opacity:.28;pointer-events:none}
+.nb{width:24px;height:24px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nb1{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.nb2{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)}
 .nc-info{flex:1;min-width:0}
-.nc-t{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nc-s{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.nc-song{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-who{font-size:11px;color:#afa9ec;font-weight:600;margin-top:2px}
 
-.ctrls{display:flex;gap:8px;margin-top:8px}
-.cb{border:none;border-radius:11px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
+/* Controls */
+.ctrls{display:flex;gap:7px;flex-shrink:0}
+.cb{border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;font-weight:600}
 .cb:active{transform:scale(.96)}
-.cb:disabled{opacity:.28;cursor:default}
-.side{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:50px;height:50px;font-size:18px}
-.side:hover:not(:disabled){background:rgba(255,255,255,.12);color:#fff}
-.btnpp{background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.35);color:#d4d0f6;flex:0 0 50px;height:50px;font-size:18px}
-.btnpp:hover:not(:disabled){background:rgba(127,119,221,.35);color:#fff}
-.btnnxt{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;flex:1;height:50px;letter-spacing:.2px}
-.btnnxt:hover:not(:disabled){filter:brightness(1.1)}
+.cb:disabled{opacity:.25;cursor:default}
+.c-side{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:44px;height:44px;font-size:17px}
+.c-side:hover:not(:disabled){background:rgba(255,255,255,.13);color:#fff}
+.c-pp{background:rgba(120,110,230,.2);border:1px solid rgba(120,110,230,.35);color:#d4d0f6;width:44px;height:44px;font-size:16px}
+.c-pp:hover:not(:disabled){background:rgba(120,110,230,.38);color:#fff}
+.c-main{background:linear-gradient(135deg,#7c74e0,#4e47af);color:#fff;flex:1;height:44px;font-size:13px;letter-spacing:.2px;gap:6px}
+.c-main:hover:not(:disabled){filter:brightness(1.1)}
 
-.queue{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-top:10px}
-.qhdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
-.qlbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.3)}
-.qlist{max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
-.qi{display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
+/* Queue */
+.queue-wrap{flex:1;display:flex;flex-direction:column;min-height:0;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.015)}
+.q-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.q-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.3)}
+.q-ct{font-size:10px;color:rgba(255,255,255,.25)}
+.q-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+.qi{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .1s}
 .qi:last-child{border-bottom:none}
-.qi:hover{background:rgba(255,255,255,.05)}
-.qi.cur{background:rgba(127,119,221,.1);border-left:3px solid #7f77dd}
-.qi.done{opacity:.28}
-.qn{font-size:11px;color:rgba(255,255,255,.25);min-width:22px;text-align:right;flex-shrink:0}
-.qico{font-size:12px;min-width:14px;text-align:center;flex-shrink:0}
-.qt{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.empty{padding:2.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:13px;line-height:1.8}
+.qi:hover{background:rgba(255,255,255,.04)}
+.qi.cur{background:rgba(120,110,230,.1);border-left:3px solid #7c74e0}
+.qi.done{opacity:.22}
+.q-n{font-size:10px;color:rgba(255,255,255,.2);min-width:20px;text-align:right;flex-shrink:0}
+.q-ico{font-size:11px;min-width:14px;text-align:center;flex-shrink:0}
+.q-info{flex:1;min-width:0}
+.q-song{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-who{font-size:11px;color:#afa9ec;font-weight:600;margin-top:1px}
+.q-nomatch{font-size:10px;color:rgba(255,200,0,.6);margin-top:1px}
+.q-empty{padding:2rem;text-align:center;color:rgba(255,255,255,.3);font-size:12px;line-height:1.8}
 
-.foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.25);margin-top:10px;padding:0 2px 0}
-kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:1px 5px;font:inherit;font-size:10px}
+.foot{font-size:10px;color:rgba(255,255,255,.2);flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
+kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font:inherit;font-size:9px}
+.ldot{width:5px;height:5px;border-radius:50%;background:#5dcaa5;display:inline-block;margin-right:4px;animation:blink 2s ease infinite}
+
+/* ── RIGHT ── */
+.right{display:flex;flex-direction:column;padding:1rem;min-width:0}
+.vid-box{flex:1;position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);min-height:0}
+#ytPlayer{width:100%;height:100%;display:block}
+.blocked{position:absolute;inset:0;background:rgba(9,6,15,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:2rem}
+.blocked.show{display:flex}
+.open-btn{background:linear-gradient(135deg,#7c74e0,#4e47af);color:#fff;border:none;border-radius:11px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:filter .15s}
+.open-btn:hover{filter:brightness(1.12)}
+.nomatch-overlay{position:absolute;inset:0;background:rgba(9,6,15,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:2rem}
+.nomatch-overlay.show{display:flex}
 </style>
 </head>
 <body>
-<div class="ambient"></div>
+<div class="bg"></div>
+<div class="app">
 
-<!-- ── SETUP SCREEN ── -->
-<div id="setup">
-  <div class="setup-icon">🎤</div>
-  <div class="setup-title">Karaoke Night Setup</div>
-  <div class="setup-sub">One-time setup: a free YouTube API key lets this page<br>read your playlist and auto-update when you add songs.</div>
-
-  <div class="steps">
-    <h3>Get your free API key (5 min)</h3>
-    <div class="step"><span class="sn">1</span><span>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> and sign in with your Google account</span></div>
-    <div class="step"><span class="sn">2</span><span>Click <strong>Create Project</strong>, name it anything (e.g. "Karaoke"), click Create</span></div>
-    <div class="step"><span class="sn">3</span><span>Go to <strong>APIs & Services → Library</strong>, search for <strong>YouTube Data API v3</strong>, click it → <strong>Enable</strong></span></div>
-    <div class="step"><span class="sn">4</span><span>Go to <strong>APIs & Services → Credentials</strong>, click <strong>+ Create Credentials → API Key</strong></span></div>
-    <div class="step"><span class="sn">5</span><span>Copy the key and paste it below — it's free up to 10,000 requests/day</span></div>
-  </div>
-
-  <div class="key-wrap">
-    <div class="key-label">Your YouTube Data API v3 Key</div>
-    <div class="key-row">
-      <input id="keyInput" type="text" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"/>
-      <button class="save-btn" id="saveBtn" onclick="saveKey()">Save & Launch</button>
+  <!-- ══ LEFT: QUEUE WITH NAMES ══ -->
+  <div class="left">
+    <div class="hdr">
+      <div class="logo"><em>🎤</em> Karaoke Night</div>
+      <div class="hdr-r">
+        <span class="pill loading" id="pill">Loading…</span>
+        <button class="ibtn" id="syncBtn" onclick="doSync()">
+          <svg id="syncIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          Sync
+        </button>
+      </div>
     </div>
-    <div class="key-err" id="keyErr"></div>
-  </div>
-  <div class="skip-link" onclick="launchWithKey('')">Skip for now (video only, no song list)</div>
-</div>
 
-<!-- ── PLAYER SCREEN ── -->
-<div id="player">
-  <div class="hdr">
-    <div class="logo"><em>🎤</em> Karaoke Night</div>
-    <div class="hdr-btns">
-      <span class="pill" id="pill">Loading…</span>
-      <button class="hbtn" id="syncBtn" onclick="doSync()">
-        <svg id="syncIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
-        Sync
+    <!-- Now Playing -->
+    <div class="now-card">
+      <div class="now-eye"><span class="npulse"></span> Now Playing</div>
+      <div class="now-song"  id="nowSong">—</div>
+      <div class="now-requester" id="nowWho" style="display:none"><em>👤</em><span id="nowWhoName"></span></div>
+      <div class="now-pos"   id="nowPos">Select a song below</div>
+    </div>
+
+    <!-- Up Next -->
+    <div class="sec-lbl">Up Next</div>
+    <div class="next-cards">
+      <div class="nc dim" id="nc1" onclick="jumpTo(cur+1)">
+        <div class="nb nb1">1</div>
+        <div class="nc-info">
+          <div class="nc-song" id="n1song">—</div>
+          <div class="nc-who"  id="n1who"></div>
+        </div>
+      </div>
+      <div class="nc dim" id="nc2" onclick="jumpTo(cur+2)">
+        <div class="nb nb2">2</div>
+        <div class="nc-info">
+          <div class="nc-song" id="n2song">—</div>
+          <div class="nc-who"  id="n2who"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="ctrls">
+      <button class="cb c-side" id="bPrev" onclick="move(-1)">↑</button>
+      <button class="cb c-pp"   id="bPP"   onclick="togglePlay()" disabled>▶</button>
+      <button class="cb c-main" id="bNext" onclick="move(1)" disabled>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Next ↓
       </button>
-      <button class="hbtn" onclick="resetKey()" title="Change API key">⚙</button>
+    </div>
+
+    <!-- Queue -->
+    <div class="queue-wrap">
+      <div class="q-head">
+        <span class="q-lbl">Song Requests</span>
+        <span class="q-ct" id="qCt">—</span>
+      </div>
+      <div class="q-list" id="qList"><div class="q-empty">Loading requests…</div></div>
+    </div>
+
+    <div class="foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play</span>
+      <span><span class="ldot"></span>sync in <span id="cd">60</span>s</span>
     </div>
   </div>
 
-  <div class="vid-wrap"><div id="yt"></div></div>
-
-  <div class="now">
-    <span class="now-badge">Now<br>Playing</span>
-    <div class="now-divider"></div>
-    <div class="now-info">
-      <div class="now-title" id="nowT">—</div>
-      <div class="now-pos" id="nowPos">Select a song to begin</div>
+  <!-- ══ RIGHT: VIDEO ══ -->
+  <div class="right">
+    <div class="vid-box">
+      <div id="ytPlayer"></div>
+      <div class="blocked" id="blocked">
+        <div style="font-size:40px">🔒</div>
+        <div style="font-size:17px;font-weight:600">Embedding disabled</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);line-height:1.5;max-width:280px">This video blocks playback on other sites.</div>
+        <button class="open-btn" onclick="openYT()">▶ Open on YouTube</button>
+      </div>
+      <div class="nomatch-overlay" id="nomatch">
+        <div style="font-size:40px">🔍</div>
+        <div style="font-size:17px;font-weight:600" id="nomatchSong"></div>
+        <div style="font-size:13px;color:rgba(255,255,255,.4);line-height:1.5;max-width:280px">Not found in YouTube playlist — search for it manually.</div>
+        <button class="open-btn" onclick="searchYT()">🔎 Search on YouTube</button>
+      </div>
     </div>
-    <div class="live" id="liveEl"><span class="ldot"></span>Live</div>
-  </div>
-
-  <div class="next-row">
-    <div class="nc dim" id="nc1" onclick="jumpTo(cur+1)">
-      <div class="nb nb1">1</div>
-      <div class="nc-info"><div class="nc-t" id="n1t">—</div><div class="nc-s">Up next · tap to jump</div></div>
-    </div>
-    <div class="nc dim" id="nc2" onclick="jumpTo(cur+2)">
-      <div class="nb nb2">2</div>
-      <div class="nc-info"><div class="nc-t" id="n2t">—</div><div class="nc-s">After that</div></div>
-    </div>
-  </div>
-
-  <div class="ctrls">
-    <button class="cb side" id="bPrev" onclick="move(-1)" title="↑">↑</button>
-    <button class="cb btnpp" id="bPP" onclick="togglePlay()">▶</button>
-    <button class="cb btnnxt" id="bNext" onclick="move(1)">Next  ↓</button>
-  </div>
-
-  <div class="queue">
-    <div class="qhdr">
-      <span class="qlbl">Full Playlist</span>
-      <span style="font-size:11px;color:rgba(255,255,255,.25)" id="qmeta">—</span>
-    </div>
-    <div class="qlist" id="qlist"><div class="empty">Loading playlist…</div></div>
-  </div>
-
-  <div class="foot">
-    <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play/pause</span>
-    <span>Sync in <span id="cd">60</span>s</span>
   </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const PL_ID = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
-const KEY_STORE = 'yt_api_key_karaoke';
+const PL_ID   = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
+const API_KEY = 'AIzaSyBuLUg5WkS6LBalTLGF_Db6MfC1VrQ7sOw';
+const SHEET   = '1ZmWVLjfvY8HLoYvX73y9psgLqHlSm4MTrbW4dsgyzp4';
 
-let player, playerReady = false, playing = false;
-let songs = [], cur = 0, apiKey = '';
+// queue entries = {song, requester, videoId, videoTitle}
+let queue=[], cur=0, ytVideos=[];
+let player=null, playerReady=false, playing=false, ytWin=null;
 
-// ── Boot ──────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem(KEY_STORE);
-  if(saved !== null) launchWithKey(saved);
-});
-
-async function saveKey(){
-  const k = document.getElementById('keyInput').value.trim();
-  const errEl = document.getElementById('keyErr');
-  errEl.style.display = 'none';
-  if(!k){ showErr('Please paste your API key above.'); return; }
-  const btn = document.getElementById('saveBtn');
-  btn.disabled = true; btn.textContent = 'Checking…';
-  try{
-    const ok = await testKey(k);
-    if(ok){ localStorage.setItem(KEY_STORE, k); launchWithKey(k); }
-    else { showErr('Key rejected by YouTube. Double-check it and make sure YouTube Data API v3 is enabled.'); }
-  } catch(e){ showErr('Network error. Check your connection.'); }
-  btn.disabled = false; btn.textContent = 'Save & Launch';
+// ── Fetch Google Sheet (JSONP) — PRIMARY SOURCE ──
+function fetchSheet(){
+  return new Promise(resolve=>{
+    const timer=setTimeout(()=>resolve([]),8000);
+    const old=document.getElementById('_gsjs'); if(old) old.remove();
+    const s=document.createElement('script'); s.id='_gsjs';
+    window._gsCB=(resp)=>{
+      clearTimeout(timer);
+      try{
+        const rows=(resp.table.rows||[])
+          .filter(r=>r.c&&r.c[1]?.v&&r.c[2]?.v)
+          .map(r=>({
+            song:     String(r.c[1].v).trim(),
+            requester:String(r.c[2].v).trim()
+          }));
+        resolve(rows);
+      }catch(e){ resolve([]); }
+    };
+    s.onerror=()=>{ clearTimeout(timer); resolve([]); };
+    s.src=`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json;callback:_gsCB&t=${Date.now()}`;
+    document.body.appendChild(s);
+  });
 }
 
-async function testKey(k){
-  const r = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=id&id=${PL_ID}&key=${k}`);
-  const d = await r.json();
-  return !d.error;
+// ── Fetch YouTube playlist — for video lookup ──
+async function fetchYT(){
+  let items=[], token='';
+  do{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),8000);
+    const url=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PL_ID}&maxResults=50&key=${API_KEY}${token?'&pageToken='+token:''}`;
+    const r=await fetch(url,{signal:ctrl.signal});
+    clearTimeout(tid);
+    const d=await r.json();
+    if(d.error) throw new Error(d.error.message);
+    (d.items||[]).forEach(i=>{
+      if(i.snippet?.resourceId?.videoId&&!['Deleted video','Private video'].includes(i.snippet.title))
+        items.push({id:i.snippet.resourceId.videoId, title:i.snippet.title});
+    });
+    token=d.nextPageToken||'';
+  }while(token);
+  return items;
 }
 
-function showErr(msg){ const e=document.getElementById('keyErr'); e.textContent=msg; e.style.display='block'; }
-
-function launchWithKey(k){
-  apiKey = k;
-  document.getElementById('setup').style.display = 'none';
-  const p = document.getElementById('player');
-  p.style.display = 'flex';
-  p.style.flexDirection = 'column';
-  if(k) fetchPlaylist();
-  resetCd();
+// ── Match a requested song to a YouTube video ──
+function norm(s){ return s.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function matchScore(req, ytTitle){
+  const wa=norm(req).split(' ').filter(w=>w.length>2);
+  const wb=new Set(norm(ytTitle).split(' ').filter(w=>w.length>2));
+  if(!wa.length||!wb.size) return 0;
+  const hits=wa.filter(w=>wb.has(w)).length;
+  return hits/Math.max(wa.length,wb.size);
+}
+function findVideo(songName){
+  let best=null, bestScore=0;
+  ytVideos.forEach(v=>{
+    const s=matchScore(songName, v.title);
+    if(s>bestScore){ bestScore=s; best=v; }
+  });
+  return bestScore>0.2 ? best : null;
 }
 
-function resetKey(){
-  localStorage.removeItem(KEY_STORE);
-  document.getElementById('setup').style.display = 'flex';
-  document.getElementById('player').style.display = 'none';
+// ── Build queue: GSheet rows + YT video lookup ─
+function buildQueue(sheetRows){
+  return sheetRows.map(row=>{
+    const match=findVideo(row.song);
+    return{
+      song:      row.song,
+      requester: row.requester,
+      videoId:   match?.id   || null,
+      videoTitle:match?.title|| null
+    };
+  });
 }
 
-// ── YouTube Data API ──────────────────────────────
-async function fetchPlaylist(){
-  if(!apiKey){ setPill('No API key','err'); return; }
+// ── Load all ───────────────────────────────────
+async function loadAll(isSync=false){
   document.getElementById('syncBtn').classList.add('spin');
-  try{
-    let items = [], pageToken = '';
-    do {
-      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PL_ID}&maxResults=50&key=${apiKey}${pageToken?'&pageToken='+pageToken:''}`;
-      const r = await fetch(url);
-      const d = await r.json();
-      if(d.error) throw new Error(d.error.message);
-      items = items.concat(d.items||[]);
-      pageToken = d.nextPageToken || '';
-    } while(pageToken);
+  setPill('Syncing…','loading');
 
-    const fresh = items
-      .filter(i => i.snippet?.resourceId?.videoId && i.snippet.title !== 'Deleted video' && i.snippet.title !== 'Private video')
-      .map(i => ({ id: i.snippet.resourceId.videoId, title: i.snippet.title }));
+  const [sheetRes, ytRes] = await Promise.allSettled([fetchSheet(), fetchYT()]);
 
-    const prevLen = songs.length;
-    songs = fresh;
+  const sheetRows = sheetRes.status==='fulfilled' ? sheetRes.value : [];
+  ytVideos        = ytRes.status==='fulfilled'    ? ytRes.value    : [];
 
-    if(fresh.length > prevLen && prevLen > 0){
-      setPill(`+${fresh.length - prevLen} new! 🎉`, 'new');
-      setTimeout(() => setPill(`${songs.length} songs`, 'ok'), 3500);
-    } else {
-      setPill(`${songs.length} songs`, 'ok');
-    }
-    renderQueue();
-    updateUI();
-  } catch(e){
-    setPill('Sync error','err');
-    document.getElementById('qlist').innerHTML = `<div class="empty">⚠️ ${e.message}</div>`;
+  if(!sheetRows.length && !ytVideos.length){
+    setPill('Could not load data','err');
+    document.getElementById('qList').innerHTML=
+      '<div class="q-empty">⚠️ Could not load requests or playlist.<br>Check internet connection and try Sync.</div>';
+    document.getElementById('syncBtn').classList.remove('spin');
+    return;
   }
+
+  // If sheet failed but YT worked, show YT as fallback
+  if(!sheetRows.length && ytVideos.length){
+    queue = ytVideos.map(v=>({song:v.title, requester:'', videoId:v.id, videoTitle:v.title}));
+    setPill(`${queue.length} songs (no requests loaded)`,'err');
+  } else {
+    const prevLen=queue.length;
+    queue=buildQueue(sheetRows);
+    if(isSync&&queue.length>prevLen&&prevLen>0){
+      setPill(`+${queue.length-prevLen} new request!`,'new');
+      setTimeout(()=>setPill(`${queue.length} requests`+(ytVideos.length?` · ${ytVideos.length} videos`:''),'ok'),3000);
+    } else {
+      setPill(`${queue.length} requests`+(ytVideos.length?` · ${ytVideos.length} videos`:''),'ok');
+    }
+  }
+
+  renderQueue(); updateUI();
   document.getElementById('syncBtn').classList.remove('spin');
 }
 
-// ── YouTube IFrame Player ─────────────────────────
+// ── YouTube Player ─────────────────────────────
 function onYouTubeIframeAPIReady(){
-  player = new YT.Player('yt', {
-    width:'100%', height:'100%',
-    playerVars:{ listType:'playlist', list:PL_ID, rel:0, modestbranding:1 },
-    events:{ onReady: ()=>{ playerReady=true; }, onStateChange: onState }
+  player=new YT.Player('ytPlayer',{width:'100%',height:'100%',
+    playerVars:{rel:0,modestbranding:1},
+    events:{onReady:()=>{playerReady=true;},onStateChange:onState,onError:onErr}
   });
 }
-
 function onState(e){
-  const S = YT.PlayerState;
-  if(e.data === S.PLAYING){
-    playing = true;
-    document.getElementById('bPP').textContent = '⏸';
-    document.getElementById('liveEl').classList.add('on');
-    try{
-      const pi = player.getPlaylistIndex();
-      if(pi >= 0 && pi !== cur){ cur = pi; updateUI(); }
-      const vd = player.getVideoData();
-      if(vd?.title) document.getElementById('nowT').textContent = vd.title;
-    } catch(e){}
-  } else if(e.data === S.PAUSED || e.data === S.ENDED){
-    playing = false;
-    document.getElementById('bPP').textContent = '▶';
-    document.getElementById('liveEl').classList.remove('on');
+  const S=YT.PlayerState;
+  if(e.data===S.PLAYING){playing=true;document.getElementById('bPP').textContent='⏸';hideOverlays();}
+  else if(e.data===S.PAUSED){playing=false;document.getElementById('bPP').textContent='▶';}
+  else if(e.data===S.ENDED){playing=false;document.getElementById('bPP').textContent='▶';move(1);}
+}
+function onErr(e){
+  if([101,150,153,5].includes(e.data)){
+    playing=false;document.getElementById('bPP').textContent='▶';
+    document.getElementById('blocked').classList.add('show');
   }
 }
-
-function togglePlay(){
-  if(!playerReady) return;
-  playing ? player.pauseVideo() : player.playVideo();
+function hideOverlays(){
+  document.getElementById('blocked').classList.remove('show');
+  document.getElementById('nomatch').classList.remove('show');
+}
+function togglePlay(){if(!playerReady||!queue[cur])return;playing?player.pauseVideo():player.playVideo();}
+function loadVideo(idx){
+  if(!playerReady||!queue[idx])return;
+  hideOverlays();
+  const entry=queue[idx];
+  if(entry.videoId){
+    player.loadVideoById(entry.videoId);
+  } else {
+    // No match found — show search overlay
+    player.stopVideo();
+    document.getElementById('nomatch').classList.add('show');
+    document.getElementById('nomatchSong').textContent=entry.song;
+  }
+}
+function openYT(){
+  if(!queue[cur])return;
+  const vid=queue[cur].videoId;
+  const url=vid
+    ?`https://www.youtube.com/watch?v=${vid}&list=${PL_ID}`
+    :`https://www.youtube.com/results?search_query=${encodeURIComponent(queue[cur].song+' karaoke')}`;
+  if(ytWin&&!ytWin.closed){ytWin.location.href=url;ytWin.focus();}
+  else{ytWin=window.open(url,'karaoke_tv');}
+}
+function searchYT(){
+  if(!queue[cur])return;
+  const url=`https://www.youtube.com/results?search_query=${encodeURIComponent(queue[cur].song+' karaoke')}`;
+  window.open(url,'_blank');
 }
 
-// ── Navigation ────────────────────────────────────
-function move(dir){
-  const n = cur + dir;
-  if(n < 0 || n >= songs.length) return;
-  cur = n;
-  if(playerReady){ try{ player.playVideoAt(cur); }catch(e){} }
-  updateUI();
-}
+// ── Navigation ─────────────────────────────────
+function move(dir){const n=cur+dir;if(n<0||n>=queue.length)return;cur=n;loadVideo(cur);updateUI();}
+function jumpTo(i){if(i<0||i>=queue.length)return;cur=i;loadVideo(cur);updateUI();}
 
-function jumpTo(i){
-  if(i < 0 || i >= songs.length) return;
-  cur = i;
-  if(playerReady){ try{ player.playVideoAt(cur); }catch(e){} }
-  updateUI();
-}
-
-// ── UI ────────────────────────────────────────────
-function setPill(text, cls){
-  const p = document.getElementById('pill');
-  p.textContent = text;
-  p.className = 'pill' + (cls ? ' '+cls : '');
-}
-
+// ── UI ─────────────────────────────────────────
+function setPill(t,c){const p=document.getElementById('pill');p.textContent=t;p.className='pill '+(c||'loading');}
 function updateUI(){
-  const s = songs[cur];
-  if(s) document.getElementById('nowT').textContent = s.title;
-  document.getElementById('nowPos').textContent = songs.length ? `Song ${cur+1} of ${songs.length}` : '';
-  document.getElementById('n1t').textContent = songs[cur+1]?.title || '—';
-  document.getElementById('n2t').textContent = songs[cur+2]?.title || '—';
-  document.getElementById('nc1').classList.toggle('dim', !songs[cur+1]);
-  document.getElementById('nc2').classList.toggle('dim', !songs[cur+2]);
-  document.getElementById('bPrev').disabled = cur <= 0;
-  document.getElementById('bNext').disabled = !songs.length || cur >= songs.length-1;
-  document.getElementById('qmeta').textContent = songs.length ? `${songs.length} songs` : '—';
-  document.querySelectorAll('.qi').forEach((el,i) => {
-    el.className = 'qi' + (i===cur?' cur':i<cur?' done':'');
-  });
-  const act = document.querySelector('.qi.cur');
-  if(act) act.scrollIntoView({block:'nearest', behavior:'smooth'});
+  const s=queue[cur],s1=queue[cur+1],s2=queue[cur+2];
+  document.getElementById('nowSong').textContent=s?.song||'—';
+  if(s?.requester){
+    document.getElementById('nowWhoName').textContent=s.requester;
+    document.getElementById('nowWho').style.display='flex';
+  } else {
+    document.getElementById('nowWho').style.display='none';
+  }
+  document.getElementById('nowPos').textContent=queue.length?`Request ${cur+1} of ${queue.length}`:'Select a song';
+
+  document.getElementById('n1song').textContent=s1?.song||'—';
+  document.getElementById('n1who').textContent=s1?.requester?'👤 '+s1.requester:'';
+  document.getElementById('n2song').textContent=s2?.song||'—';
+  document.getElementById('n2who').textContent=s2?.requester?'👤 '+s2.requester:'';
+  document.getElementById('nc1').classList.toggle('dim',!s1);
+  document.getElementById('nc2').classList.toggle('dim',!s2);
+
+  document.getElementById('bPrev').disabled=cur<=0;
+  document.getElementById('bNext').disabled=!queue.length||cur>=queue.length-1;
+  document.getElementById('bPP').disabled=!s;
+  document.getElementById('qCt').textContent=queue.length?`${queue.length} requests`:'—';
+
+  document.querySelectorAll('.qi').forEach((el,i)=>{el.className='qi'+(i===cur?' cur':i<cur?' done':'');});
+  const act=document.querySelector('.qi.cur');
+  if(act) act.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 
 function renderQueue(){
-  document.getElementById('qlist').innerHTML = songs.map((s,i) => `
+  document.getElementById('qList').innerHTML=queue.map((s,i)=>`
     <div class="qi${i===cur?' cur':i<cur?' done':''}" onclick="jumpTo(${i})">
-      <span class="qn">${i+1}</span>
-      <span class="qico">${i===cur?'🎤':i<cur?'✓':''}</span>
-      <span class="qt" title="${s.title}">${s.title}</span>
+      <span class="q-n">${i+1}</span>
+      <span class="q-ico">${i===cur?'🎤':i<cur?'✓':''}</span>
+      <div class="q-info">
+        <div class="q-song">${s.song}</div>
+        <div class="q-who">👤 ${s.requester}</div>
+        ${!s.videoId?'<div class="q-nomatch">⚠ not in playlist</div>':''}
+      </div>
     </div>`).join('');
   updateUI();
 }
 
-// ── Keyboard ──────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
-  if(e.key==='ArrowDown'){ e.preventDefault(); move(1); }
-  if(e.key==='ArrowUp'){   e.preventDefault(); move(-1); }
-  if(e.key===' '){         e.preventDefault(); togglePlay(); }
+// ── Keyboard ───────────────────────────────────
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
+  if(e.key==='ArrowDown'){e.preventDefault();move(1);}
+  if(e.key==='ArrowUp'){e.preventDefault();move(-1);}
+  if(e.key===' '){e.preventDefault();togglePlay();}
 });
 
-// ── Countdown ─────────────────────────────────────
-function doSync(){ fetchPlaylist(); resetCd(); }
-let cdVal=60, cdTimer;
+// ── Auto-sync ──────────────────────────────────
+function doSync(){loadAll(true);resetCd();}
+let cdVal=60,cdTimer;
 function resetCd(){
-  clearInterval(cdTimer); cdVal=60;
+  clearInterval(cdTimer);cdVal=60;
   document.getElementById('cd').textContent=cdVal;
   cdTimer=setInterval(()=>{
-    cdVal--;
-    const el=document.getElementById('cd');
-    if(el) el.textContent=cdVal;
-    if(cdVal<=0){ fetchPlaylist(); cdVal=60; }
+    cdVal--;const el=document.getElementById('cd');if(el)el.textContent=cdVal;
+    if(cdVal<=0){loadAll(true);cdVal=60;}
   },1000);
 }
+loadAll();resetCd();
 </script>
 </body>
 </html>
