@@ -7,43 +7,67 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#0d0818;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-body{display:flex;flex-direction:column;align-items:center;padding:0 0 2rem}
+body{display:flex;flex-direction:column;align-items:center;min-height:100vh}
 
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .ambient::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(127,119,221,.18) 0%,transparent 65%)}
-.ambient::after{content:'';position:absolute;bottom:-80px;right:5%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(29,158,117,.09) 0%,transparent 65%)}
+.ambient::after{content:'';position:absolute;bottom:0;right:5%;width:500px;height:350px;background:radial-gradient(ellipse,rgba(29,158,117,.09) 0%,transparent 65%)}
 
-.page{position:relative;z-index:1;width:100%;max-width:660px;padding:1.25rem 1rem 0}
+/* ── SETUP SCREEN ── */
+#setup{position:relative;z-index:1;width:100%;max-width:520px;padding:3rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:0}
+.setup-icon{font-size:52px;margin-bottom:1.25rem}
+.setup-title{font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:.4rem;text-align:center}
+.setup-sub{font-size:14px;color:rgba(255,255,255,.45);text-align:center;line-height:1.6;margin-bottom:2rem}
+.steps{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+.steps h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:rgba(255,255,255,.35);margin-bottom:.9rem}
+.step{display:flex;align-items:flex-start;gap:12px;margin-bottom:.85rem;font-size:13px;line-height:1.5;color:rgba(255,255,255,.7)}
+.step:last-child{margin-bottom:0}
+.sn{width:22px;height:22px;border-radius:50%;background:rgba(127,119,221,.25);color:#afa9ec;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step a{color:#afa9ec;text-decoration:none}
+.step a:hover{color:#d4d0f6;text-decoration:underline}
+.key-wrap{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.key-label{font-size:12px;color:rgba(255,255,255,.4);font-weight:500}
+.key-row{display:flex;gap:8px}
+#keyInput{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 14px;font-size:13px;color:#fff;font-family:inherit;outline:none;transition:border-color .15s}
+#keyInput:focus{border-color:rgba(127,119,221,.6)}
+#keyInput::placeholder{color:rgba(255,255,255,.2)}
+.save-btn{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;transition:filter .15s}
+.save-btn:hover{filter:brightness(1.12)}
+.save-btn:disabled{opacity:.4;cursor:default}
+.key-err{font-size:12px;color:#f87171;display:none}
+.skip-link{font-size:12px;color:rgba(255,255,255,.25);margin-top:.5rem;cursor:pointer;text-decoration:underline}
+.skip-link:hover{color:rgba(255,255,255,.5)}
 
-/* header */
+/* ── PLAYER SCREEN ── */
+#player{position:relative;z-index:1;width:100%;max-width:660px;padding:1.25rem 1rem 0;display:none;flex-direction:column}
+
 .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:rgba(255,255,255,.7)}
 .logo em{font-style:normal;font-size:22px}
 .pill{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(127,119,221,.15);color:#afa9ec;border:1px solid rgba(127,119,221,.25);transition:all .4s}
 .pill.ok{background:rgba(29,158,117,.15);color:#5dcaa5;border-color:rgba(93,202,165,.3)}
-.pill.new{background:rgba(255,200,0,.15);color:#ffd95e;border-color:rgba(255,200,0,.25)}
-.sync-btn{background:none;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
-.sync-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
-.sync-btn.spin svg{animation:spin .7s linear infinite}
+.pill.new{background:rgba(255,200,0,.15);color:#ffd95e;border-color:rgba(255,200,0,.3)}
+.pill.err{background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.25)}
+.hdr-btns{display:flex;gap:6px}
+.hbtn{background:none;border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.3);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
+.hbtn:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7)}
+.hbtn.spin svg{animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* video */
 .vid-wrap{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
 #yt{width:100%;height:100%}
 
-/* now playing */
 .now{display:flex;align-items:center;gap:12px;background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.25);border-radius:14px;padding:12px 16px;margin-top:10px}
-.now-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#afa9ec;white-space:nowrap;line-height:1.5}
-.now-line{width:1px;height:30px;background:rgba(127,119,221,.25);flex-shrink:0}
+.now-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#afa9ec;white-space:nowrap;line-height:1.6}
+.now-divider{width:1px;height:30px;background:rgba(127,119,221,.25);flex-shrink:0}
 .now-info{flex:1;min-width:0}
 .now-title{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
-.now-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.now-pos{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
 .live{display:none;align-items:center;gap:5px;font-size:11px;color:#5dcaa5;flex-shrink:0}
 .live.on{display:flex}
 .ldot{width:6px;height:6px;border-radius:50%;background:#5dcaa5;animation:pulse 1.4s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
 
-/* next row */
 .next-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .nc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .15s}
 .nc:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)}
@@ -55,19 +79,17 @@ body{display:flex;flex-direction:column;align-items:center;padding:0 0 2rem}
 .nc-t{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nc-s{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
 
-/* controls */
 .ctrls{display:flex;gap:8px;margin-top:8px}
 .cb{border:none;border-radius:11px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
 .cb:active{transform:scale(.96)}
 .cb:disabled{opacity:.28;cursor:default}
 .side{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:50px;height:50px;font-size:18px}
 .side:hover:not(:disabled){background:rgba(255,255,255,.12);color:#fff}
-.btnplay{background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.35);color:#d4d0f6;flex:0 0 50px;height:50px;font-size:18px}
-.btnplay:hover:not(:disabled){background:rgba(127,119,221,.35);color:#fff}
-.btnnext{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;flex:1;height:50px;letter-spacing:.2px}
-.btnnext:hover:not(:disabled){filter:brightness(1.1)}
+.btnpp{background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.35);color:#d4d0f6;flex:0 0 50px;height:50px;font-size:18px}
+.btnpp:hover:not(:disabled){background:rgba(127,119,221,.35);color:#fff}
+.btnnxt{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;flex:1;height:50px;letter-spacing:.2px}
+.btnnxt:hover:not(:disabled){filter:brightness(1.1)}
 
-/* queue */
 .queue{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-top:10px}
 .qhdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
 .qlbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.3)}
@@ -80,26 +102,52 @@ body{display:flex;flex-direction:column;align-items:center;padding:0 0 2rem}
 .qn{font-size:11px;color:rgba(255,255,255,.25);min-width:22px;text-align:right;flex-shrink:0}
 .qico{font-size:12px;min-width:14px;text-align:center;flex-shrink:0}
 .qt{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qd{font-size:10px;color:rgba(255,255,255,.25);flex-shrink:0}
-.loading-row{padding:2.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:13px;line-height:1.8}
+.empty{padding:2.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:13px;line-height:1.8}
 
-/* footer */
-.foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.25);margin-top:10px;padding:0 2px}
+.foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.25);margin-top:10px;padding:0 2px 0}
 kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:1px 5px;font:inherit;font-size:10px}
 </style>
 </head>
 <body>
 <div class="ambient"></div>
-<div class="page">
 
+<!-- ── SETUP SCREEN ── -->
+<div id="setup">
+  <div class="setup-icon">🎤</div>
+  <div class="setup-title">Karaoke Night Setup</div>
+  <div class="setup-sub">One-time setup: a free YouTube API key lets this page<br>read your playlist and auto-update when you add songs.</div>
+
+  <div class="steps">
+    <h3>Get your free API key (5 min)</h3>
+    <div class="step"><span class="sn">1</span><span>Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> and sign in with your Google account</span></div>
+    <div class="step"><span class="sn">2</span><span>Click <strong>Create Project</strong>, name it anything (e.g. "Karaoke"), click Create</span></div>
+    <div class="step"><span class="sn">3</span><span>Go to <strong>APIs & Services → Library</strong>, search for <strong>YouTube Data API v3</strong>, click it → <strong>Enable</strong></span></div>
+    <div class="step"><span class="sn">4</span><span>Go to <strong>APIs & Services → Credentials</strong>, click <strong>+ Create Credentials → API Key</strong></span></div>
+    <div class="step"><span class="sn">5</span><span>Copy the key and paste it below — it's free up to 10,000 requests/day</span></div>
+  </div>
+
+  <div class="key-wrap">
+    <div class="key-label">Your YouTube Data API v3 Key</div>
+    <div class="key-row">
+      <input id="keyInput" type="text" placeholder="AIzaSy..." autocomplete="off" spellcheck="false"/>
+      <button class="save-btn" id="saveBtn" onclick="saveKey()">Save & Launch</button>
+    </div>
+    <div class="key-err" id="keyErr"></div>
+  </div>
+  <div class="skip-link" onclick="launchWithKey('')">Skip for now (video only, no song list)</div>
+</div>
+
+<!-- ── PLAYER SCREEN ── -->
+<div id="player">
   <div class="hdr">
     <div class="logo"><em>🎤</em> Karaoke Night</div>
-    <div style="display:flex;gap:7px;align-items:center">
+    <div class="hdr-btns">
       <span class="pill" id="pill">Loading…</span>
-      <button class="sync-btn" id="syncBtn" onclick="doSync()">
+      <button class="hbtn" id="syncBtn" onclick="doSync()">
         <svg id="syncIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         Sync
       </button>
+      <button class="hbtn" onclick="resetKey()" title="Change API key">⚙</button>
     </div>
   </div>
 
@@ -107,10 +155,10 @@ kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);bord
 
   <div class="now">
     <span class="now-badge">Now<br>Playing</span>
-    <div class="now-line"></div>
+    <div class="now-divider"></div>
     <div class="now-info">
       <div class="now-title" id="nowT">—</div>
-      <div class="now-sub" id="nowS">Press play to start</div>
+      <div class="now-pos" id="nowPos">Select a song to begin</div>
     </div>
     <div class="live" id="liveEl"><span class="ldot"></span>Live</div>
   </div>
@@ -127,9 +175,9 @@ kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);bord
   </div>
 
   <div class="ctrls">
-    <button class="cb side" id="bPrev" onclick="move(-1)" title="↑ Prev">↑</button>
-    <button class="cb btnplay" id="bPlay" onclick="togglePlay()" title="Space">▶</button>
-    <button class="cb btnnext" id="bNext" onclick="move(1)" title="↓ Next">Next song  ↓</button>
+    <button class="cb side" id="bPrev" onclick="move(-1)" title="↑">↑</button>
+    <button class="cb btnpp" id="bPP" onclick="togglePlay()">▶</button>
+    <button class="cb btnnxt" id="bNext" onclick="move(1)">Next  ↓</button>
   </div>
 
   <div class="queue">
@@ -137,54 +185,129 @@ kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);bord
       <span class="qlbl">Full Playlist</span>
       <span style="font-size:11px;color:rgba(255,255,255,.25)" id="qmeta">—</span>
     </div>
-    <div class="qlist" id="qlist"><div class="loading-row">Loading playlist…</div></div>
+    <div class="qlist" id="qlist"><div class="empty">Loading playlist…</div></div>
   </div>
 
   <div class="foot">
     <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play/pause</span>
-    <span>Auto-sync in <span id="cd">60</span>s &nbsp;<span id="updT"></span></span>
+    <span>Sync in <span id="cd">60</span>s</span>
   </div>
 </div>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 const PL_ID = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
+const KEY_STORE = 'yt_api_key_karaoke';
 
 let player, playerReady = false, playing = false;
-let songs = [];   // [{id, title}]
-let cur = 0;
+let songs = [], cur = 0, apiKey = '';
 
-// ─── YouTube Player ───────────────────────────────
-function onYouTubeIframeAPIReady(){
-  player = new YT.Player('yt',{
-    width:'100%', height:'100%',
-    playerVars:{ listType:'playlist', list:PL_ID, rel:0, modestbranding:1 },
-    events:{ onReady:onReady, onStateChange:onState }
-  });
+// ── Boot ──────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(KEY_STORE);
+  if(saved !== null) launchWithKey(saved);
+});
+
+async function saveKey(){
+  const k = document.getElementById('keyInput').value.trim();
+  const errEl = document.getElementById('keyErr');
+  errEl.style.display = 'none';
+  if(!k){ showErr('Please paste your API key above.'); return; }
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = 'Checking…';
+  try{
+    const ok = await testKey(k);
+    if(ok){ localStorage.setItem(KEY_STORE, k); launchWithKey(k); }
+    else { showErr('Key rejected by YouTube. Double-check it and make sure YouTube Data API v3 is enabled.'); }
+  } catch(e){ showErr('Network error. Check your connection.'); }
+  btn.disabled = false; btn.textContent = 'Save & Launch';
 }
 
-function onReady(){
-  playerReady = true;
-  // Give the player a moment to load the playlist then fetch titles
-  setTimeout(fetchTitles, 1500);
+async function testKey(k){
+  const r = await fetch(`https://www.googleapis.com/youtube/v3/playlists?part=id&id=${PL_ID}&key=${k}`);
+  const d = await r.json();
+  return !d.error;
+}
+
+function showErr(msg){ const e=document.getElementById('keyErr'); e.textContent=msg; e.style.display='block'; }
+
+function launchWithKey(k){
+  apiKey = k;
+  document.getElementById('setup').style.display = 'none';
+  const p = document.getElementById('player');
+  p.style.display = 'flex';
+  p.style.flexDirection = 'column';
+  if(k) fetchPlaylist();
+  resetCd();
+}
+
+function resetKey(){
+  localStorage.removeItem(KEY_STORE);
+  document.getElementById('setup').style.display = 'flex';
+  document.getElementById('player').style.display = 'none';
+}
+
+// ── YouTube Data API ──────────────────────────────
+async function fetchPlaylist(){
+  if(!apiKey){ setPill('No API key','err'); return; }
+  document.getElementById('syncBtn').classList.add('spin');
+  try{
+    let items = [], pageToken = '';
+    do {
+      const url = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PL_ID}&maxResults=50&key=${apiKey}${pageToken?'&pageToken='+pageToken:''}`;
+      const r = await fetch(url);
+      const d = await r.json();
+      if(d.error) throw new Error(d.error.message);
+      items = items.concat(d.items||[]);
+      pageToken = d.nextPageToken || '';
+    } while(pageToken);
+
+    const fresh = items
+      .filter(i => i.snippet?.resourceId?.videoId && i.snippet.title !== 'Deleted video' && i.snippet.title !== 'Private video')
+      .map(i => ({ id: i.snippet.resourceId.videoId, title: i.snippet.title }));
+
+    const prevLen = songs.length;
+    songs = fresh;
+
+    if(fresh.length > prevLen && prevLen > 0){
+      setPill(`+${fresh.length - prevLen} new! 🎉`, 'new');
+      setTimeout(() => setPill(`${songs.length} songs`, 'ok'), 3500);
+    } else {
+      setPill(`${songs.length} songs`, 'ok');
+    }
+    renderQueue();
+    updateUI();
+  } catch(e){
+    setPill('Sync error','err');
+    document.getElementById('qlist').innerHTML = `<div class="empty">⚠️ ${e.message}</div>`;
+  }
+  document.getElementById('syncBtn').classList.remove('spin');
+}
+
+// ── YouTube IFrame Player ─────────────────────────
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('yt', {
+    width:'100%', height:'100%',
+    playerVars:{ listType:'playlist', list:PL_ID, rel:0, modestbranding:1 },
+    events:{ onReady: ()=>{ playerReady=true; }, onStateChange: onState }
+  });
 }
 
 function onState(e){
   const S = YT.PlayerState;
   if(e.data === S.PLAYING){
     playing = true;
-    document.getElementById('bPlay').textContent = '⏸';
+    document.getElementById('bPP').textContent = '⏸';
     document.getElementById('liveEl').classList.add('on');
-    // Sync cur index with actual player position
-    const idx = player.getPlaylistIndex();
-    if(idx >= 0 && idx !== cur){ cur = idx; updateUI(); }
-    // Update now-playing title from player (most reliable source)
-    const vd = player.getVideoData();
-    if(vd && vd.title) document.getElementById('nowT').textContent = vd.title;
-    document.getElementById('nowS').textContent = `Song ${cur+1} of ${songs.length||'?'}`;
+    try{
+      const pi = player.getPlaylistIndex();
+      if(pi >= 0 && pi !== cur){ cur = pi; updateUI(); }
+      const vd = player.getVideoData();
+      if(vd?.title) document.getElementById('nowT').textContent = vd.title;
+    } catch(e){}
   } else if(e.data === S.PAUSED || e.data === S.ENDED){
     playing = false;
-    document.getElementById('bPlay').textContent = '▶';
+    document.getElementById('bPP').textContent = '▶';
     document.getElementById('liveEl').classList.remove('on');
   }
 }
@@ -194,94 +317,33 @@ function togglePlay(){
   playing ? player.pauseVideo() : player.playVideo();
 }
 
-// ─── Navigation ──────────────────────────────────
+// ── Navigation ────────────────────────────────────
 function move(dir){
-  if(!playerReady) return;
   const n = cur + dir;
-  const total = songs.length || (playerReady ? (player.getPlaylist()?.length || 0) : 0);
-  if(n < 0 || (total && n >= total)) return;
+  if(n < 0 || n >= songs.length) return;
   cur = n;
-  player.playVideoAt(cur);
+  if(playerReady){ try{ player.playVideoAt(cur); }catch(e){} }
   updateUI();
 }
 
 function jumpTo(i){
-  if(!playerReady || i < 0) return;
+  if(i < 0 || i >= songs.length) return;
   cur = i;
-  player.playVideoAt(cur);
+  if(playerReady){ try{ player.playVideoAt(cur); }catch(e){} }
   updateUI();
 }
 
-// ─── Title Fetching ───────────────────────────────
-async function fetchTitle(videoId){
-  try{
-    const r = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
-    const d = await r.json();
-    return d.title || videoId;
-  } catch(e){ return null; }
-}
-
-async function fetchTitles(){
-  const syncBtn = document.getElementById('syncBtn');
-  syncBtn.classList.add('spin');
-  setPill('Fetching titles…','');
-
-  let ids = [];
-  try{ ids = player.getPlaylist() || []; } catch(e){}
-
-  if(!ids.length){
-    setPill('⚠ No playlist data','');
-    syncBtn.classList.remove('spin');
-    document.getElementById('qlist').innerHTML =
-      '<div class="loading-row">Player not ready yet.<br>Wait a moment and press Sync.</div>';
-    return;
-  }
-
-  // Fetch all titles in parallel (batches of 8 to be polite)
-  const newSongs = ids.map(id=>({id, title: null}));
-  const BATCH = 8;
-  for(let i=0; i<newSongs.length; i+=BATCH){
-    const batch = newSongs.slice(i, i+BATCH);
-    const titles = await Promise.all(batch.map(s => fetchTitle(s.id)));
-    titles.forEach((t,j) => { if(t) newSongs[i+j].title = t; });
-  }
-
-  // Fill any blanks with fallback label
-  newSongs.forEach((s,i) => { if(!s.title) s.title = `Song ${i+1}`; });
-
-  const prevLen = songs.length;
-  songs = newSongs;
-
-  if(songs.length > prevLen && prevLen > 0){
-    setPill(`+${songs.length-prevLen} new! 🎉`, 'new');
-    setTimeout(()=>setPill(`${songs.length} songs`,'ok'), 3500);
-  } else {
-    setPill(`${songs.length} songs`, 'ok');
-  }
-
-  syncBtn.classList.remove('spin');
-  document.getElementById('updT').textContent =
-    new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-
-  // Sync cur with player
-  try{ const pi = player.getPlaylistIndex(); if(pi>=0) cur=pi; } catch(e){}
-
-  renderQueue();
-  updateUI();
-}
-
+// ── UI ────────────────────────────────────────────
 function setPill(text, cls){
   const p = document.getElementById('pill');
   p.textContent = text;
   p.className = 'pill' + (cls ? ' '+cls : '');
 }
 
-// ─── UI ───────────────────────────────────────────
 function updateUI(){
   const s = songs[cur];
   if(s) document.getElementById('nowT').textContent = s.title;
-  document.getElementById('nowS').textContent = songs.length
-    ? `Song ${cur+1} of ${songs.length}` : 'Loading…';
+  document.getElementById('nowPos').textContent = songs.length ? `Song ${cur+1} of ${songs.length}` : '';
   document.getElementById('n1t').textContent = songs[cur+1]?.title || '—';
   document.getElementById('n2t').textContent = songs[cur+2]?.title || '—';
   document.getElementById('nc1').classList.toggle('dim', !songs[cur+1]);
@@ -289,8 +351,6 @@ function updateUI(){
   document.getElementById('bPrev').disabled = cur <= 0;
   document.getElementById('bNext').disabled = !songs.length || cur >= songs.length-1;
   document.getElementById('qmeta').textContent = songs.length ? `${songs.length} songs` : '—';
-
-  // Highlight queue row
   document.querySelectorAll('.qi').forEach((el,i) => {
     el.className = 'qi' + (i===cur?' cur':i<cur?' done':'');
   });
@@ -308,7 +368,7 @@ function renderQueue(){
   updateUI();
 }
 
-// ─── Keyboard ─────────────────────────────────────
+// ── Keyboard ──────────────────────────────────────
 document.addEventListener('keydown', e => {
   if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
   if(e.key==='ArrowDown'){ e.preventDefault(); move(1); }
@@ -316,20 +376,19 @@ document.addEventListener('keydown', e => {
   if(e.key===' '){         e.preventDefault(); togglePlay(); }
 });
 
-// ─── Auto-sync countdown ──────────────────────────
-function doSync(){ if(playerReady) fetchTitles(); resetCd(); }
+// ── Countdown ─────────────────────────────────────
+function doSync(){ fetchPlaylist(); resetCd(); }
 let cdVal=60, cdTimer;
 function resetCd(){
   clearInterval(cdTimer); cdVal=60;
   document.getElementById('cd').textContent=cdVal;
-  cdTimer = setInterval(()=>{
+  cdTimer=setInterval(()=>{
     cdVal--;
     const el=document.getElementById('cd');
     if(el) el.textContent=cdVal;
-    if(cdVal<=0){ if(playerReady) fetchTitles(); cdVal=60; }
+    if(cdVal<=0){ fetchPlaylist(); cdVal=60; }
   },1000);
 }
-resetCd();
 </script>
 </body>
 </html>
