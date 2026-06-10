@@ -7,85 +7,85 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;background:#0d0818;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-body{display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:0 0 2rem}
+body{display:flex;flex-direction:column;align-items:center;padding:0 0 2rem}
 
 .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .ambient::before{content:'';position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(127,119,221,.18) 0%,transparent 65%)}
 .ambient::after{content:'';position:absolute;bottom:-80px;right:5%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(29,158,117,.09) 0%,transparent 65%)}
 
-.page{position:relative;z-index:1;width:100%;max-width:640px;padding:1.25rem 1rem 0}
+.page{position:relative;z-index:1;width:100%;max-width:660px;padding:1.25rem 1rem 0}
 
 /* header */
-.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
 .logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:rgba(255,255,255,.7)}
 .logo em{font-style:normal;font-size:22px}
-.hdr-right{display:flex;gap:7px;align-items:center}
-.pill{font-size:11px;background:rgba(127,119,221,.15);color:#afa9ec;border:1px solid rgba(127,119,221,.25);padding:3px 10px;border-radius:20px;transition:background .3s}
-.pill.flash{background:rgba(29,158,117,.25);color:#5dcaa5;border-color:rgba(93,202,165,.3)}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(127,119,221,.15);color:#afa9ec;border:1px solid rgba(127,119,221,.25);transition:all .4s}
+.pill.ok{background:rgba(29,158,117,.15);color:#5dcaa5;border-color:rgba(93,202,165,.3)}
+.pill.new{background:rgba(255,200,0,.15);color:#ffd95e;border-color:rgba(255,200,0,.25)}
 .sync-btn{background:none;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.35);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
 .sync-btn:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7)}
 .sync-btn.spin svg{animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* NOW PLAYING big card */
-.now-card{background:linear-gradient(135deg,rgba(127,119,221,.15),rgba(83,74,183,.08));border:1px solid rgba(127,119,221,.3);border-radius:18px;padding:1.4rem 1.6rem;position:relative;overflow:hidden;margin-bottom:10px}
-.now-card::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(127,119,221,.12),transparent 70%);pointer-events:none}
-.nc-eyebrow{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:#afa9ec;margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
-.nc-dot{width:6px;height:6px;border-radius:50%;background:#afa9ec;animation:blink 1.5s ease infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
-.nc-title{font-size:24px;font-weight:700;letter-spacing:-.4px;line-height:1.2;margin-bottom:.3rem}
-.nc-pos{font-size:12px;color:rgba(255,255,255,.35)}
-.play-btn{position:absolute;top:1.4rem;right:1.5rem;background:rgba(127,119,221,.25);border:1px solid rgba(127,119,221,.4);color:#d4d0f6;border-radius:11px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
-.play-btn:hover{background:rgba(127,119,221,.4);border-color:rgba(127,119,221,.6);color:#fff}
-.play-btn:disabled{opacity:.3;cursor:default}
-.play-btn .arrow{font-size:16px}
+/* video */
+.vid-wrap{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+#yt{width:100%;height:100%}
 
-/* next 2 */
-.next-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.nc2{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:11px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
-.nc2:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16)}
-.nc2.dim{opacity:.35;pointer-events:none}
-.nb{width:28px;height:28px;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* now playing */
+.now{display:flex;align-items:center;gap:12px;background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.25);border-radius:14px;padding:12px 16px;margin-top:10px}
+.now-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#afa9ec;white-space:nowrap;line-height:1.5}
+.now-line{width:1px;height:30px;background:rgba(127,119,221,.25);flex-shrink:0}
+.now-info{flex:1;min-width:0}
+.now-title{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.now-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.live{display:none;align-items:center;gap:5px;font-size:11px;color:#5dcaa5;flex-shrink:0}
+.live.on{display:flex}
+.ldot{width:6px;height:6px;border-radius:50%;background:#5dcaa5;animation:pulse 1.4s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* next row */
+.next-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.nc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:all .15s}
+.nc:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15)}
+.nc.dim{opacity:.3;pointer-events:none}
+.nb{width:26px;height:26px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .nb1{background:rgba(255,255,255,.12);color:rgba(255,255,255,.65)}
 .nb2{background:rgba(255,255,255,.07);color:rgba(255,255,255,.35)}
-.nc2-info{flex:1;min-width:0}
-.nc2-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nc2-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
+.nc-info{flex:1;min-width:0}
+.nc-t{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-s{font-size:10px;color:rgba(255,255,255,.3);margin-top:1px}
 
 /* controls */
-.ctrls{display:flex;gap:8px;margin-bottom:10px}
-.cb{border:none;border-radius:12px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:600}
+.ctrls{display:flex;gap:8px;margin-top:8px}
+.cb{border:none;border-radius:11px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;font-weight:600;font-size:14px}
 .cb:active{transform:scale(.96)}
-.cb:disabled{opacity:.3;cursor:default}
-.cb-side{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:50px;height:50px;font-size:19px}
-.cb-side:hover:not(:disabled){background:rgba(255,255,255,.12);color:rgba(255,255,255,.9)}
-.cb-main{background:linear-gradient(135deg,#7f77dd,#534ab7);color:#fff;flex:1;height:50px;letter-spacing:.2px}
-.cb-main:hover:not(:disabled){filter:brightness(1.1)}
+.cb:disabled{opacity:.28;cursor:default}
+.side{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:50px;height:50px;font-size:18px}
+.side:hover:not(:disabled){background:rgba(255,255,255,.12);color:#fff}
+.btnplay{background:rgba(127,119,221,.2);border:1px solid rgba(127,119,221,.35);color:#d4d0f6;flex:0 0 50px;height:50px;font-size:18px}
+.btnplay:hover:not(:disabled){background:rgba(127,119,221,.35);color:#fff}
+.btnnext{background:linear-gradient(135deg,#7f77dd,#4e47af);color:#fff;flex:1;height:50px;letter-spacing:.2px}
+.btnnext:hover:not(:disabled){filter:brightness(1.1)}
 
 /* queue */
-.queue-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden}
+.queue{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;margin-top:10px}
 .qhdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
 .qlbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.3)}
-.qmeta{font-size:11px;color:rgba(255,255,255,.25)}
 .qlist{max-height:260px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
 .qi{display:flex;align-items:center;gap:9px;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
 .qi:last-child{border-bottom:none}
 .qi:hover{background:rgba(255,255,255,.05)}
-.qi.active{background:rgba(127,119,221,.1);border-left:3px solid #7f77dd}
-.qi.played{opacity:.28}
-.qi-n{font-size:11px;color:rgba(255,255,255,.25);min-width:22px;text-align:right;flex-shrink:0}
-.qi-ico{font-size:12px;min-width:14px;text-align:center;flex-shrink:0}
-.qi-t{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qi-d{font-size:10px;color:rgba(255,255,255,.25);flex-shrink:0}
-.qi-play{font-size:10px;background:rgba(127,119,221,.2);color:#afa9ec;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;font-family:inherit;flex-shrink:0;display:none}
-.qi:hover .qi-play{display:block}
-
-.empty{padding:2rem;text-align:center;color:rgba(255,255,255,.3);font-size:13px;line-height:1.7}
+.qi.cur{background:rgba(127,119,221,.1);border-left:3px solid #7f77dd}
+.qi.done{opacity:.28}
+.qn{font-size:11px;color:rgba(255,255,255,.25);min-width:22px;text-align:right;flex-shrink:0}
+.qico{font-size:12px;min-width:14px;text-align:center;flex-shrink:0}
+.qt{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qd{font-size:10px;color:rgba(255,255,255,.25);flex-shrink:0}
+.loading-row{padding:2.5rem;text-align:center;color:rgba(255,255,255,.3);font-size:13px;line-height:1.8}
 
 /* footer */
 .foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.25);margin-top:10px;padding:0 2px}
 kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:1px 5px;font:inherit;font-size:10px}
-.ldot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.3);display:inline-block;margin-right:4px;animation:blink 2s ease infinite}
 </style>
 </head>
 <body>
@@ -94,8 +94,8 @@ kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);bord
 
   <div class="hdr">
     <div class="logo"><em>🎤</em> Karaoke Night</div>
-    <div class="hdr-right">
-      <span class="pill" id="pill">Syncing…</span>
+    <div style="display:flex;gap:7px;align-items:center">
+      <span class="pill" id="pill">Loading…</span>
       <button class="sync-btn" id="syncBtn" onclick="doSync()">
         <svg id="syncIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
         Sync
@@ -103,215 +103,232 @@ kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);bord
     </div>
   </div>
 
-  <!-- Now Playing -->
-  <div class="now-card">
-    <div class="nc-eyebrow"><span class="nc-dot"></span> Now Playing</div>
-    <div class="nc-title" id="nowTitle">—</div>
-    <div class="nc-pos" id="nowPos">Select a song below to begin</div>
-    <button class="play-btn" id="playBtn" onclick="openCurrent()" disabled>
-      <span class="arrow">▶</span> Open on YouTube
-    </button>
+  <div class="vid-wrap"><div id="yt"></div></div>
+
+  <div class="now">
+    <span class="now-badge">Now<br>Playing</span>
+    <div class="now-line"></div>
+    <div class="now-info">
+      <div class="now-title" id="nowT">—</div>
+      <div class="now-sub" id="nowS">Press play to start</div>
+    </div>
+    <div class="live" id="liveEl"><span class="ldot"></span>Live</div>
   </div>
 
-  <!-- Up Next -->
   <div class="next-row">
-    <div class="nc2" id="n1card" onclick="jumpTo(cur+1)">
+    <div class="nc dim" id="nc1" onclick="jumpTo(cur+1)">
       <div class="nb nb1">1</div>
-      <div class="nc2-info">
-        <div class="nc2-title" id="n1t">—</div>
-        <div class="nc2-sub">Up next · click to jump</div>
-      </div>
+      <div class="nc-info"><div class="nc-t" id="n1t">—</div><div class="nc-s">Up next · tap to jump</div></div>
     </div>
-    <div class="nc2" id="n2card" onclick="jumpTo(cur+2)">
+    <div class="nc dim" id="nc2" onclick="jumpTo(cur+2)">
       <div class="nb nb2">2</div>
-      <div class="nc2-info">
-        <div class="nc2-title" id="n2t">—</div>
-        <div class="nc2-sub">After that</div>
-      </div>
+      <div class="nc-info"><div class="nc-t" id="n2t">—</div><div class="nc-s">After that</div></div>
     </div>
   </div>
 
-  <!-- Controls -->
   <div class="ctrls">
-    <button class="cb cb-side" id="btnPrev" onclick="move(-1)" title="Previous (↑)">↑</button>
-    <button class="cb cb-main" id="btnOpen" onclick="openCurrent()" disabled>▶&nbsp; Open on YouTube</button>
-    <button class="cb cb-side" id="btnNext" onclick="move(1)" title="Next (↓)">↓</button>
+    <button class="cb side" id="bPrev" onclick="move(-1)" title="↑ Prev">↑</button>
+    <button class="cb btnplay" id="bPlay" onclick="togglePlay()" title="Space">▶</button>
+    <button class="cb btnnext" id="bNext" onclick="move(1)" title="↓ Next">Next song  ↓</button>
   </div>
 
-  <!-- Queue -->
-  <div class="queue-card">
+  <div class="queue">
     <div class="qhdr">
       <span class="qlbl">Full Playlist</span>
-      <span class="qmeta" id="qmeta">—</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.25)" id="qmeta">—</span>
     </div>
-    <div class="qlist" id="qlist">
-      <div class="empty">Fetching playlist from YouTube…</div>
-    </div>
+    <div class="qlist" id="qlist"><div class="loading-row">Loading playlist…</div></div>
   </div>
 
   <div class="foot">
-    <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Enter</kbd> open</span>
-    <span><span class="ldot"></span>Auto-sync in <span id="cd">60</span>s &nbsp;<span id="updTxt"></span></span>
+    <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play/pause</span>
+    <span>Auto-sync in <span id="cd">60</span>s &nbsp;<span id="updT"></span></span>
   </div>
 </div>
 
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
-const PL   = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
-const APIS = [
-  'https://pipedapi.kavin.rocks',
-  'https://pipedapi.adminforge.de',
-  'https://api.piped.yt',
-  'https://pipedapi.drgns.space'
-];
+const PL_ID = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
 
-let songs = [], cur = 0;
-let ytWindow = null;
+let player, playerReady = false, playing = false;
+let songs = [];   // [{id, title}]
+let cur = 0;
 
-function fmtDur(s){
-  if(!s||s<0) return '';
-  return Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+// ─── YouTube Player ───────────────────────────────
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('yt',{
+    width:'100%', height:'100%',
+    playerVars:{ listType:'playlist', list:PL_ID, rel:0, modestbranding:1 },
+    events:{ onReady:onReady, onStateChange:onState }
+  });
 }
 
-// ── Fetch playlist ──
-async function fetchPlaylist(){
-  for(const api of APIS){
-    try{
-      const r = await fetch(`${api}/playlists/${PL}`,{signal:AbortSignal.timeout(6000)});
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      const d = await r.json();
-      const list = (d.relatedStreams||d.videos||[])
-        .filter(v=>v.url&&v.title)
-        .map(v=>({
-          id:   v.url.replace('/watch?v=','').split('&')[0].trim(),
-          title:v.title.trim(),
-          dur:  v.duration
-        }));
-      if(list.length) return list;
-    }catch(e){ console.warn(api,'→',e.message); }
-  }
-  return null;
+function onReady(){
+  playerReady = true;
+  // Give the player a moment to load the playlist then fetch titles
+  setTimeout(fetchTitles, 1500);
 }
 
-// ── Load / Sync ──
-async function loadPlaylist(isSync){
-  document.getElementById('syncBtn').classList.add('spin');
-  const fresh = await fetchPlaylist();
-  document.getElementById('syncBtn').classList.remove('spin');
-
-  if(fresh){
-    const prev = songs.length;
-    songs = fresh;
-    const pill = document.getElementById('pill');
-    if(isSync && songs.length > prev){
-      pill.textContent = `+${songs.length-prev} new! 🎉`;
-      pill.classList.add('flash');
-      setTimeout(()=>{ pill.textContent=`${songs.length} songs`; pill.classList.remove('flash'); },3500);
-    } else {
-      pill.textContent = `${songs.length} songs`;
-    }
-    renderQueue();
-    updateUI();
-  } else {
-    document.getElementById('pill').textContent = '⚠ Sync failed';
-    if(!songs.length){
-      document.getElementById('qlist').innerHTML =
-        '<div class="empty">Could not reach YouTube playlist API.<br>Check your internet connection and try Sync again.</div>';
-    }
-  }
-  document.getElementById('updTxt').textContent =
-    new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-}
-
-function doSync(){ loadPlaylist(true); resetCd(); }
-
-// ── Open video ──
-function openCurrent(){
-  if(!songs[cur]) return;
-  const url = 'https://www.youtube.com/watch?v='+songs[cur].id
-            + '&list='+PL+'&index='+(cur+1);
-  if(ytWindow && !ytWindow.closed){
-    ytWindow.location.href = url;
-    ytWindow.focus();
-  } else {
-    ytWindow = window.open(url,'_blank');
+function onState(e){
+  const S = YT.PlayerState;
+  if(e.data === S.PLAYING){
+    playing = true;
+    document.getElementById('bPlay').textContent = '⏸';
+    document.getElementById('liveEl').classList.add('on');
+    // Sync cur index with actual player position
+    const idx = player.getPlaylistIndex();
+    if(idx >= 0 && idx !== cur){ cur = idx; updateUI(); }
+    // Update now-playing title from player (most reliable source)
+    const vd = player.getVideoData();
+    if(vd && vd.title) document.getElementById('nowT').textContent = vd.title;
+    document.getElementById('nowS').textContent = `Song ${cur+1} of ${songs.length||'?'}`;
+  } else if(e.data === S.PAUSED || e.data === S.ENDED){
+    playing = false;
+    document.getElementById('bPlay').textContent = '▶';
+    document.getElementById('liveEl').classList.remove('on');
   }
 }
 
-// ── Navigation ──
+function togglePlay(){
+  if(!playerReady) return;
+  playing ? player.pauseVideo() : player.playVideo();
+}
+
+// ─── Navigation ──────────────────────────────────
 function move(dir){
-  const n = cur+dir;
-  if(n<0||n>=songs.length) return;
+  if(!playerReady) return;
+  const n = cur + dir;
+  const total = songs.length || (playerReady ? (player.getPlaylist()?.length || 0) : 0);
+  if(n < 0 || (total && n >= total)) return;
   cur = n;
+  player.playVideoAt(cur);
   updateUI();
-  // If YouTube window is open, auto-load next video
-  if(ytWindow && !ytWindow.closed) openCurrent();
 }
 
 function jumpTo(i){
-  if(i<0||i>=songs.length) return;
+  if(!playerReady || i < 0) return;
   cur = i;
+  player.playVideoAt(cur);
   updateUI();
-  openCurrent();
 }
 
-// ── UI ──
+// ─── Title Fetching ───────────────────────────────
+async function fetchTitle(videoId){
+  try{
+    const r = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+    const d = await r.json();
+    return d.title || videoId;
+  } catch(e){ return null; }
+}
+
+async function fetchTitles(){
+  const syncBtn = document.getElementById('syncBtn');
+  syncBtn.classList.add('spin');
+  setPill('Fetching titles…','');
+
+  let ids = [];
+  try{ ids = player.getPlaylist() || []; } catch(e){}
+
+  if(!ids.length){
+    setPill('⚠ No playlist data','');
+    syncBtn.classList.remove('spin');
+    document.getElementById('qlist').innerHTML =
+      '<div class="loading-row">Player not ready yet.<br>Wait a moment and press Sync.</div>';
+    return;
+  }
+
+  // Fetch all titles in parallel (batches of 8 to be polite)
+  const newSongs = ids.map(id=>({id, title: null}));
+  const BATCH = 8;
+  for(let i=0; i<newSongs.length; i+=BATCH){
+    const batch = newSongs.slice(i, i+BATCH);
+    const titles = await Promise.all(batch.map(s => fetchTitle(s.id)));
+    titles.forEach((t,j) => { if(t) newSongs[i+j].title = t; });
+  }
+
+  // Fill any blanks with fallback label
+  newSongs.forEach((s,i) => { if(!s.title) s.title = `Song ${i+1}`; });
+
+  const prevLen = songs.length;
+  songs = newSongs;
+
+  if(songs.length > prevLen && prevLen > 0){
+    setPill(`+${songs.length-prevLen} new! 🎉`, 'new');
+    setTimeout(()=>setPill(`${songs.length} songs`,'ok'), 3500);
+  } else {
+    setPill(`${songs.length} songs`, 'ok');
+  }
+
+  syncBtn.classList.remove('spin');
+  document.getElementById('updT').textContent =
+    new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+
+  // Sync cur with player
+  try{ const pi = player.getPlaylistIndex(); if(pi>=0) cur=pi; } catch(e){}
+
+  renderQueue();
+  updateUI();
+}
+
+function setPill(text, cls){
+  const p = document.getElementById('pill');
+  p.textContent = text;
+  p.className = 'pill' + (cls ? ' '+cls : '');
+}
+
+// ─── UI ───────────────────────────────────────────
 function updateUI(){
   const s = songs[cur];
-  document.getElementById('nowTitle').textContent = s ? s.title : '—';
-  document.getElementById('nowPos').textContent   = s ? `Song ${cur+1} of ${songs.length}` : 'Select a song to begin';
-  document.getElementById('n1t').textContent      = songs[cur+1]?.title || '—';
-  document.getElementById('n2t').textContent      = songs[cur+2]?.title || '—';
-  document.getElementById('n1card').classList.toggle('dim', !songs[cur+1]);
-  document.getElementById('n2card').classList.toggle('dim', !songs[cur+2]);
-  document.getElementById('btnPrev').disabled = cur <= 0;
-  document.getElementById('btnNext').disabled = cur >= songs.length-1;
-  document.getElementById('playBtn').disabled = !s;
-  document.getElementById('btnOpen').disabled = !s;
+  if(s) document.getElementById('nowT').textContent = s.title;
+  document.getElementById('nowS').textContent = songs.length
+    ? `Song ${cur+1} of ${songs.length}` : 'Loading…';
+  document.getElementById('n1t').textContent = songs[cur+1]?.title || '—';
+  document.getElementById('n2t').textContent = songs[cur+2]?.title || '—';
+  document.getElementById('nc1').classList.toggle('dim', !songs[cur+1]);
+  document.getElementById('nc2').classList.toggle('dim', !songs[cur+2]);
+  document.getElementById('bPrev').disabled = cur <= 0;
+  document.getElementById('bNext').disabled = !songs.length || cur >= songs.length-1;
   document.getElementById('qmeta').textContent = songs.length ? `${songs.length} songs` : '—';
 
-  // Refresh active row in queue
-  document.querySelectorAll('.qi').forEach((el,i)=>{
-    el.classList.toggle('active',  i===cur);
-    el.classList.toggle('played',  i<cur);
+  // Highlight queue row
+  document.querySelectorAll('.qi').forEach((el,i) => {
+    el.className = 'qi' + (i===cur?' cur':i<cur?' done':'');
   });
-  const active = document.querySelector('.qi.active');
-  if(active) active.scrollIntoView({block:'nearest',behavior:'smooth'});
+  const act = document.querySelector('.qi.cur');
+  if(act) act.scrollIntoView({block:'nearest', behavior:'smooth'});
 }
 
 function renderQueue(){
-  document.getElementById('qlist').innerHTML = songs.map((s,i)=>`
-    <div class="qi${i===cur?' active':i<cur?' played':''}" onclick="jumpTo(${i})">
-      <span class="qi-n">${i+1}</span>
-      <span class="qi-ico">${i===cur?'🎤':i<cur?'✓':''}</span>
-      <span class="qi-t" title="${s.title}">${s.title}</span>
-      <span class="qi-d">${fmtDur(s.dur)}</span>
-      <button class="qi-play" onclick="event.stopPropagation();jumpTo(${i})">▶ Play</button>
+  document.getElementById('qlist').innerHTML = songs.map((s,i) => `
+    <div class="qi${i===cur?' cur':i<cur?' done':''}" onclick="jumpTo(${i})">
+      <span class="qn">${i+1}</span>
+      <span class="qico">${i===cur?'🎤':i<cur?'✓':''}</span>
+      <span class="qt" title="${s.title}">${s.title}</span>
     </div>`).join('');
   updateUI();
 }
 
-// ── Keyboard ──
-document.addEventListener('keydown', e=>{
+// ─── Keyboard ─────────────────────────────────────
+document.addEventListener('keydown', e => {
   if(['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
   if(e.key==='ArrowDown'){ e.preventDefault(); move(1); }
   if(e.key==='ArrowUp'){   e.preventDefault(); move(-1); }
-  if(e.key==='Enter'){     e.preventDefault(); openCurrent(); }
+  if(e.key===' '){         e.preventDefault(); togglePlay(); }
 });
 
-// ── Countdown ──
+// ─── Auto-sync countdown ──────────────────────────
+function doSync(){ if(playerReady) fetchTitles(); resetCd(); }
 let cdVal=60, cdTimer;
 function resetCd(){
   clearInterval(cdTimer); cdVal=60;
   document.getElementById('cd').textContent=cdVal;
-  cdTimer=setInterval(()=>{
+  cdTimer = setInterval(()=>{
     cdVal--;
     const el=document.getElementById('cd');
     if(el) el.textContent=cdVal;
-    if(cdVal<=0){ loadPlaylist(true); cdVal=60; }
+    if(cdVal<=0){ if(playerReady) fetchTitles(); cdVal=60; }
   },1000);
 }
-
-loadPlaylist(false);
 resetCd();
 </script>
 </body>
