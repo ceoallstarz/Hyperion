@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎤 Karaoke Player</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0818;--card:rgba(255,255,255,.05);--border:rgba(255,255,255,.1);
+  --purple:#7f77dd;--purple-dim:rgba(127,119,221,.15);--green:#5dcaa5;
+  --txt:rgba(255,255,255,.9);--txt2:rgba(255,255,255,.5);--txt3:rgba(255,255,255,.25);
+}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:0 0 2rem}
+
+/* ambient */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0}
+.ambient::before{content:'';position:absolute;top:-150px;left:50%;transform:translateX(-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(127,119,221,.15) 0%,transparent 65%)}
+.ambient::after{content:'';position:absolute;bottom:0;right:10%;width:400px;height:300px;background:radial-gradient(ellipse,rgba(29,158,117,.08) 0%,transparent 65%)}
+
+.page{position:relative;z-index:1;width:100%;max-width:680px;padding:1.25rem 1rem 0}
+
+/* ── HEADER ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.logo{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--txt2)}
+.logo em{font-style:normal;font-size:22px}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.pill{font-size:11px;background:var(--purple-dim);color:#afa9ec;border:1px solid rgba(127,119,221,.25);padding:3px 10px;border-radius:20px}
+.ref-btn{background:none;border:1px solid var(--border);color:var(--txt3);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
+.ref-btn:hover{border-color:rgba(255,255,255,.25);color:var(--txt2)}
+.ref-btn.spin svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── VIDEO ── */
+.video-wrap{width:100%;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden;position:relative;border:1px solid var(--border)}
+#ytPlayer{width:100%;height:100%;display:block}
+.video-overlay{position:absolute;inset:0;background:rgba(13,8,24,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;pointer-events:none;transition:opacity .3s}
+.video-overlay.hidden{opacity:0}
+.vo-icon{font-size:48px}
+.vo-text{font-size:14px;color:var(--txt2)}
+
+/* ── NOW PLAYING ── */
+.now-bar{display:flex;align-items:center;gap:12px;background:rgba(127,119,221,.1);border:1px solid rgba(127,119,221,.25);border-radius:14px;padding:12px 16px;margin-top:10px}
+.now-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#afa9ec;white-space:nowrap}
+.now-divider{width:1px;height:28px;background:rgba(127,119,221,.25)}
+.now-info{flex:1;min-width:0}
+.now-title{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.now-pos{font-size:11px;color:var(--txt3);margin-top:2px}
+.now-live{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green)}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── NEXT SLOTS ── */
+.next-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.next-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s,border-color .15s}
+.next-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+.nc-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.b1{background:rgba(255,255,255,.12);color:var(--txt2)}
+.b2{background:rgba(255,255,255,.07);color:var(--txt3)}
+.nc-info{flex:1;min-width:0}
+.nc-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.nc-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+.nc-empty{opacity:.3}
+
+/* ── CONTROLS ── */
+.controls{display:flex;align-items:center;gap:8px;margin-top:10px}
+.ctrl{border:none;border-radius:11px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ctrl:active{transform:scale(.96)}
+.ctrl:disabled{opacity:.3;cursor:default}
+.btn-side{background:var(--card);border:1px solid var(--border);color:var(--txt2);width:48px;height:48px;font-size:18px}
+.btn-side:hover:not(:disabled){background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+.btn-play{background:var(--purple);color:#fff;flex:1;height:48px;font-size:15px;font-weight:600;letter-spacing:.2px}
+.btn-play:hover:not(:disabled){filter:brightness(1.12)}
+.btn-next{background:linear-gradient(90deg,rgba(127,119,221,.3),rgba(83,74,183,.2));border:1px solid rgba(127,119,221,.3);color:#d4d0f6;flex:1;height:48px;font-size:14px;font-weight:600}
+.btn-next:hover:not(:disabled){background:linear-gradient(90deg,rgba(127,119,221,.45),rgba(83,74,183,.35));border-color:rgba(127,119,221,.5)}
+
+/* ── QUEUE ── */
+.queue-wrap{margin-top:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.queue-hdr{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:1px solid var(--border)}
+.queue-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--txt3)}
+.q-count{font-size:11px;color:var(--txt3)}
+.queue-list{max-height:240px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+.qi{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .12s}
+.qi:last-child{border-bottom:none}
+.qi:hover{background:rgba(255,255,255,.05)}
+.qi.active{background:rgba(127,119,221,.12);border-left:3px solid var(--purple)}
+.qi.played{opacity:.3}
+.qi-n{font-size:11px;color:var(--txt3);min-width:24px;text-align:right}
+.qi-icon{font-size:12px;min-width:14px;text-align:center}
+.qi-title{font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qi-dur{font-size:10px;color:var(--txt3);white-space:nowrap}
+
+.loading-row{padding:2rem;text-align:center;color:var(--txt3);font-size:13px}
+
+/* ── FOOTER ── */
+.foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--txt3);margin-top:10px;padding:0 2px}
+
+/* kbd hint */
+.kbd-hint{font-size:10px;color:var(--txt3);display:flex;align-items:center;gap:4px}
+kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:1px 5px;font-family:inherit;font-size:10px}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="page">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="logo"><em>🎤</em> Karaoke Night</div>
+    <div class="hdr-right">
+      <span class="pill" id="statusPill">Loading…</span>
+      <button class="ref-btn" id="refBtn" onclick="doRefresh()">
+        <svg id="refIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        Sync playlist
+      </button>
+    </div>
+  </div>
+
+  <!-- Video -->
+  <div class="video-wrap">
+    <div id="ytPlayer"></div>
+    <div class="video-overlay" id="overlay">
+      <div class="vo-icon">🎤</div>
+      <div class="vo-text">Press Play to start</div>
+    </div>
+  </div>
+
+  <!-- Now Playing bar -->
+  <div class="now-bar">
+    <span class="now-label">Now<br>Playing</span>
+    <div class="now-divider"></div>
+    <div class="now-info">
+      <div class="now-title" id="nowTitle">—</div>
+      <div class="now-pos" id="nowPos">Select a song to begin</div>
+    </div>
+    <div class="now-live" id="liveIndicator" style="display:none">
+      <span class="ldot"></span> Live
+    </div>
+  </div>
+
+  <!-- Next 2 -->
+  <div class="next-row">
+    <div class="next-card" id="nextCard1" onclick="jumpRelative(1)">
+      <div class="nc-badge b1">1</div>
+      <div class="nc-info">
+        <div class="nc-title" id="next1T">—</div>
+        <div class="nc-sub">Up next — click to jump</div>
+      </div>
+    </div>
+    <div class="next-card" id="nextCard2" onclick="jumpRelative(2)">
+      <div class="nc-badge b2">2</div>
+      <div class="nc-info">
+        <div class="nc-title" id="next2T">—</div>
+        <div class="nc-sub">After that</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="ctrl btn-side" id="btnPrev" onclick="move(-1)" title="Previous (↑ key)">↑</button>
+    <button class="ctrl btn-play" id="btnPlay" onclick="togglePlay()">▶ Play</button>
+    <button class="ctrl btn-next" id="btnNext" onclick="move(1)" title="Next (↓ key)">Next ↓</button>
+  </div>
+
+  <!-- Full queue -->
+  <div class="queue-wrap">
+    <div class="queue-hdr">
+      <span class="queue-lbl">Full playlist</span>
+      <span class="q-count" id="qCount">—</span>
+    </div>
+    <div class="queue-list" id="queueList">
+      <div class="loading-row">Fetching playlist…</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="foot">
+    <span class="kbd-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;|&nbsp; <kbd>Space</kbd> play/pause</span>
+    <span><span class="ldot" style="background:var(--txt3)"></span> Auto-sync in <span id="cd">60</span>s &nbsp; <span id="updTxt"></span></span>
+  </div>
+
+</div>
+
+<!-- YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const PLAYLIST_ID = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
+const PIPED_INSTANCES = [
+  'https://pipedapi.kavin.rocks',
+  'https://pipedapi.adminforge.de',
+  'https://api.piped.yt'
+];
+
+let player = null;
+let songs = [];     // [{id, title, duration}]
+let cur = 0;
+let playerReady = false;
+let isPlaying = false;
+
+// ── YouTube Player ──
+function onYouTubeIframeAPIReady(){
+  player = new YT.Player('ytPlayer',{
+    width:'100%',height:'100%',
+    playerVars:{rel:0,modestbranding:1,enablejsapi:1,origin:location.origin||''},
+    events:{onReady:()=>{playerReady=true;}, onStateChange:onStateChange}
+  });
+}
+
+function onStateChange(e){
+  const S = YT.PlayerState;
+  if(e.data===S.PLAYING){
+    isPlaying=true;
+    document.getElementById('btnPlay').textContent='⏸ Pause';
+    document.getElementById('overlay').classList.add('hidden');
+    document.getElementById('liveIndicator').style.display='flex';
+  } else if(e.data===S.PAUSED||e.data===S.ENDED){
+    isPlaying=false;
+    document.getElementById('btnPlay').textContent='▶ Play';
+    document.getElementById('liveIndicator').style.display='none';
+    if(e.data===S.ENDED) move(1);
+  }
+}
+
+function togglePlay(){
+  if(!playerReady||!songs.length) return;
+  if(isPlaying){ player.pauseVideo(); }
+  else {
+    if(!player.getVideoData||!player.getVideoData().video_id){
+      loadVideo(cur);
+    } else { player.playVideo(); }
+  }
+}
+
+function loadVideo(idx){
+  if(!playerReady||!songs[idx]) return;
+  cur=idx;
+  player.loadVideoById(songs[idx].id);
+  updateUI();
+}
+
+function move(dir){
+  const n=cur+dir;
+  if(n<0||n>=songs.length) return;
+  if(isPlaying||player.getVideoData?.()?.video_id){ loadVideo(n); }
+  else { cur=n; updateUI(); }
+}
+
+function jumpRelative(offset){ move(offset); }
+
+function jumpTo(i){
+  loadVideo(i);
+}
+
+// ── Fetch Playlist ──
+function fmtDur(s){
+  if(!s) return '';
+  const m=Math.floor(s/60), sec=s%60;
+  return m+':'+(sec<10?'0':'')+sec;
+}
+
+async function fetchFromPiped(baseUrl){
+  const res = await fetch(`${baseUrl}/playlists/${PLAYLIST_ID}`);
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const streams = data.relatedStreams||data.videos||[];
+  return streams
+    .filter(v=>v.url&&v.title)
+    .map(v=>({
+      id: v.url.replace('/watch?v=','').split('&')[0],
+      title: v.title,
+      duration: v.duration
+    }));
+}
+
+async function loadPlaylist(isRefresh=false){
+  document.getElementById('refBtn').classList.add('spin');
+  let fetched=null;
+  for(const inst of PIPED_INSTANCES){
+    try{ fetched=await fetchFromPiped(inst); break; }
+    catch(e){ console.warn(`${inst} failed:`,e.message); }
+  }
+  document.getElementById('refBtn').classList.remove('spin');
+
+  if(fetched&&fetched.length){
+    const prevLen=songs.length;
+    songs=fetched;
+    document.getElementById('statusPill').textContent=`${songs.length} songs`;
+    if(isRefresh&&songs.length>prevLen){
+      document.getElementById('statusPill').textContent=`+${songs.length-prevLen} new!`;
+      setTimeout(()=>{document.getElementById('statusPill').textContent=`${songs.length} songs`},3000);
+    }
+    updateUI();
+    renderQueue();
+  } else {
+    document.getElementById('statusPill').textContent='Playlist error';
+    document.getElementById('queueList').innerHTML='<div class="loading-row">Could not load playlist.<br>Check internet connection.</div>';
+  }
+  document.getElementById('updTxt').textContent=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+// ── UI Updates ──
+function updateUI(){
+  const s=songs[cur];
+  document.getElementById('nowTitle').textContent   = s ? s.title : '—';
+  document.getElementById('nowPos').textContent     = s ? `#${cur+1} of ${songs.length}` : '';
+  document.getElementById('next1T').textContent     = songs[cur+1]?.title||'—';
+  document.getElementById('next2T').textContent     = songs[cur+2]?.title||'—';
+  document.getElementById('nextCard1').classList.toggle('nc-empty',!songs[cur+1]);
+  document.getElementById('nextCard2').classList.toggle('nc-empty',!songs[cur+2]);
+  document.getElementById('btnPrev').disabled = cur<=0;
+  document.getElementById('btnNext').disabled = cur>=songs.length-1;
+  document.getElementById('qCount').textContent = `${songs.length} songs`;
+
+  // Scroll queue to active item
+  const ql=document.getElementById('queueList');
+  const active=ql.querySelector('.qi.active');
+  if(active) active.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function renderQueue(){
+  document.getElementById('queueList').innerHTML = songs.map((s,i)=>`
+    <div class="qi${i===cur?' active':i<cur?' played':''}" onclick="jumpTo(${i})">
+      <span class="qi-n">${i+1}</span>
+      <span class="qi-icon">${i===cur?'🎤':i<cur?'✓':''}</span>
+      <span class="qi-title">${s.title}</span>
+      <span class="qi-dur">${fmtDur(s.duration)}</span>
+    </div>`).join('');
+  updateUI();
+}
+
+// ── Keyboard ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'){ e.preventDefault(); move(1); }
+  if(e.key==='ArrowUp'){   e.preventDefault(); move(-1); }
+  if(e.key===' '){ e.preventDefault(); togglePlay(); }
+});
+
+// ── Auto-refresh ──
+function doRefresh(){ loadPlaylist(true); resetCD(); }
+let cdVal=60, cdTimer;
+function resetCD(){
+  clearInterval(cdTimer); cdVal=60;
+  document.getElementById('cd').textContent=cdVal;
+  cdTimer=setInterval(()=>{
+    cdVal--;
+    const el=document.getElementById('cd');
+    if(el) el.textContent=cdVal;
+    if(cdVal<=0){ loadPlaylist(true); cdVal=60; }
+  },1000);
+}
+
+// ── Boot ──
+loadPlaylist();
+resetCD();
+</script>
+</body>
+</html>
