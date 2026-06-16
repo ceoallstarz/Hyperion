@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎤 Karaoke Night</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#09060f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden}
+.bg{position:fixed;inset:0;pointer-events:none}
+.bg::before{content:'';position:absolute;top:-200px;left:20%;width:700px;height:500px;background:radial-gradient(ellipse,rgba(120,110,230,.13) 0%,transparent 65%)}
+.app{position:relative;z-index:1;display:grid;grid-template-columns:400px 1fr;height:100vh}
+
+.left{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.02);padding:1rem;gap:10px;overflow:hidden}
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:7px}
+.logo em{font-style:normal;font-size:20px}
+.hdr-r{display:flex;gap:6px;align-items:center}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500;border:1px solid transparent;transition:all .4s;white-space:nowrap}
+.pill.loading{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border-color:rgba(255,255,255,.08)}
+.pill.ok{background:rgba(29,158,117,.12);color:#5dcaa5;border-color:rgba(93,202,165,.2)}
+.pill.new{background:rgba(255,200,0,.12);color:#ffd95e;border-color:rgba(255,200,0,.2)}
+.pill.err{background:rgba(248,113,113,.1);color:#f87171;border-color:rgba(248,113,113,.2)}
+.ibtn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.35);border-radius:7px;padding:4px 9px;font-size:11px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;transition:all .15s}
+.ibtn:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.ibtn.spin svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.now-card{background:linear-gradient(135deg,rgba(120,110,230,.14),rgba(60,50,140,.06));border:1px solid rgba(120,110,230,.25);border-radius:14px;padding:14px 16px;flex-shrink:0;display:flex;gap:12px;align-items:flex-start}
+.now-thumb-wrap{flex-shrink:0;width:90px;height:60px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06);position:relative}
+.now-thumb{width:100%;height:100%;object-fit:cover;display:block}
+.now-thumb-wrap::after{content:'▶';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(255,255,255,.0);background:rgba(0,0,0,0);transition:all .2s}
+.now-thumb-wrap:hover::after{color:rgba(255,255,255,.9);background:rgba(0,0,0,.45);cursor:pointer}
+.now-body{flex:1;min-width:0}
+.now-eye{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;color:#afa9ec;display:flex;align-items:center;gap:6px;margin-bottom:.4rem}
+.npulse{width:6px;height:6px;border-radius:50%;background:#afa9ec;animation:blink 1.5s ease infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.now-song{font-size:15px;font-weight:700;line-height:1.25;letter-spacing:-.3px;margin-bottom:.3rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now-who-row{display:flex;align-items:center;gap:7px;margin-bottom:.2rem}
+.now-who-icon{width:22px;height:22px;border-radius:50%;background:rgba(175,169,236,.2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.now-who-name{font-size:14px;font-weight:700;color:#d4d0f6}
+.now-pos{font-size:11px;color:rgba(255,255,255,.3)}
+
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.3);flex-shrink:0}
+.next-cards{display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+.nc{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:10px 12px;cursor:pointer;transition:all .15s}
+.nc:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.14)}
+.nc.dim{opacity:.28;pointer-events:none}
+.nb{width:24px;height:24px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nb1{background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.nb2{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)}
+.nc-info{flex:1;min-width:0}
+.nc-song{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nc-who{font-size:11px;color:#afa9ec;font-weight:700;margin-top:2px}
+
+.ctrls{display:flex;gap:7px;flex-shrink:0}
+.cb{border:none;border-radius:10px;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;font-weight:600}
+.cb:active{transform:scale(.96)}
+.cb:disabled{opacity:.25;cursor:default}
+.c-side{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);width:44px;height:44px;font-size:17px}
+.c-side:hover:not(:disabled){background:rgba(255,255,255,.13);color:#fff}
+.c-pp{background:rgba(120,110,230,.2);border:1px solid rgba(120,110,230,.35);color:#d4d0f6;width:44px;height:44px;font-size:16px}
+.c-pp:hover:not(:disabled){background:rgba(120,110,230,.38);color:#fff}
+.c-main{background:linear-gradient(135deg,#7c74e0,#4e47af);color:#fff;flex:1;height:44px;font-size:13px;letter-spacing:.2px;gap:6px}
+.c-main:hover:not(:disabled){filter:brightness(1.1)}
+
+.queue-wrap{flex:1;display:flex;flex-direction:column;min-height:0;border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.015)}
+.q-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.q-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.3)}
+.q-ct{font-size:10px;color:rgba(255,255,255,.25)}
+.q-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.08) transparent}
+.qi{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .1s}
+.qi:last-child{border-bottom:none}
+.qi:hover{background:rgba(255,255,255,.04)}
+.qi.cur{background:rgba(120,110,230,.1);border-left:3px solid #7c74e0}
+.qi.done{opacity:.22}
+.q-n{font-size:10px;color:rgba(255,255,255,.2);min-width:20px;text-align:right;flex-shrink:0}
+.q-ico{font-size:11px;min-width:14px;text-align:center;flex-shrink:0}
+.q-info{flex:1;min-width:0}
+.q-song{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.q-who{font-size:11px;color:#afa9ec;font-weight:700;margin-top:1px}
+.q-empty{padding:2rem;text-align:center;color:rgba(255,255,255,.3);font-size:12px;line-height:1.8}
+
+.foot{font-size:10px;color:rgba(255,255,255,.2);flex-shrink:0;display:flex;justify-content:space-between;align-items:center}
+kbd{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font:inherit;font-size:9px}
+.ldot{width:5px;height:5px;border-radius:50%;background:#5dcaa5;display:inline-block;margin-right:4px;animation:blink 2s ease infinite}
+
+.right{display:flex;flex-direction:column;padding:1rem;min-width:0}
+.vid-box{flex:1;position:relative;border-radius:16px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.08);min-height:0}
+#ytPlayer{width:100%;height:100%;display:block}
+.overlay{position:absolute;inset:0;background:rgba(9,6,15,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:2rem}
+.overlay.show{display:flex}
+.ov-icon{font-size:44px}
+.ov-title{font-size:17px;font-weight:600}
+.ov-sub{font-size:13px;color:rgba(255,255,255,.4);line-height:1.5;max-width:280px}
+.ov-btn{background:linear-gradient(135deg,#7c74e0,#4e47af);color:#fff;border:none;border-radius:11px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:7px;transition:filter .15s}
+.ov-btn:hover{filter:brightness(1.12)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="app">
+
+  <div class="left">
+    <div class="hdr">
+      <div class="logo"><em>🎤</em> Karaoke Night</div>
+      <div class="hdr-r">
+        <span class="pill loading" id="pill">Loading…</span>
+        <button class="ibtn" id="syncBtn" onclick="doSync()">
+          <svg id="syncIco" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+          Sync
+        </button>
+      </div>
+    </div>
+
+    <div class="now-card">
+      <div class="now-thumb-wrap" id="nowThumbWrap" onclick="openYT()">
+        <img class="now-thumb" id="nowThumb" src="" alt="">
+      </div>
+      <div class="now-body">
+        <div class="now-eye"><span class="npulse"></span> Now Playing</div>
+        <div class="now-song" id="nowSong">—</div>
+        <div class="now-who-row" id="nowWhoRow" style="display:none">
+          <div class="now-who-icon">👤</div>
+          <div class="now-who-name" id="nowWhoName"></div>
+        </div>
+        <div class="now-pos" id="nowPos">Select a song below</div>
+      </div>
+    </div>
+
+    <div class="sec-lbl">Up Next</div>
+    <div class="next-cards">
+      <div class="nc dim" id="nc1" onclick="jumpTo(cur+1)">
+        <div class="nb nb1">1</div>
+        <div class="nc-info">
+          <div class="nc-song" id="n1song">—</div>
+          <div class="nc-who"  id="n1who"></div>
+        </div>
+      </div>
+      <div class="nc dim" id="nc2" onclick="jumpTo(cur+2)">
+        <div class="nb nb2">2</div>
+        <div class="nc-info">
+          <div class="nc-song" id="n2song">—</div>
+          <div class="nc-who"  id="n2who"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctrls">
+      <button class="cb c-side" id="bPrev" onclick="move(-1)">↑</button>
+      <button class="cb c-pp"   id="bPP"   onclick="togglePlay()" disabled>▶</button>
+      <button class="cb c-main" id="bNext" onclick="move(1)" disabled>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Next ↓
+      </button>
+    </div>
+
+    <div class="queue-wrap">
+      <div class="q-head">
+        <span class="q-lbl">Song Requests</span>
+        <span class="q-ct" id="qCt">—</span>
+      </div>
+      <div class="q-list" id="qList"><div class="q-empty">Loading…</div></div>
+    </div>
+
+    <div class="foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play</span>
+      <span><span class="ldot"></span>sync in <span id="cd">60</span>s</span>
+    </div>
+  </div>
+
+  <div class="right">
+    <div class="vid-box">
+      <div id="ytPlayer"></div>
+      <div class="overlay" id="ovBlocked">
+        <img id="ovBlockedThumb" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:blur(2px)">
+        <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;padding:2rem">
+          <button onclick="openYT()" style="width:72px;height:72px;border-radius:50%;background:rgba(124,116,224,.9);border:3px solid rgba(255,255,255,.5);color:#fff;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;padding-left:4px" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">▶</button>
+          <div style="font-size:16px;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.8)" id="ovBlockedTitle"></div>
+          <div style="font-size:12px;color:rgba(255,255,255,.6);text-shadow:0 1px 4px rgba(0,0,0,.8);background:rgba(0,0,0,.4);padding:6px 14px;border-radius:20px">Embedding blocked — tap to open on YouTube</div>
+        </div>
+      </div>
+      <div class="overlay" id="ovNoMatch">
+        <div class="ov-icon">🔍</div>
+        <div class="ov-title" id="ovNoMatchTitle"></div>
+        <div class="ov-sub">Not found in playlist — search YouTube instead.</div>
+        <button class="ov-btn" onclick="searchYT()">🔎 Search on YouTube</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const PL_ID   = 'PL0xr20H5TtS7qx6Q3DaC---Y5aErrXggS';
+const API_KEY = 'AIzaSyBuLUg5WkS6LBalTLGF_Db6MfC1VrQ7sOw';
+const SHEET   = '1ZmWVLjfvY8HLoYvX73y9psgLqHlSm4MTrbW4dsgyzp4';
+
+let queue=[], cur=0, ytVideos=[];
+let player=null, playerReady=false, playing=false, ytWin=null;
+
+// ── Google Sheet — direct fetch (works on GitHub Pages) ──
+async function fetchSheet(){
+  // Method 1: direct gviz fetch (Google supports CORS on public sheets)
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json&t=${Date.now()}`;
+    const ctrl=new AbortController();
+    setTimeout(()=>ctrl.abort(),8000);
+    const r=await fetch(url,{signal:ctrl.signal});
+    const text=await r.text();
+    // Strip the /*O_o*/ wrapper Google adds
+    const json=JSON.parse(text.replace(/^[^\{]+/,'').replace(/\s*\)\s*;?\s*$/,''));
+    const rows=(json.table.rows||[])
+      .filter(r=>r.c&&r.c[1]?.v&&r.c[2]?.v)
+      .map(r=>({song:String(r.c[1].v).trim(), name:String(r.c[2].v).trim()}));
+    if(rows.length) return rows;
+  }catch(e){ console.warn('Direct fetch failed:',e.message); }
+
+  // Method 2: JSONP fallback
+  return new Promise(resolve=>{
+    const timer=setTimeout(()=>resolve([]),8000);
+    const old=document.getElementById('_gsjs'); if(old) old.remove();
+    const s=document.createElement('script'); s.id='_gsjs';
+    window._gsCB=(resp)=>{
+      clearTimeout(timer);
+      try{
+        const rows=(resp.table.rows||[])
+          .filter(r=>r.c&&r.c[1]?.v&&r.c[2]?.v)
+          .map(r=>({song:String(r.c[1].v).trim(), name:String(r.c[2].v).trim()}));
+        resolve(rows);
+      }catch(e){ resolve([]); }
+    };
+    s.onerror=()=>{ clearTimeout(timer); resolve([]); };
+    s.src=`https://docs.google.com/spreadsheets/d/${SHEET}/gviz/tq?tqx=out:json;callback:_gsCB&t=${Date.now()}`;
+    document.body.appendChild(s);
+  });
+}
+
+// ── YouTube playlist ──────────────────────────
+async function fetchYT(){
+  let items=[], token='';
+  do{
+    const ctrl=new AbortController();
+    setTimeout(()=>ctrl.abort(),8000);
+    const url=`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${PL_ID}&maxResults=50&key=${API_KEY}${token?'&pageToken='+token:''}`;
+    const r=await fetch(url,{signal:ctrl.signal});
+    const d=await r.json();
+    if(d.error) throw new Error(d.error.message);
+    (d.items||[]).forEach(i=>{
+      if(i.snippet?.resourceId?.videoId&&!['Deleted video','Private video'].includes(i.snippet.title))
+        items.push({id:i.snippet.resourceId.videoId,title:i.snippet.title});
+    });
+    token=d.nextPageToken||'';
+  }while(token);
+  return items;
+}
+
+// ── Fuzzy match helpers ────────────────────────
+function norm(s){ return s.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+function matchScore(a,b){
+  const wa=norm(a).split(' ').filter(w=>w.length>2);
+  const wb=new Set(norm(b).split(' ').filter(w=>w.length>2));
+  if(!wa.length||!wb.size) return 0;
+  return wa.filter(w=>wb.has(w)).length / Math.max(wa.length,wb.size);
+}
+
+// ── Match a YT video to its requester (reverse lookup) ──
+function findRequester(ytTitle, sheetRows, usedSet){
+  let best=-1, bestS=0;
+  sheetRows.forEach((row,i)=>{
+    if(usedSet.has(i)) return;
+    const s=matchScore(row.song, ytTitle);
+    if(s>bestS){ bestS=s; best=i; }
+  });
+  if(bestS>0.2 && best>=0){ usedSet.add(best); return sheetRows[best].name; }
+  return '';
+}
+
+// ── Build & load — YouTube playlist order is the source of truth ──
+async function loadAll(isSync=false){
+  document.getElementById('syncBtn').classList.add('spin');
+  setPill('Syncing…','loading');
+
+  const [sheetRes,ytRes]=await Promise.allSettled([fetchSheet(),fetchYT()]);
+  const sheetRows=sheetRes.status==='fulfilled'?sheetRes.value:[];
+  ytVideos=ytRes.status==='fulfilled'?ytRes.value:[];
+
+  console.log(`Sheet rows: ${sheetRows.length}, YT videos: ${ytVideos.length}`);
+
+  if(!ytVideos.length){
+    setPill('YouTube load failed — tap Sync','err');
+    document.getElementById('qList').innerHTML='<div class="q-empty">⚠️ Could not load YouTube playlist.<br>Check API key & internet, then try Sync.</div>';
+    document.getElementById('syncBtn').classList.remove('spin');
+    return;
+  }
+
+  const used=new Set();
+  const newQueue = ytVideos.map(v=>({
+    song:      v.title,
+    requester: findRequester(v.title, sheetRows, used),
+    videoId:   v.id,
+    videoTitle:v.title
+  }));
+
+  const prevLen=queue.length;
+  queue=newQueue;
+
+  const namedCt = queue.filter(q=>q.requester).length;
+  const info = `${queue.length} songs · ${namedCt} named`;
+
+  if(isSync&&queue.length>prevLen&&prevLen>0){
+    setPill(`+${queue.length-prevLen} new!`,'new');
+    setTimeout(()=>setPill(info,'ok'),3000);
+  } else { setPill(info,'ok'); }
+
+  renderQueue(); updateUI();
+  document.getElementById('syncBtn').classList.remove('spin');
+}
+
+// ── YouTube Player ────────────────────────────
+function onYouTubeIframeAPIReady(){
+  player=new YT.Player('ytPlayer',{width:'100%',height:'100%',
+    playerVars:{rel:0,modestbranding:1},
+    events:{onReady:()=>{playerReady=true;},onStateChange:onState,onError:onErr}
+  });
+}
+function onState(e){
+  const S=YT.PlayerState;
+  if(e.data===S.PLAYING){playing=true;document.getElementById('bPP').textContent='⏸';hideOv();}
+  else if(e.data===S.PAUSED){playing=false;document.getElementById('bPP').textContent='▶';}
+  else if(e.data===S.ENDED){playing=false;document.getElementById('bPP').textContent='▶';move(1);}
+}
+function onErr(e){
+  if([101,150,153,5].includes(e.data)){
+    playing=false; document.getElementById('bPP').textContent='▶';
+    // Populate blocked overlay with thumbnail + title
+    const s=queue[cur];
+    if(s?.videoId){
+      document.getElementById('ovBlockedThumb').src=thumb(s.videoId);
+      document.getElementById('ovBlockedTitle').textContent=s.song;
+    }
+    showOv('ovBlocked');
+  }
+}
+function hideOv(){document.getElementById('ovBlocked').classList.remove('show');document.getElementById('ovNoMatch').classList.remove('show');}
+function showOv(id){hideOv();document.getElementById(id).classList.add('show');}
+function togglePlay(){if(!playerReady||!queue[cur])return;playing?player.pauseVideo():player.playVideo();}
+function loadVideo(idx){
+  if(!playerReady||!queue[idx])return;
+  hideOv();
+  const e=queue[idx];
+  if(e.videoId){ player.loadVideoById(e.videoId); }
+  else { player.stopVideo(); document.getElementById('ovNoMatchTitle').textContent=e.song; showOv('ovNoMatch'); }
+}
+function openYT(){
+  if(!queue[cur])return;
+  const v=queue[cur].videoId;
+  const url=v?`https://www.youtube.com/watch?v=${v}&list=${PL_ID}`:`https://www.youtube.com/results?search_query=${encodeURIComponent(queue[cur].song+' karaoke')}`;
+  if(ytWin&&!ytWin.closed){ytWin.location.href=url;ytWin.focus();}else{ytWin=window.open(url,'karaoke_tv');}
+}
+function searchYT(){ if(!queue[cur])return; window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(queue[cur].song+' karaoke')}`, '_blank'); }
+
+// ── Navigation ────────────────────────────────
+function move(dir){const n=cur+dir;if(n<0||n>=queue.length)return;cur=n;loadVideo(cur);updateUI();}
+function jumpTo(i){if(i<0||i>=queue.length)return;cur=i;loadVideo(cur);updateUI();}
+
+// ── UI ────────────────────────────────────────
+function setPill(t,c){const p=document.getElementById('pill');p.textContent=t;p.className='pill '+(c||'loading');}
+function thumb(id){ return id?`https://img.youtube.com/vi/${id}/mqdefault.jpg`:''; }
+function updateUI(){
+  const s=queue[cur],s1=queue[cur+1],s2=queue[cur+2];
+  document.getElementById('nowSong').textContent=s?.song||'—';
+  document.getElementById('nowThumb').src=s?.videoId?thumb(s.videoId):'';
+  document.getElementById('nowThumbWrap').style.display=s?.videoId?'block':'none';
+  if(s?.requester){
+    document.getElementById('nowWhoName').textContent=s.requester;
+    document.getElementById('nowWhoRow').style.display='flex';
+  } else {
+    document.getElementById('nowWhoRow').style.display='none';
+  }
+  document.getElementById('nowPos').textContent=queue.length?`Request ${cur+1} of ${queue.length}`:'Select a song';
+  document.getElementById('n1song').textContent=s1?.song||'—';
+  document.getElementById('n1who').textContent=s1?.requester?'👤 '+s1.requester:'';
+  document.getElementById('n2song').textContent=s2?.song||'—';
+  document.getElementById('n2who').textContent=s2?.requester?'👤 '+s2.requester:'';
+  document.getElementById('nc1').classList.toggle('dim',!s1);
+  document.getElementById('nc2').classList.toggle('dim',!s2);
+  document.getElementById('bPrev').disabled=cur<=0;
+  document.getElementById('bNext').disabled=!queue.length||cur>=queue.length-1;
+  document.getElementById('bPP').disabled=!s;
+  document.getElementById('qCt').textContent=queue.length?`${queue.length} requests`:'—';
+  document.querySelectorAll('.qi').forEach((el,i)=>{el.className='qi'+(i===cur?' cur':i<cur?' done':'');});
+  const act=document.querySelector('.qi.cur');
+  if(act) act.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function renderQueue(){
+  document.getElementById('qList').innerHTML=queue.map((s,i)=>`
+    <div class="qi${i===cur?' cur':i<cur?' done':''}" onclick="jumpTo(${i})">
+      <span class="q-n">${i+1}</span>
+      <span class="q-ico">${i===cur?'🎤':i<cur?'✓':''}</span>
+      <div class="q-info">
+        <div class="q-song">${s.song}</div>
+        ${s.requester?`<div class="q-who">👤 ${s.requester}</div>`:'<div class="q-who" style="color:rgba(255,255,255,.2)">no name</div>'}
+      </div>
+    </div>`).join('');
+  updateUI();
+}
+
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(e.target.tagName))return;
+  if(e.key==='ArrowDown'){e.preventDefault();move(1);}
+  if(e.key==='ArrowUp'){e.preventDefault();move(-1);}
+  if(e.key===' '){e.preventDefault();togglePlay();}
+});
+
+function doSync(){loadAll(true);resetCd();}
+let cdVal=60,cdTimer;
+function resetCd(){
+  clearInterval(cdTimer);cdVal=60;
+  document.getElementById('cd').textContent=cdVal;
+  cdTimer=setInterval(()=>{
+    cdVal--;const el=document.getElementById('cd');if(el)el.textContent=cdVal;
+    if(cdVal<=0){loadAll(true);cdVal=60;}
+  },1000);
+}
+loadAll();resetCd();
+</script>
+</body>
+</html>
